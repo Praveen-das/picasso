@@ -1,0 +1,117 @@
+.navbar{
+    box-sizing: border-box;
+    width: 100%;
+    height: 3.5rem;
+    /* box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.253); */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0 3rem;
+    background: rgba(255, 255, 255, 0.664);
+    backdrop-filter: blur(30px);
+    z-index: 100;
+    border-bottom: 1px solid rgba(180, 180, 180, 0.336);
+}
+.left{
+    display: flex;
+    align-items: center;
+}
+.logo{
+    width: 120px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.logo img{
+    border-radius: 50%;
+}
+.catagory{
+    padding-left: 2rem;
+    position: relative;
+    font-size: 0.8em;
+}
+.catagory::after{
+    content: url(../../Assets/Icons/arrow-down.svg);
+    position: absolute;
+    width: 11px;
+    aspect-ratio: 1;
+    right: -20px;
+    top: 2px;
+    opacity: 0.7;
+}
+.searchbar{
+    margin-left: 2rem;
+    border-radius: 25px;
+    width: 200px;
+    height: 1.8rem;
+    border: none;
+    background: rgba(0, 0, 0, 0.116);
+    color: rgb(95, 95, 95);
+    outline: none;
+    padding: 0 2rem 0 1rem;
+    font-size: 16px;
+}
+.searchbox-wrapper{
+    position: relative;
+}
+.searchbox-wrapper::after{
+    content: '';
+    background: url(../../Assets/Icons/search.svg);
+    background-size: contain;
+    position: absolute;
+    opacity: .4;
+    top: 6px;
+    right: 10px;
+    width: 15px;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+.right{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-size: 0.8em;
+}
+.shop,
+.marketplace,
+.create,
+.login{
+    position: relative;
+    cursor: pointer;
+}
+.marketplace,
+.create{
+    word-wrap: normal;
+}
+.login{
+    border-left: 1px solid rgb(107, 107, 107);
+    line-height: 20px;
+    padding: 0.5rem 1.5rem;
+}
+.shop::after,
+.marketplace::after,
+.create::after{
+    content: '';
+    position: absolute;
+    background-size: contain;
+    top: 0px;
+    left: 0rem;
+    width: 15px;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+.marketplace::after{
+    top: -2px;
+    width: 20px;
+    opacity: 0.7;
+}
+.shop:hover,
+.marketplace:hover,
+.create:hover,
+.login:hover{
+    color: tomato;
+}
