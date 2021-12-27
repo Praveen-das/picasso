@@ -1,0 +1,80 @@
+.actions{
+    position: relative;
+    display: flex;
+    gap: 10px;
+    justify-content: right;
+    margin: auto;
+    z-index: 2;
+}
+.addProduct,
+.editProducts{
+    height: 40px;
+    width: 150px;
+    border-radius: 5px;
+    border: none;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.144);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-bottom: 1rem ;
+}
+.faAddIcon {
+    font-size: 1em;
+}
+.addProduct:hover,
+.editProducts:hover,
+.addProduct:hover .faAddIcon *,
+.editProducts:hover .faAddIcon *{
+    color: var(--brand);
+}
+.checkbox,
+.checkboxAll{
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 425px) {
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(6),
+    td:nth-child(6),
+    th:nth-child(7),
+    td:nth-child(7){
+        display: none;
+    }
+    .addProduct,
+    .editProducts{
+        height: 30px;
+        width: 100%;
+        font-size: 0.8em;
+    }
+    .faAddIcon {
+        font-size: 0.9em;
+    }
+}
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(6),
+    td:nth-child(6),
+    th:nth-child(7),
+    td:nth-child(7){
+        display: none;
+    }
+    .addProduct,
+    .editProducts{
+        height: 30px;
+        width: 100px;
+        font-size: 0.8em;
+    }
+    .faAddIcon {
+        font-size: 0.9em;
+    }
+}

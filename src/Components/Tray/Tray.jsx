@@ -1,27 +1,27 @@
 import React from 'react'
-import Card from '../Card/Card'
 import './tray.css'
+import { materials } from '../../Assets/URLs/categories'
 
-function Tray({title}) {
+function TrayMaterials() {
     return (
         <>
-            <div className="tray-wrapper">
-                <div className="title-wrapper">
-                    <label className='tray-title' htmlFor="">{title}</label>
-                    <label className='tray-more' htmlFor="">More</label>
-                </div>
+            <div className="tray-material-wrapper">
+                <label className='tile-title' htmlFor="">SHOP BY MATERIAL</label>
                 <hr />
-                <div className="tray">
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
+                <div className="tray-materials">
+                    {materials.map((material, index) =>
+                        <div
+                            key={index}
+                            className='cards materials moveup'
+                            style={{ backgroundImage: `url(${material.url})` }}
+                        >
+                            <div>{material.type}</div>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
     )
 }
 
-export default Tray
+export default TrayMaterials

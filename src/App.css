@@ -5,16 +5,26 @@
     font-family: Roboto;
 } */
 
+:root{
+    --brand: rgb(255, 126, 21);
+}
 body{
     margin: 0;
     padding: 0;
     /* cursor:url(./Assets/Icons/brush.png),auto; */
 }
+/* #root >*{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-wrap: wrap;
+} */
 *{
     font-family: Montserrat;
     font-weight: 600;
-    color: rgb(48, 48, 48);
+    text-decoration: none;
 }
 ::selection{
-    background: rgba(0, 0, 0, 0.185)
+    background: rgba(0, 0, 0, 0.185);
+    color:hsl(0, 0%, 77%);
 }

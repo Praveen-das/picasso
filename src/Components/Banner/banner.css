@@ -13,7 +13,6 @@
     height: 500px;
     background-image: url(../../Assets/Images/image1.jpg);
     background-size: cover;
-    /* mask-image: linear-gradient(90deg,black,black,black, rgba(0, 0, 0, 0)); */
 }
 .banner-right{
     position: absolute;
@@ -22,7 +21,7 @@
     height: 500px;
     background: url(../../Assets/Images/image2.jpg);
     background-size: cover;
-    mask-image: linear-gradient(270deg,black,black,black,black,black,black,black, rgba(255, 255, 255, 0));
+    /* mask-image: linear-gradient(270deg,black,black,black,black,black,black,black, rgba(255, 255, 255, 0)); */
 }
 .banner-left,
 .banner-right{

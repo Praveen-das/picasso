@@ -1,0 +1,43 @@
+.artists {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 5rem 3rem;
+
+  /* margin-top: 3rem; */
+}
+.artists-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  align-items: end;
+  gap: 20px;
+}
+.artists label {
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: 600;
+  line-height: 50px;
+  position: relative;
+}
+hr{
+    display: flex;
+    margin: 5rem 0;
+}
+.artists-card{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+.artists-card label{
+    text-align: center;
+    line-height: 5rem;
+}
+.members{
+    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}

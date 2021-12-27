@@ -11,9 +11,6 @@ function Navbar() {
                     <label htmlFor=""> painting</label>
                     <label htmlFor=""> painting</label>
                 </div>
-                <div id="navbar-right">
-                    <label htmlFor=""> create</label>
-                </div>
             </div>
         </>
     )

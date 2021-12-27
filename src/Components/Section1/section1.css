@@ -1,29 +1,104 @@
-section{
-    box-sizing: border-box;
-    width: 100%;
-    padding: 4rem 3rem;
-    background: linear-gradient(45deg, rgb(19, 19, 19), rgb(48, 48, 48));
+section {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+  padding: 0 3rem;
+  box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.11);
+  overflow: hidden;
 }
-section h1{
-    line-height: 20px;
-    margin: 0;
-    color: white;
+
+.section1-contents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 3rem;
 }
-section h3{
-    line-height: 0;
-    margin-top: 1.5rem;
-    color: white;
+section h1 {
+  line-height: 20px;
+  margin: 0;
+  color: rgb(41, 41, 41);
 }
-section p{
-    font-size: 0.85em;
-    color: white;
-    font-weight: 500;
-    line-height: 25px;
+section h4 {
+  line-height: 30px;
+  /* text-align: center; */
+  /* margin-top: 1.5rem; */
+  color: rgb(41, 41, 41);
 }
-section button{
-    border: none;
-    font-size: 1.2em;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    margin-top: 2rem;
+section p {
+  font-size: 0.85em;
+  color: rgb(41, 41, 41);
+  font-weight: 500;
+  line-height: 30px;
+  z-index: 20;
+}
+.steps-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.card-upload{
+  display: flex;
+  position: relative;
+  width: 200px;
+  aspect-ratio: 1;
+  flex-direction: column;
+  padding: 2rem;
+  margin-top: 2rem;
+  perspective: 500px;
+  transform-style: preserve-3d;
+  transition: 0.5s;
+  pointer-events: none;
+}
+.card-upload::after{
+  content: '';
+  position: absolute;
+  inset: 30px;
+  /* background:linear-gradient(30deg, #cecece,rgba(255, 255, 255, 0)); */
+  background: rgb(209, 209, 209);
+  border-radius: 50%;
+  z-index: -1;
+}
+.steps-wrapper img {
+  width: 100%;
+  transition: 0.2s;
+  transform: translateZ(0px);
+}
+.steps-wrapper label {
+  text-align: center;
+  line-height: 50px;
+  transition: 0.1s;
+}
+section button {
+  border: none;
+  font-size: 1.2em;
+  padding: 1rem 2rem;
+  margin-top: 2rem;
+  border-radius: 50px;
+  background: rgb(48, 48, 48);
+  color: white;
+  /* margin-top: 1rem; */
+}
+/* ////////////////////////////////////////////// */
+.perspective{
+  perspective: 200px;
+  cursor: pointer;
+}
+
+.perspective:hover .card-upload{
+  transform:rotateX(75deg) translateZ(-25px);
+}
+.perspective:hover .card-upload img,
+.perspective:hover .card-customize img,
+.perspective:hover .card-order img {
+  transition: 0.3s 0.1s;
+  transform: translateZ(75px) translateY(45px) rotateX(-60deg);
+}
+.perspective:hover .card-upload label,
+.perspective:hover .card-customize label,
+.perspective:hover .card-order label {
+  transform: translateZ(5px) translateY(14px) rotateX(-65deg);
+  transition: 0.3s;
 }

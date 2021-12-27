@@ -1,13 +1,22 @@
-import Header from "./Components/Header/Header";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css'
-import Banner from "./Components/Banner/Banner";
-import Navbar from "./Components/Navbar/Navbar";
+import Dashboard from './Pages/Admin/Dashboard';
 import HomePage from "./Pages/HomePage";
+import Products from './Pages/Products';
+import SellerProducts from './Pages/Admin/SellerProducts';
 
 function App() {
   return (
     <>
-      <HomePage/>
+      <Router>
+        <Routes>
+          <Route path='/' element={<HomePage />}/>
+          <Route path='/products' element={<Products/>}/>
+          <Route path='/seller' element={<Dashboard/>}/>
+          <Route path='/seller/products' element={<SellerProducts/>}/>
+        </Routes>
+      </Router>
+      
     </>
   );
 }
