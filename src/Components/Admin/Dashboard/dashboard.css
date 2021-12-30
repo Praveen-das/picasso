@@ -106,10 +106,11 @@ td:last-child{
 }
 td{
     text-align: center;
-    font-size: 0.85em;
+    font-size: 1em;
     line-height: 40px;
     color: rgb(70, 70, 70);
 }
+
 tr:nth-child(even){
     background: rgba(233, 233, 233, 0.726);
 }
@@ -117,13 +118,17 @@ td:first-child,
 th:first-child{
     text-align: left;
 }
+td:last-child,
+th:last-child{
+    width: 80px;
+}
 .action{
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
 }
 .action *{
-    font-size: 1.1em;
+    font-size: 1.2em;
 }
 
 @media only screen and (max-width: 425px) {

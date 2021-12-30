@@ -5,7 +5,7 @@ import Products from '../../Components/Admin/Products/Products'
 function AddProducts() {
     return (
         <div className='admin-wrapper'>
-            {/* <Navbar/> */}
+            <Navbar/>
             <Products/>
         </div>
     )

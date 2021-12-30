@@ -1,8 +1,8 @@
 import { createContext, useContext, useState } from "react";
-import { arrayUnion, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteField, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
 import { db, storage } from "../Config/Firebase/Firebase";
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 
 const Firebase = createContext()
 
@@ -13,13 +13,12 @@ export function useFirebase() {
 export default function FirebaseContext({ children }) {
     const [adminProducts, setAdminProducts] = useState()
     const [uploadProgress, setUploadProgress] = useState()
-    const [imageUrl, setImageUrl] = useState([])
 
     useEffect(() => {
         onSnapshot(doc(db, "admin", "praveen"), (doc) => {
             if (doc.exists()) return setAdminProducts(doc.data().products)
         });
-    })
+    }, [])
 
     const addProductToDatabase = (data) => {
         try {
@@ -31,41 +30,42 @@ export default function FirebaseContext({ children }) {
         }
     }
 
-    useEffect(() => {
-        console.log(imageUrl);
-    }, [imageUrl])
-
-    const uploadImage = (file) => {
-        const storageRef = ref(storage, `user/${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadProgress(Math.floor(progress))
-            },
-            (error) => { console.log(error); },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setImageUrl(pre=>{
-                        return [downloadURL,...pre]
-                    })
-                });
-            }
-        );
+    const removeProduct = async (product) => {
+        const productRef = doc(db, 'admin', 'praveen');
+        await updateDoc(productRef, {
+            products: arrayRemove(product)
+        })
     }
 
-    // const removeProduct = (data) => {
-
-    // }
+    const uploadImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const storageRef = ref(storage, `user/${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setUploadProgress(progress)
+                },
+                (error) => {
+                    console.log(error)
+                    reject(error)
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        resolve(downloadURL)
+                    })
+                }
+            )
+        })
+    }
 
 
     const value = {
         addProductToDatabase,
+        removeProduct,
         adminProducts,
         uploadImage,
         uploadProgress,
-        imageUrl
     }
 
     return (

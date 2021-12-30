@@ -12,10 +12,10 @@ function InputField({ label, onChange, rows, xs, md, value,required }) {
                     multiline
                     rows={rows}
                     value={value}
+                    size='small'
                     variant='outlined'
                     onChange={(e) => onChange(e)}
                     fullWidth
-                    size='small'
                 ></TextField>
             </Grid>
         </>

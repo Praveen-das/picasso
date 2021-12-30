@@ -1,71 +1,76 @@
-import React, { useState } from 'react'
-import Header from '../Header/Header'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { faAngleLeft, faChevronLeft, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faEdit, faPlus, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useFirebase } from '../../../Context/FirebaseContext'
 import './products.css'
-import { Link } from 'react-router-dom'
-import { useEffect } from 'react/cjs/react.development'
 import AddProduct from '../AddProduct/AddProduct'
+import AlertMessage from '../../Alert/Alert'
 
 function Products() {
-    const [toggleDelete, setToggleDelete] = useState(false)
+    const [toggleEditButton, setToggleEditButton] = useState(true)
+    const [toggleEdit, setToggleEdit] = useState(false)
     const [toggleAddProduct, setToggleAddProduct] = useState(false)
-    const [isSelected, setIsSelected] = useState([])
-    const { adminProducts } = useFirebase()
+    const { adminProducts, removeProduct } = useFirebase()
+    const [confirmationMessage, setConfirmationMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
 
-    const handleAction = (action) => {
+    const [confirmationDialog, setConfirmationDialog] = useState({
+        open: false,
+        isSuccess: false
+    })
+
+    const handleAction = (action, product) => {
         switch (action) {
             case 'add':
                 toggleAddProduct ?
                     setToggleAddProduct(false) :
                     setToggleAddProduct(true)
                 break;
+            case 'edit':
+                toggleEditButton ?
+                    setToggleEditButton(false) :
+                    setToggleEditButton(true)
+                break;
+            case 'update':
+                setToggleAddProduct({
+                    open:true,
+                    payload:'data'
+                })
+                break;
             case 'delete':
-                toggleDelete ?
-                    setToggleDelete(false) :
-                    setToggleDelete(true)
+                setConfirmationMessage('Press CONFIRM to remove product')
+                setSuccessMessage('Product Removed successfully')
+                setConfirmationDialog({
+                    open: true,
+                    isSuccess: false,
+                    isConfirmed: () => removeProduct(product)
+                })
                 break;
             default:
                 break;
         }
     }
 
-    const handleSelected = (event, id) => {
-        if (event.target.checked) {
-            if (!id) {
-                document.querySelectorAll('.single').forEach(o => o.checked = true)
-                return setIsSelected(adminProducts.map(o => o.id))
-            }
-            setIsSelected(pre => {
-                return [...pre, ...id]
-            })
-            return
-        }
-        if (!event.target.checked) {
-            if (!id) {
-                document.querySelectorAll('.single').forEach(o => o.checked = false)
-                return setIsSelected([])
-            }
-            return setIsSelected(isSelected.filter(o => o !== id))
-        }
-    }
-
     return (
         <>
             <div className="dashboard-wrapper">
-                {/* <Header page='Products' /> */}
+                <AlertMessage
+                    confirmationDialog={confirmationDialog}
+                    setConfirmationDialog={setConfirmationDialog}
+                    confirmationMessage={confirmationMessage}
+                    successMessage={successMessage}
+                />
                 <div id="dashboard">
-                    {!toggleAddProduct && <div className="actions">
-                        <button onClick={() => handleAction('add')} className='addProduct'>
+                    <div className="actions">
+                        <button color='secondary' onClick={() => handleAction('add')} className='addProduct'>
                             <Icon className='faAddIcon' icon={faPlus} /> ADD
                         </button>
-                        <button onClick={() => handleAction('delete')} className='editProducts'><
-                            Icon className='faAddIcon' icon={faTrash} />DELETE
+                        <button onClick={() => handleAction('edit')} className='editProducts'><
+                            Icon className='faAddIcon' icon={faEdit} />EDIT
                         </button>
-                    </div>}
-                    {toggleAddProduct && <AddProduct setToggleAddProduct={setToggleAddProduct}/>}
-                    <table style={{ width: '100%' }}>
+                    </div>
+                    <AddProduct setToggleAddProduct={setToggleAddProduct} toggleAddProduct={toggleAddProduct} />
+                    <table className='productTable' style={{ width: '100%' }}>
                         <thead>
                             <tr>
                                 <th>no</th>
@@ -75,25 +80,46 @@ function Products() {
                                 <th>availible</th>
                                 <th>discount</th>
                                 <th>PRice</th>
-                                {toggleDelete && <th><input onChange={(e) => handleSelected(e)} className='checkbox' type="checkbox" /></th>}
+                                {toggleEditButton && <th>action</th>}
+                                {/* {toggleEditButton && <th><input onChange={(e) => handleSelected(e)} className='checkbox' type="checkbox" /></th>} */}
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                adminProducts &&
-                                adminProducts.map((data, index) =>
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>1</td>
-                                        <td>{data.product}</td>
-                                        <td>{data.id}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.discount}</td>
-                                        <td>{data.price}</td>
-                                        {toggleDelete && <td>
-                                            <input onChange={(e) => handleSelected(e, data.id)} className='checkbox single' type="checkbox" />
-                                        </td>}
-                                    </tr>
+                                adminProducts?.map((data, index) => {
+                                    return toggleEdit ?
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td><img id='productImage' src={data.image_url} alt="" /></td>
+                                            <td>zxczxc</td>
+                                            <td>{data.id}</td>
+                                            <td>zxczxc</td>
+                                            <td>zxczxc</td>
+                                            <td>zxczxc</td>
+                                            {toggleEditButton && <td>
+                                                <div className='action'>
+                                                    <Icon className='actionButtons' icon={faCheck} />
+                                                    <Icon className='actionButtons' onClick={() => setToggleEdit(false)} icon={faTimes} />
+                                                </div>
+                                            </td>}
+                                        </tr>
+                                        :
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td><img id='productImage' src={data.image_url} alt="" /></td>
+                                            <td>{data.product}</td>
+                                            <td>{data.id}</td>
+                                            <td>{data.quantity}</td>
+                                            <td>{data.discount}</td>
+                                            <td>{data.price}</td>
+                                            {toggleEditButton && <td>
+                                                <div className='action'>
+                                                    <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
+                                                    <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
+                                                </div>
+                                            </td>}
+                                        </tr>
+                                }
                                 )
                             }
                         </tbody>

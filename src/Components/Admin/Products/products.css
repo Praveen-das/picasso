@@ -1,10 +1,8 @@
 .actions{
-    position: relative;
     display: flex;
     gap: 10px;
     justify-content: right;
-    margin: auto;
-    z-index: 2;
+    margin-bottom: 1rem;
 }
 .addProduct,
 .editProducts{
@@ -20,7 +18,6 @@
     gap: 10px;
     font-size: 0.9em;
     cursor: pointer;
-    margin-bottom: 1rem ;
 }
 .faAddIcon {
     font-size: 1em;
@@ -31,11 +28,28 @@
 .editProducts:hover .faAddIcon *{
     color: var(--brand);
 }
-.checkbox,
-.checkboxAll{
+
+#productImage{
+    display: flex;
+    margin: 10px auto;
+    width: 80px;
+    aspect-ratio: 1;
+    background-size: cover;
+}
+.productTable th:first-child,
+.productTable td:first-child{
+    width: 10px;
+}
+.productTable th:nth-child(2),
+.productTable td:nth-child(2){
+    width: 100px;
+}
+.actionButtons{
     cursor: pointer;
 }
-
+.actionButtons:hover{
+    color: var(--brand);
+}
 @media only screen and (max-width: 425px) {
     th:nth-child(2),
     td:nth-child(2),

@@ -6,7 +6,12 @@ input::-webkit-inner-spin-button {
 }
 .imageTray{
   width: 100%;
-  height: 100px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(80px,1fr));
   gap: 1rem;
+}
+.imageTray img{
+  width: 100%;
+  aspect-ratio: 1;
+  background-size: cover;
 }
