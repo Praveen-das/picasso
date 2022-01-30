@@ -11,7 +11,7 @@ import './style.css'
 
 function HomePage() {
     return (
-        <div>
+        <>
             <Header />
             <Banner />
             <Tiles />
@@ -19,7 +19,7 @@ function HomePage() {
             <Section1 />
             <Artists/>
             <Footer/>
-        </div>
+        </>
     )
 }
 

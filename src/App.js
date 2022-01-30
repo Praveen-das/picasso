@@ -1,22 +1,25 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css'
-import Dashboard from './Pages/Admin/Dashboard';
 import HomePage from "./Pages/HomePage";
-import Products from './Pages/Products';
-import SellerProducts from './Pages/Admin/SellerProducts';
+import ShoppingPage from './Pages/ShoppingPage';
+import ProfilePage from './Pages/ProfilePage';
+import SellerPage from './Pages/SellerPage';
+import ProductPage from './Pages/ProductPage';
+import CheckoutPage from './Pages/CheckoutPage';
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path='/' element={<HomePage />}/>
-          <Route path='/products' element={<Products/>}/>
-          <Route path='/seller' element={<Dashboard/>}/>
-          <Route path='/seller/products' element={<SellerProducts/>}/>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/shop' element={<ShoppingPage />} />
+          <Route path='/seller' element={<SellerPage />} />
+          <Route path='/my-profile' element={<ProfilePage />} />
+          <Route path='/shop/product' element={<ProductPage />} />
+          <Route path='/checkout' element={<CheckoutPage />} />
         </Routes>
       </Router>
-      
     </>
   );
 }

@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom'
 function Banner() {
     const recent = useRef()
 
-    const setWidth = (e) => {
+    const setDimension = (e) => {
         const clientWidth = e.target.clientWidth
         const clientHeight = e.target.clientHeight
         const aspectRatio = clientWidth / clientHeight
@@ -79,13 +79,13 @@ function Banner() {
                         <div className="recent hover" ref={recent}>
                             <label htmlFor="">Recent works</label>
                         </div>
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img1} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img2} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img3} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img4} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img5} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img6} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setWidth(e)} src={img7} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img1} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img2} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img3} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img4} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img5} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img6} alt="" />
+                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img7} alt="" />
                     </div>
                 </div>
             </div>

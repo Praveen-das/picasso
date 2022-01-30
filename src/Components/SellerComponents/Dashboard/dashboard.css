@@ -9,6 +9,7 @@
 #dashboard {
   width: 100%;
   padding: 1.5rem;
+  padding-top: 0;
 }
 .dashboard-items {
   width: 100%;
@@ -75,51 +76,59 @@
     color: rgb(59, 59, 59);
     font-size: 1.2em;
 }
-table{
+.dashboard-wrapper table{
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.185);
     border-radius: 5px;
     border-spacing: 0;
 }
-thead{
+#dashboard thead{
     height: 30px;
     font-size: 0.8em;
 }
-tbody *{
+#dashboard tbody *{
     font-weight: 500;
-    font-size: 0.9em;
+    font-size: 1em;
 }
-th{
+#dashboard th{
     color: rgb(0, 0, 0);
     border-bottom: 1px solid rgb(233, 233, 233);
     line-height: 20px;
     text-transform: uppercase;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
-th:first-child,
-th:last-child{
+#dashboard th:first-child,
+#dashboard th:last-child{
     padding: 0 1rem;
     height: 3rem;
 }
-td:first-child,
-td:last-child{
+#dashboard td:first-child,
+#dashboard td:last-child{
     padding: 1rem 1rem;
 }
-td{
+#dashboard td,th{
+    /* max-width: 90px; */
+    overflow: hidden;
+}
+#dashboard td{
     text-align: center;
-    font-size: 1em;
-    line-height: 40px;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 25px;
     color: rgb(70, 70, 70);
 }
+#dashboard td #status{
+    /* margin: 0 auto; */
+}
 
-tr:nth-child(even){
+.dashboard-wrapper tr:nth-child(even){
     background: rgba(233, 233, 233, 0.726);
 }
-td:first-child,
-th:first-child{
+#dashboard td:first-child,
+#dashboard th:first-child{
     text-align: left;
 }
-td:last-child,
-th:last-child{
+#dashboard td:last-child,
+#dashboard th:last-child{
     width: 80px;
 }
 .action{
@@ -137,4 +146,8 @@ th:last-child{
       }
 }
 
+
+#select >*{
+    background: #000;
+}
 

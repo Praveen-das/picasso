@@ -1,0 +1,6 @@
+.create-account{
+    border: none;
+    background: none;
+    cursor:  pointer;
+    color: var(--brand);
+}

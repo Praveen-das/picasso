@@ -1,0 +1,32 @@
+.nav-item{
+    position: relative;
+}
+.dropdown-menu-wrapper{
+    position: absolute;
+    padding-top: 0.5rem;
+    right: -20px;
+}
+.dropdown-menu{
+    list-style: none;
+    background: rgb(255, 255, 255);
+    color: rgb(48, 48, 48);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.226);
+    font-size: 0.8rem;
+    overflow: hidden;
+}
+.dropdown-menu-item{
+    height: 40px;
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    cursor: pointer;
+}
+.dropdown-menu-item:hover{
+    background: rgba(0, 0, 0, 0.062);
+    color: var(--brand);
+}
+.dropdown-menu-item > svg {
+    font-size: 18px;
+}

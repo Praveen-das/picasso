@@ -1,0 +1,19 @@
+#avatar{
+    position: relative;
+}
+.imageUpdateBtn{
+    border: none;
+    border-radius: 50px;
+    background: var(--brand);
+    width: 35px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+.imageUpdateBtn:hover{
+    filter: brightness(1.1);
+}

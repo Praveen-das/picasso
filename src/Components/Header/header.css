@@ -9,13 +9,13 @@
     position: fixed;
     top: 0;
     left: 0;
-    padding: 0 3rem;
+    padding: 0 2rem;
     background: rgb(255, 255, 255);
     z-index: 100;
     border-bottom: 1px solid rgba(180, 180, 180, 0.336);
     transition: 0.18s;
 }
-.left{
+.navbar .left{
     display: flex;
     align-items: center;
 }
@@ -70,7 +70,7 @@
     aspect-ratio: 1;
     object-fit: contain;
 }
-.right{
+.navbar .right{
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -87,6 +87,8 @@
     word-wrap: normal;
 }
 .login{
+    border: none;
+    background: none;
     border-left: 1px solid rgb(107, 107, 107);
     line-height: 20px;
     padding: 0.5rem 0 0.5rem 1.5rem;
@@ -117,3 +119,4 @@
     color: var(--brand);
     cursor: pointer;
 }
+

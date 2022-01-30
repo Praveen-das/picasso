@@ -1,17 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
-/* @font-face{
-    src: url(./Assets/Font/Roboto-Medium.ttf);
-    font-family: Roboto;
-} */
-
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
 :root{
-    --brand: rgb(255, 126, 21);
+    --brand: #1a7ffd;
+    /* --brand: #2994ff; */
+    --brandGradient: linear-gradient(30deg, #aa23ff,#2081ff);
+    --Title: 'Oswald', sans-serif;
+    --subTitle : 'Montserrat';
 }
 body{
     margin: 0;
-    padding: 0;
+    padding: 0 !important;
+    overflow: visible !important;
     /* cursor:url(./Assets/Icons/brush.png),auto; */
+    margin-top: 4rem;
+    color: #33364d;
+    /* text-shadow: 0 0 1px rgba(0, 0, 0, 0.438); */
+    
 }
 /* #root >*{
     position: absolute;
@@ -20,11 +24,11 @@ body{
     flex-wrap: wrap;
 } */
 *{
-    font-family: Montserrat;
+    font-family: var(--subTitle);
     font-weight: 600;
     text-decoration: none;
 }
 ::selection{
-    background: rgba(0, 0, 0, 0.185);
-    color:hsl(0, 0%, 77%);
+    background: rgba(0, 0, 0, 0.103);
+    color:hsl(0, 0%, 24%);
 }

@@ -1,34 +1,63 @@
 import { Alert, Button, Slide } from '@mui/material'
 import React, { useEffect } from 'react'
 
-function AlertMessage({ confirmationDialog, setConfirmationDialog, confirmationMessage, successMessage }) {
+function AlertMessage({ dialog, setDialog }) {
 
     const style = {
         fontWeight: 600
     }
 
     const handleActions = () => {
-        // confirmationDialog.isConfirmed()
-        setConfirmationDialog(
-            {
-                isSuccess: true,
-                open: true
-            })
+        if (dialog.type !== 'confirmation') return
+        dialog.onConfirmation()
+        setDialog(pre => {
+            return {
+                ...pre,
+                isConfirmed: true,
+                type: 'success'
+            }
+        })
     }
 
     useEffect(() => {
-        if (confirmationDialog.isSuccess)
-            setTimeout(() => setConfirmationDialog(
-                {
-                    isSuccess: true,
-                    open: false
-                }), 2000)
-    },[confirmationDialog.isSuccess])
+        if (!dialog) return
+        if (dialog.isConfirmed || dialog.type === 'success')
+            var timer = setTimeout (() => {
+                setDialog(pre => { return { ...pre, open: false } })
+            }, 2000)
+        return (() => clearTimeout(timer))
+    }, [dialog && dialog.isConfirmed])
 
+    if (!dialog) return ''
     return (
-        <Slide in={confirmationDialog.open}>
+        <Slide in={dialog.open}>
             {
-                confirmationDialog.isSuccess ?
+                dialog.type !== 'success' ?
+                    <Alert
+                        severity="warning"
+                        action={
+                            <>
+                                <Button sx={style} onClick={handleActions} color='inherit'>CONFIRM</Button>
+                                <Button sx={style} onClick={() => setDialog(pre => { return { ...pre, open: false } })} color='inherit'>CANCEL</Button>
+                            </>
+                        }
+                        sx={{
+                            position: 'fixed',
+                            left: '10rem',
+                            right: '0',
+                            top: '0',
+                            margin: 'auto',
+                            width: 500,
+                            height: '80px',
+                            // display: !successDialog.open ? 'flex' : 'none',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            zIndex: 100
+                        }}
+                    >
+                        {dialog && dialog.confirmationMessage}
+                    </Alert >
+                    :
                     <Alert
                         sx={{
                             position: 'fixed',
@@ -44,35 +73,10 @@ function AlertMessage({ confirmationDialog, setConfirmationDialog, confirmationM
                             zIndex: 100
                         }}
                         severity="success">
-                        {successMessage}
-                    </Alert>
-                    :
-                    <Alert
-                        severity="warning"
-                        action={
-                            <>
-                                <Button sx={style} onClick={handleActions} color='inherit'>CONFIRM</Button>
-                                <Button sx={style} onClick={() => setConfirmationDialog({ open: false })} color='inherit'>CANCEL</Button>
-                            </>
-                        }
-                        sx={{
-                            position: 'fixed',
-                            left: '10rem',
-                            right: '0',
-                            top: '0',
-                            margin: 'auto',
-                            width: 500,
-                            height: '80px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            zIndex: 100
-                        }}
-                    >
-                        {confirmationMessage}
+                        {dialog && dialog.successMessage}
                     </Alert>
             }
-        </Slide>
+        </Slide >
     )
 }
 export default AlertMessage

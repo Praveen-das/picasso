@@ -16,14 +16,14 @@ footer{
     display: flex;
     gap: 5rem;
 }
-ul{
+.footer-container ul{
     list-style: none;
     color: white;
     font-weight: 500;
     line-height: 40px;
     padding: 0;
 }
-li{
+.footer-container li{
     font-size: 0.85em;
     font-weight: 400;
     color: white;

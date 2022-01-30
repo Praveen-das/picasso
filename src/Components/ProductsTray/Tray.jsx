@@ -1,23 +1,23 @@
 import React from 'react'
 import Card from '../Card/Card'
 import './tray.css'
-import { images } from '../../Assets/URLs/ImgUrls'
+import { useFirebase } from '../../Context/FirebaseContext'
+import Masonry from '@mui/lab/Masonry';
 
 function Tray() {
+    const { allProducts } = useFirebase()
     
     return (
         <>
             <div className="productsTray-wrapper">
                 <label className='categoryTitle' htmlFor="">Product category</label>
-                
-                <div className="productsTray">
+                <Masonry columns={{ xs: 1, sm: 2, md: 4 }} spacing={0.3}>
                     {
-                        images.map((product,index)=>{
-                            // if(index === 0)
-                            return <Card key={index} product={product}/>
+                        allProducts?.map((product, index) => {
+                            return <Card key={index} product={product} />
                         })
                     }
-                </div>
+                </Masonry>
             </div>
         </>
     )

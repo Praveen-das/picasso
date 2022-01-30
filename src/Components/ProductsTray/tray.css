@@ -1,14 +1,11 @@
 .productsTray-wrapper{
+    box-sizing: border-box;
     width: 100%;
     display: block;
-    padding: 5rem 2rem 2rem 2rem;
+    padding: 2rem;
 }
 .categoryTitle{
     display: flex;
     padding-bottom: 2rem;
-}
-.productsTray{
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-    gap: 20px;
+    justify-content: center;
 }
