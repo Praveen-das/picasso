@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
 import { db, storage, auth } from "../Config/Firebase/Firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
@@ -145,7 +145,11 @@ export default function FirebaseContext({ children }) {
         return unsubscribe
     }, [currentUser])
 
-    /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
@@ -173,6 +177,22 @@ export default function FirebaseContext({ children }) {
             }
         });
     }, [currentUser])
+
+    const [reviews, setReviews] = useState()
+    const [weightedRating, setWeightedRating] = useState()
+
+    useEffect(() => {
+        let queryRef = query(collection(db, "reviews"))
+        onSnapshot(queryRef, (snapshot) => {
+            setReviews(snapshot.docs.map((o) => { return { ...o.data(), review_id: o.id } }));
+        });
+    }, [])
+
+    const getAverageRating = (array) => {
+        let sum = array.map((o) => o.reduce((x, y) => x + y, 0))
+        let rating = (5 * sum[4] + 4 * sum[3] + 3 * sum[2] + 2 * sum[1] + 1 * sum[0]) / (sum[4] + sum[3] + sum[2] + sum[1] + sum[0])
+        return rating
+    }
 
     useEffect(() => {
         if (!currentUser) return
@@ -300,11 +320,12 @@ export default function FirebaseContext({ children }) {
     }
 
     const makeOrder = (checkoutData) => {
-        // console.log(checkoutData);
-        let orderId = Math.floor(Math.random() * 9999999999 + 1)
         try {
             const docRef = collection(db, 'orders')
-            addDoc(docRef, checkoutData, { merge: true })
+            addDoc(docRef, {
+                ...checkoutData,
+                date_added: serverTimestamp()
+            }, { merge: true })
                 .then(() => console.log('new order received'))
                 .catch((err) => console.log(err))
         } catch (error) {
@@ -312,8 +333,38 @@ export default function FirebaseContext({ children }) {
         }
     }
 
+    const handleOrder = async (status, orderId) => {
+        console.log(status);
+        const docRef = doc(db, "orders", orderId);
+        await updateDoc(docRef, {
+            status: status
+        })
+            .then(() => console.log(`status changed to ${status}`))
+            .catch((error) => console.log(error))
+    }
+
+    const handleAvailableQuantity = async (productId, quantity) => {
+        const docRef = doc(db, "products", productId);
+        await updateDoc(docRef, {
+            quantity: increment(-quantity)
+        }).then(() => console.log('quantity updated'))
+    }
+
+    const productRating = (rating, productId) => {
+        let procuctIdKey = productId.substring(0, 10)
+        let userIdKey = currentUser.uid.substring(0, 10)
+        let reviewId = procuctIdKey.concat(userIdKey)
+
+        const docRef = doc(db, 'reviews', reviewId)
+        setDoc(docRef, {
+            rating: rating,
+            user_id: currentUser.uid,
+            product_id: productId
+        }, { merge: true })
+    }
 
     const value = {
+        /////////////////product
         addProductToDatabase,
         removeProduct,
         updateProduct,
@@ -322,7 +373,7 @@ export default function FirebaseContext({ children }) {
         handleSearch,
         searchResult,
         addUserAddress,
-        ///////////////
+        ///////////////admin cart order
         adminProducts,
         allProducts,
         addToWishlist,
@@ -332,7 +383,13 @@ export default function FirebaseContext({ children }) {
         makeOrder,
         userOrders,
         availableOrders,
-        ///////////////
+        handleOrder,
+        handleAvailableQuantity,
+        productRating,
+        weightedRating,
+        reviews,
+        getAverageRating,
+        ///////////////authentication
         currentUser,
         userData,
         signupUsingEmailPassword,

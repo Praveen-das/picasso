@@ -2,7 +2,6 @@ import { Alert, Button, Slide } from '@mui/material'
 import React, { useEffect } from 'react'
 
 function AlertMessage({ dialog, setDialog }) {
-
     const style = {
         fontWeight: 600
     }
@@ -47,9 +46,8 @@ function AlertMessage({ dialog, setDialog }) {
                             right: '0',
                             top: '0',
                             margin: 'auto',
-                            width: 500,
+                            width: 550,
                             height: '80px',
-                            // display: !successDialog.open ? 'flex' : 'none',
                             justifyContent: 'center',
                             alignItems: 'center',
                             zIndex: 100

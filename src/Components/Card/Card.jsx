@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import favourite_normal from '../../Assets/Icons/favourite-normal.svg'
 import favourite_active from '../../Assets/Icons/favourite-active.svg'
 import './card.css'
@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 function Card({ product }) {
     const { addToWishlist, removeFromWishlist, userData } = useFirebase()
-    
+
     return (
         <Link to='/shop/product' state={product} className="card">
             <img className='product-image' src={product.image[product.defaultImage]} alt="" />
@@ -20,7 +20,8 @@ function Card({ product }) {
                             <img
                                 onClick={(e) => {
                                     e.preventDefault()
-                                    removeFromWishlist(product.id)}}
+                                    removeFromWishlist(product.id)
+                                }}
                                 className='favourite'
                                 src={favourite_active}
                                 alt=""
@@ -28,7 +29,8 @@ function Card({ product }) {
                             <img
                                 onClick={(e) => {
                                     e.preventDefault()
-                                    addToWishlist(product.id)}}
+                                    addToWishlist(product.id)
+                                }}
                                 className='favourite'
                                 src={favourite_normal}
                                 alt=""

@@ -85,10 +85,6 @@
     height: 30px;
     font-size: 0.8em;
 }
-#dashboard tbody *{
-    font-weight: 500;
-    font-size: 1em;
-}
 #dashboard th{
     color: rgb(0, 0, 0);
     border-bottom: 1px solid rgb(233, 233, 233);
@@ -104,32 +100,28 @@
 #dashboard td:first-child,
 #dashboard td:last-child{
     padding: 1rem 1rem;
+    max-width: 100px;
 }
 #dashboard td,th{
-    /* max-width: 90px; */
     overflow: hidden;
 }
-#dashboard td{
+#dashboard tbody td:nth-child(6) span{
+    margin: auto;
+}
+#dashboard tr{
     text-align: center;
     font-size: 0.85em;
     font-weight: 600;
     line-height: 25px;
     color: rgb(70, 70, 70);
+    position: relative;
 }
-#dashboard td #status{
-    /* margin: 0 auto; */
-}
-
 .dashboard-wrapper tr:nth-child(even){
     background: rgba(233, 233, 233, 0.726);
 }
 #dashboard td:first-child,
 #dashboard th:first-child{
     text-align: left;
-}
-#dashboard td:last-child,
-#dashboard th:last-child{
-    width: 80px;
 }
 .action{
     display: flex;
@@ -146,8 +138,34 @@
       }
 }
 
-
-#select >*{
+#dashboard tbody tr td{
+    position: relative;
+    z-index: 2;
+}
+#dashboard tbody tr td span{
+    margin: 0 auto;
+}
+#dashbord_edit{
+    display: flex;
+    gap: 10px;
+    /* position: absolute;
+    bottom: 20px;
+    right: 10px; */
+    transition: 0.1s;
+}
+#dashbord_select{
+    height: 30px;
+    border: 1px solid rgb(207, 207, 207);
+    border-radius: 5px;
+    padding-left: 5px;
+    background: transparent;
+    color: var(--brand);
+    outline: none;
+    cursor: pointer;
+}
+#dashbord_select:nth-child(2){
     background: #000;
 }
-
+.status_options{
+    padding: 5px;
+}

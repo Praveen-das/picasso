@@ -10,7 +10,7 @@ function Tray() {
     return (
         <>
             <div className="productsTray-wrapper">
-                <label className='categoryTitle' htmlFor="">Product category</label>
+                <label className='categoryTitle' htmlFor="">LATEST COLLECTIONS</label>
                 <Masonry columns={{ xs: 1, sm: 2, md: 4 }} spacing={0.3}>
                     {
                         allProducts?.map((product, index) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Rating, Button } from '@mui/material/';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -14,14 +14,40 @@ function Product() {
     const { state } = useLocation()
     const [value, setValue] = useState(0)
     const [quantity, setQuantity] = useState([1])
-    const { userData, removeFromCart, addToCart, removeFromWishlist, addToWishlist } = useFirebase()
+    const { userData, removeFromCart, addToCart, removeFromWishlist, addToWishlist, productRating, reviews, getAverageRating } = useFirebase()
+    const [rating, setRating] = useState([])
     let navigate = useNavigate()
-    
+
     const handleCheckout = () => {
         state.item_quantity = Object.values(quantity)
         navigate('/checkout', { state: state })
     }
 
+    useEffect(() => {
+        if (!reviews) return
+        setRating([])
+        let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
+        for (let i = 0; i < 5; i++) {
+            setRating(pre => [...new Set([...pre, ratings.map((o) => o[i])])])
+        }
+    }, [reviews, state])
+    const ratingRef = useRef()
+    const handleProductRating = (newValue, productId) => {
+        let rating = [0, 0, 0, 0, 0]
+        rating[newValue - 1] = 1
+        if (!newValue || ratingRef.current === newValue) {
+            rating = [0, 0, 0, 0, 0]
+            ratingRef.current = ''
+            productRating(rating, productId)
+            return
+        }
+        ratingRef.current = newValue
+        productRating(rating, productId)
+    }
+    useEffect(() => {
+        if (rating.length > 0)
+            setValue(getAverageRating(rating))
+    }, [rating])
     return (
         <>
             <div className='productContainer'>
@@ -35,11 +61,9 @@ function Product() {
                             size="medium"
                             name="simple-controlled"
                             value={value}
-                            onChange={(event, newValue) => {
-                                setValue(newValue);
-                            }}
+                            onChange={(event, newValue) => handleProductRating(newValue, state.id)}
                         />
-                        <small id='reviews'>3 Reviews</small>
+                        <small id='reviews'>{rating.length > 0 && rating[0].length} reviews</small>
                     </div>
                     <div className="canvas-dimension-CW-wrapper">
                         <div className='canvas-dimension'>
@@ -62,6 +86,7 @@ function Product() {
                             }
                         </div>
                     </div>
+                    <label id='productDimension'>Available : {state.quantity}</label>
                     <p id='productDescription'>{state.description}</p>
                     <label id='productPrice'>Rs. {state.price * quantity[0]}</label>
                     <div id="buyItem">

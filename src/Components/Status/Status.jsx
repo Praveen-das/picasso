@@ -9,13 +9,13 @@ function Status({ status }) {
             case 'processing':
                 statusRef.current.style.background = 'var(--brand)'
                 break;
-            case 'delivering':
+            case 'Delivering':
                 statusRef.current.style.background = '#ff9800'
                 break;
-            case 'delivered':
+            case 'Delivered':
                 statusRef.current.style.background = '#4caf50'
                 break;
-            case 'cancelled':
+            case 'Cancelled':
                 statusRef.current.style.background = '#ef5350'
                 break;
             default:

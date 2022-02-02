@@ -18,7 +18,7 @@ import 'swiper/swiper.min.css'
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 function Checkout() {
-    const { userData, allProducts, makeOrder } = useFirebase()
+    const { userData, allProducts, makeOrder, handleAvailableQuantity } = useFirebase()
     const [address, setAddress] = useState()
     const [isDefault, setIsDefault] = useState(0)
     let { state } = useLocation()
@@ -27,7 +27,7 @@ function Checkout() {
     const [open, setOpen] = useState(false)
     const [totalAmount, setTotalAmount] = useState()
     const [paymentMethod, setPaymentMethod] = useState()
-    const [checked,setChecked] = useState(true)
+    const [checked, setChecked] = useState(true)
 
     useEffect(() => {
         if (state) {
@@ -61,10 +61,9 @@ function Checkout() {
         setPaymentMethod('card')
     }, [])
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         if (!paymentMethod) return
-        console.log(state);
-        makeOrder({
+        await makeOrder({
             product: state,
             seller_id: state.uid,
             user_id: userData.uid,
@@ -72,8 +71,9 @@ function Checkout() {
             status: 'processing',
             address: address,
             totalAmount: totalAmount,
-            product_quantity:quantity[0]
+            product_quantity: quantity[0]
         })
+        await handleAvailableQuantity(state.id, quantity[0])
     }
 
     useEffect(() => {
