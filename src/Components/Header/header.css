@@ -76,6 +76,9 @@
     gap: 2rem;
     font-size: 0.8em;
 }
+.create{
+    padding-right: .8rem;
+}
 .shop,
 .marketplace,
 .create,

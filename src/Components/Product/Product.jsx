@@ -48,11 +48,12 @@ function Product() {
         if (rating.length > 0)
             setValue(getAverageRating(rating))
     }, [rating])
+    console.log(state);
     return (
         <>
             <div className='productContainer'>
                 <div className="left">
-                    <img id='productImage' src={state.image[0]} alt="" />
+                    <img id='productImage' src={state.image[state.defaultImage]+'/tr:w-200'} alt="" />
                 </div>
                 <div className="right">
                     <label id='productTitle'>{state.name}</label>

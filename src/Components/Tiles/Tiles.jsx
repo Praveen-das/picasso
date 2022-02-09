@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import './tiles.css'
 import { categories } from '../../Assets/URLs/categories'
 
 function Tray() {
+
     return (
         <>
             <div className="tile-wrapper">

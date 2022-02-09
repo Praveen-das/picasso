@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './banner.css'
 import img1 from '../../Assets/Images/wall/img1.jpg'
 import img2 from '../../Assets/Images/wall/img2.jpg'
@@ -8,85 +8,67 @@ import img5 from '../../Assets/Images/wall/img5.jpg'
 import img6 from '../../Assets/Images/wall/img6.jpg'
 import img7 from '../../Assets/Images/wall/img7.jpeg'
 import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { Link } from 'react-router-dom'
+import { Power2 } from 'gsap/all'
+import Masonry from '@mui/lab/Masonry';
+
+
 
 function Banner() {
-    const recent = useRef()
+    const images = [
+        img1,
+        img2,
+        img3,
+        img4,
+        img5,
+        img6,
+        img7,
+    ]
 
-    const setDimension = (e) => {
-        const clientWidth = e.target.clientWidth
-        const clientHeight = e.target.clientHeight
-        const aspectRatio = clientWidth / clientHeight
-
-        if (aspectRatio > 1) {
-            let imgWidth = Math.floor(Math.random() * (200 - 100) + 100)
-            e.target.style.width = imgWidth + 25 + 'px'
-            e.target.style.alignSelf = 'flex-start'
-        }
-        else {
-            let imgHeight = Math.floor(Math.random() * (150 - 100) + 100)
-            e.target.style.height = imgHeight + 25 + 'px'
-        }
-        recent.current.style.display = 'unset'
-        e.target.style.display = 'unset'
+    const generateRandom = (min, max) => {
+        return Math.floor((Math.random() * (max - min) + min))
     }
-
-    const handleHover = () => {
-        gsap.utils.toArray(".hover").forEach(image => {
-            let hover = gsap.to(image, {
-                z: 5,
-                boxShadow: "10px 0px 3px 1px #00000052",
-                duration: 0.5,
-                paused: true
-            });
-            setTimeout(() => {
-                image.addEventListener("mouseenter", () => hover.play());
-                image.addEventListener("mouseleave", () => hover.reverse());
-            }, 1500)
-        });
-    }
+    let random = [
+        { x: generateRandom(-200, 200), y: generateRandom(-200, 200) }
+    ]
 
     useEffect(() => {
-        gsap.timeline({
-            onComplete: handleHover
-        })
-        gsap.from(".paintings", {
-            z: 200,
-            stagger: {
-                from: "random",
-                amount: 0.5,
-            }
-        }, 0.5);
-        gsap.from(".recent", {
-            x: -500,
-            duration: 0.8
-        });
-        gsap.from('.PerspectiveBanner-left', {
-            opacity: 0,
-            duration: 0.8
-        })
+        let tl = gsap.timeline({defaults:{ease:'power4.inOut'}})
+        // tl.from('.pb-label,.pb-label2,.shopnow-button', {
+        //     'clip-path': 'polygon(0% 100%, 100% 100%, 100% 100%, 0 100%)',
+        //     opacity: 0,
+        //     y:50,
+        //     duration: 1,
+        //     stagger:0.3
+        // })
+        // .from('.paintings',{
+        //     scale:0.8,
+        //     opacity:0,
+        //     duration:0.5,
+        //     stagger:{
+        //         from:'random',
+        //         amount:0.5
+        //     }
+        // },"-=0.8")
     })
 
     return (
         <>
-            <div className="PerspectiveBanner">
+            <div className="PerspectiveBanner" id='banner'>
                 <div className="PerspectiveBanner-left">
-                    <label className='pb-label' htmlFor="">Biggest online platform for buying and selling paintings.</label>
+                    <label className='pb-label' htmlFor="">Every Purchase Will Be Made With Pleasure</label>
+                    <p className='pb-label2' htmlFor="">Buy or sell your favourate paintings</p>
                     <Link to='/products' className='shopnow-button'>Shop now</Link>
                 </div>
                 <div className="PerspectiveBanner-right">
-                    <div className="wall">
-                        <div className="recent hover" ref={recent}>
-                            <label htmlFor="">Recent works</label>
-                        </div>
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img1} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img2} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img3} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img4} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img5} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img6} alt="" />
-                        <img className='paintings hover' onLoad={(e) => setDimension(e)} src={img7} alt="" />
-                    </div>
+                    <Masonry className='asd' columns={3}>
+                        {
+                            images.map((image, index) =>
+                                <img name='painting' className='paintings wiggle' src={image} alt="" />
+                            )
+                        }
+                    </Masonry>
                 </div>
             </div>
         </>

@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
 import React, { createContext, useContext } from 'react'
+import { IKContext } from 'imagekitio-react'
 
 export function useHelper() {
     return useContext(ContextProvider)
@@ -9,6 +10,9 @@ export function useHelper() {
 const ContextProvider = createContext()
 
 export default function HelperContext({ children }) {
+    const urlEndpoint = 'https://ik.imagekit.io/1q7keivsfku/'
+    const publicKey = 'public_TgB5AGA3AeEiZhn3/24RR02eNbo='
+    const authenticationEndpoint = 'http://localhost:3001/auth'
 
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
 
@@ -52,8 +56,14 @@ export default function HelperContext({ children }) {
     return (
         <ContextProvider.Provider value={value}>
             <ThemeProvider theme={theme}>
-                {children}
+                <IKContext
+                    urlEndpoint={urlEndpoint}
+                    publicKey={publicKey}
+                    authenticationEndpoint={authenticationEndpoint}
+                >
+                    {children}
+                </IKContext>
             </ThemeProvider>
-        </ContextProvider.Provider>
+        </ContextProvider.Provider >
     )
 }

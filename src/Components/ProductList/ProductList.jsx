@@ -25,7 +25,7 @@ function ProductList({ product }) {
     return <>
         <Alert dialog={dialog} setDialog={setDialog} />
         <div className="checkout__product">
-            <img src={product.product.image} alt="" />
+            <img src={product.product.image[0]+'/tr:w-100'} alt="" />
             <div className='checkout__product--details'>
                 <div><label className='checkout__product--name' htmlFor="">{product.product.name}</label></div>
                 <Typography width='90%' variant='caption' fontSize={14}>{product.product.description}</Typography>

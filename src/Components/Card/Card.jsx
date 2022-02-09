@@ -10,7 +10,7 @@ function Card({ product }) {
 
     return (
         <Link to='/shop/product' state={product} className="card">
-            <img className='product-image' src={product.image[product.defaultImage]} alt="" />
+            <img className='product-image' src={product.image[product.defaultImage]+'/tr:w-500'} alt="" />
             <div className="product-details">
                 <label className='product-title' htmlFor="">{product.name}</label>
                 <div className="favourite-wrapper">

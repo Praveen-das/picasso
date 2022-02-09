@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
 import { db, storage, auth } from "../Config/Firebase/Firebase";
@@ -150,20 +150,25 @@ export default function FirebaseContext({ children }) {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
-        onSnapshot(queryRef, (snapshot) => {
-            const adminCollections = snapshot.docs.map(doc => {
-                // return doc.data().uid === '123' && { ...doc.data(), id: doc.id }
-                return { ...doc.data(), id: doc.id }
+        const loadContent = async () => {
+            let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
+            await onSnapshot(queryRef, (snapshot) => {
+                const adminCollections = snapshot.docs.map(doc => {
+                    // return doc.data().uid === '123' && { ...doc.data(), id: doc.id }
+                    return { ...doc.data(), id: doc.id }
+                })
+                const allCollections = snapshot.docs.map(doc => {
+                    return { ...doc.data(), id: doc.id }
+                })
+                setAdminProducts(adminCollections.filter(o => o !== false))
+                setAllProducts(allCollections)
             })
-            const allCollections = snapshot.docs.map(doc => {
-                return { ...doc.data(), id: doc.id }
-            })
-            setAdminProducts(adminCollections.filter(o => o !== false))
-            setAllProducts(allCollections)
-        });
+            setLoading(false)
+        }
+        loadContent()
     }, [])
 
     const [userData, setUserData] = useState()
@@ -401,7 +406,7 @@ export default function FirebaseContext({ children }) {
         verifyEmail,
         updateUserPassword
     }
-
+    
     return (
         <Firebase.Provider value={value}>
             {children}

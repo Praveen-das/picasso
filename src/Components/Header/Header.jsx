@@ -8,26 +8,27 @@ import Signup from '../Signup/Signup'
 import { useFirebase } from '../../Context/FirebaseContext'
 import DropDown from '../DropDown/DropDown'
 import Avatar from '../Avatar/Avatar'
+import Badge from '@mui/material/Badge';
 
 function Header() {
     const [toggleHeader, setToggleHeader] = useState(false)
     const [model, setModel] = useState({ login: false, signup: false })
     const scrollValue = useRef(0)
 
-    const { currentUser, signout } = useFirebase()
+    const { currentUser, userData, signout } = useFirebase()
 
     useEffect(() => {
-        document.onscroll = () => {
-            let scrollY = window.scrollY
-            if (scrollY > scrollValue.current) {
-                scrollValue.current = scrollY
-                return setToggleHeader(true)
-            }
-            if (scrollY < scrollValue.current) {
-                scrollValue.current = scrollY
-                return setToggleHeader(false)
-            }
-        }
+        // document.onscroll = () => {
+        //     let scrollY = window.scrollY
+        //     if (scrollY > scrollValue.current) {
+        //         scrollValue.current = scrollY
+        //         return setToggleHeader(true)
+        //     }
+        //     if (scrollY < scrollValue.current) {
+        //         scrollValue.current = scrollY
+        //         return setToggleHeader(false)
+        //     }
+        // }
     }, [])
 
     return (
@@ -55,7 +56,9 @@ function Header() {
                 <div className="right">
                     <Link to='/shop' className='shop' htmlFor="">SHOP</Link>
                     <Link to='/seller' className='marketplace' htmlFor="">SELL</Link>
-                    <label className='create' htmlFor="">CREATE</label>
+                    <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
+                        <Link to='/checkout' className='create' htmlFor="">CART</Link>
+                    </Badge>
                     {
                         currentUser &&
                             currentUser ?

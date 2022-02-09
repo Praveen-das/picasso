@@ -126,4 +126,19 @@
 .checkout__method label{
     font-size: 0.9rem;
 }
-
+.emptyCart{
+    display: flex;
+    position: absolute;
+    inset: 0;
+}
+.emptyCart label{
+    font-size: 2rem;
+    font-weight: 800;
+}
+.emptyCart div{
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+    flex-direction: column;
+}

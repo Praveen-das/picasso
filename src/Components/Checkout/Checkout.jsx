@@ -16,24 +16,23 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 import 'swiper/swiper.min.css'
 import { Swiper, SwiperSlide } from 'swiper/react';
+import EmptyCart from './EmptyCart';
 
 function Checkout() {
     const { userData, allProducts, makeOrder, handleAvailableQuantity } = useFirebase()
     const [address, setAddress] = useState()
     const [isDefault, setIsDefault] = useState(0)
     let { state } = useLocation()
-    const [quantity, setQuantity] = useState(state.item_quantity)
+    const [quantity, setQuantity] = useState(state ? state.item_quantity : [1])
     const [cart, setCart] = useState()
     const [open, setOpen] = useState(false)
     const [totalAmount, setTotalAmount] = useState()
     const [paymentMethod, setPaymentMethod] = useState()
-    const [checked, setChecked] = useState(true)
 
     useEffect(() => {
         if (state) {
             return setTotalAmount(state.price * (quantity && quantity[0]))
         }
-        console.log(quantity);
         setTotalAmount(cart && cart.map((o, i) => o.price * (quantity[i] ? quantity[i] : 1)).reduce((a, b) => a + b))
     }, [state, quantity, cart])
 
@@ -44,7 +43,8 @@ function Checkout() {
             return setCart([state])
         }
         if (allProducts && userData) {
-            userData.cart.forEach(() => setQuantity(pre => [...pre, 1]))
+            if (!userData.cart) return setCart()
+            userData.cart.forEach((o, i) => setQuantity(pre => [...pre, [1]]))
             setCart(allProducts.filter((o) => userData.cart.includes(o.id)))
         }
     }, [allProducts, userData, state])
@@ -81,6 +81,8 @@ function Checkout() {
             userData.address = userData.address.reverse()
     }, [userData])
 
+    if ((userData && !userData.cart) && !state)
+        return <EmptyCart />
     return (
         <>
             <AddAddress open={open} setOpen={setOpen} />
@@ -148,7 +150,7 @@ function Checkout() {
                             {
                                 cart && cart.map((product, index) =>
                                     <div key={index} className="checkout__product">
-                                        <img src={product.image} alt="" />
+                                        <img src={product.image[product.defaultImage] + '/tr:w-100'} alt="" />
                                         <div className='checkout__product--details'>
                                             <div><label className='checkout__product--name' htmlFor="">{product.name}</label></div>
                                             <Typography width='90%' variant='caption' fontSize={14}>{product.description}</Typography>

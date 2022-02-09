@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/system'
 import AlertMessage from '../../Alert/Alert'
 import { useHelper } from '../../../Context/HelperContext'
+import { IKContext, IKImage, IKUpload } from 'imagekitio-react'
 
 function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
     const [templates, setTemplates] = useState([])
@@ -17,6 +18,8 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
     const [product, setProduct] = useState()
     const [defaultImage, setDefaultImage] = useState(0)
     const [dialog, setDialog] = useState('')
+    const [imageURL, setImageURL] = useState([])
+    const [imageTemplate, setImageTemplate] = useState([])
     const { theme } = useHelper()
 
     const fileRef = useRef()
@@ -35,22 +38,22 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
             case 'submit':
                 setToggleAddProduct({ open: false })
                 setLoading(true)
-                uploadImage(payload)
-                    .then((imageURL) => {
-                        product.image = imageURL
-                        product.defaultImage = defaultImage
-                        product.uid = 'asdasdasdasd'
-                        addProductToDatabase(product)
-                        setProduct('')
-                        setPayload([])
-                        setLoading(false)
-                        setTemplates([])
-                        setDialog({
-                            open: true,
-                            successMessage: 'Product added successfully',
-                            type: 'success'
-                        })
-                    }).catch(error => console.log(error))
+                // uploadImage(payload)
+                //     .then((imageURL) => {
+                //     }).catch(error => console.log(error))
+                product.image = imageURL
+                product.defaultImage = defaultImage
+                product.uid = 'asdasdasdasd'
+                addProductToDatabase(product)
+                setProduct('')
+                setPayload([])
+                setLoading(false)
+                setImageTemplate([])
+                setDialog({
+                    open: true,
+                    successMessage: 'Product added successfully',
+                    type: 'success'
+                })
                 break;
 
             case 'reset':
@@ -60,9 +63,7 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                 break;
 
             case 'update':
-                const image = await uploadImage(payload)
-                if (image)
-                    product.image = [...image, ...product.image]
+                    product.image = [...imageURL, ...product.image]
                 product.defaultImage = defaultImage
                 await toggleAddProduct.isConfirmed(product)
                 setToggleAddProduct({
@@ -162,7 +163,7 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                                 <Grid item xs={12} gap='2rem' mb={2}>
                                     <div className='imageTray'>
                                         {
-                                            templates.map((image, index) => {
+                                            imageTemplate && imageTemplate.map((image, index) => {
                                                 if (index === defaultImage)
                                                     return <div key={index} className='templateImage default'><img src={image} alt='' /></div>
                                                 return <div key={index} onClick={() => setDefaultImage(index)} className='templateImage'><img src={image} alt='' /></div>
@@ -170,14 +171,23 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                                         }
                                         <Button component="label" variant='contained' color='secondary' sx={{ aspectRatio: '1' }}
                                         >
-                                            {
+                                            {/* {
                                                 uploadProgress ?
                                                     uploadProgress === 100 ?
                                                         <Icon box_style={{ fontSize: '2em' }} color='grey' icon={faPlus} /> :
                                                         <CircularProgress variant='determinate' value={uploadProgress} color='primary' /> :
                                                     <Icon style={{ fontSize: '2em' }} color='grey' icon={faPlus} />
                                             }
-                                            <input accept="image/*" ref={fileRef} type="file" onInput={(e) => handleActions('uploadImage', e)} hidden />
+                                            <input accept="image/*" ref={fileRef} type="file" onInput={(e) => handleActions('uploadImage', e)} hidden /> */}
+                                            <IKUpload
+                                                folder={"/products-images"}
+                                                onError={(err) => console.log(err)}
+                                                onSuccess={(res) => {
+                                                    setImageURL(pre => [...pre, res.url])
+                                                    setImageTemplate(pre => [...pre, res.thumbnailUrl])
+                                                }}
+                                                hidden
+                                            />
                                         </Button>
                                     </div>
                                 </Grid>
