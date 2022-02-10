@@ -10,7 +10,7 @@ function Tray() {
     const urlEndpoint = 'https://ik.imagekit.io/1q7keivsfku/'
 
     const CustomMasonry = useCallback(() => {
-        return <Masonry columns={{ xs: 1, sm: 2, md: 4 }} spacing={0.3}>
+        return <Masonry columns={{ xs: 1, sm: 2, md: 5 }} spacing={1.5}>
             {
                 allProducts?.map((product, index) => {
                     return <Card key={index} product={product} />

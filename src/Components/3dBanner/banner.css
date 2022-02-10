@@ -6,6 +6,7 @@
   flex-direction: column;
   /* background: linear-gradient(to left, rgba(0, 0, 0, 0.301) 30%, white,white); */
   padding: 0 5rem;
+  overflow: hidden;
 }
 .PerspectiveBanner-left {
   height: 85vh;
@@ -19,18 +20,21 @@
   width: 100%;
   display: grid;
   place-items: center;
-}
-.asd {
-  /* perspective-origin: 50% 120%;
-  perspective: 700px; */
+  transform: rotate(25deg) skewX(330deg) translateX(0px) translateY(30px);
 }
 .paintings {
-  transform: rotate(347deg);
   max-width: max-content;
   object-fit: fill;
   cursor: pointer;
   border-radius: 10px;
+  overflow: hidden;
+  /* transition: 0.2s; */
+  box-shadow: var(--boxShadow) 15px 12px 10px 1px hsl(0, 0%, 65%);
 }
+/* .paintings:hover{
+  transform: translate(-10px, -10px) !important;
+  box-shadow: var(--boxShadow) 30px 25px 13px -2px hsl(0, 0%, 80%);
+} */
 .PerspectiveBanner-left label {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
   font-size: 3rem;
@@ -59,3 +63,4 @@
 .PerspectiveBanner-left:hover.PerspectiveBanner-left label {
   /* transform: scale(1.05) translateY(-2rem); */
 }
+

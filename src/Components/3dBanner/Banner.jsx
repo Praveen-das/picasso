@@ -26,31 +26,56 @@ function Banner() {
         img7,
     ]
 
-    const generateRandom = (min, max) => {
-        return Math.floor((Math.random() * (max - min) + min))
+    useEffect(() => {
+        let tl = gsap.timeline({ defaults: { ease: 'power4.inOut' }, onComplete: handleHover })
+        gsap.registerPlugin(ScrollTrigger)
+        tl.from('.pb-label,.pb-label2,.shopnow-button', {
+            'clip-path': 'polygon(0% 100%, 100% 100%, 100% 100%, 0 100%)',
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.3
+        })
+            .from('.paintings', {
+                x: -500,
+                y: -500,
+                duration: 0.5,
+                stagger: {
+                    from: 'random',
+                    amount: 0.5
+                }
+            }, "-=0.8")
+    }, [])
+
+    const handleHover = () => {
+        gsap.utils.toArray(".paintings").forEach(image => {
+            let hover = gsap.fromTo(image, {
+                x: 0,
+                y: 0,
+                boxShadow: "var(--boxShadow) 15px 12px 10px 1px hsl(0, 0%, 65%)",
+                duration: 0.2,
+                paused: true
+            },
+                {
+                    x: -10,
+                    y: -10,
+                    boxShadow: "var(--boxShadow) 25px 22px 10px 0px  hsl(0, 0%, 75%)",
+                    duration: 0.2,
+                    paused: true
+                });
+            image.onmouseenter = () => hover.play()
+            image.onmouseleave = () => hover.reverse()
+        });
     }
-    let random = [
-        { x: generateRandom(-200, 200), y: generateRandom(-200, 200) }
-    ]
 
     useEffect(() => {
-        let tl = gsap.timeline({defaults:{ease:'power4.inOut'}})
-        // tl.from('.pb-label,.pb-label2,.shopnow-button', {
-        //     'clip-path': 'polygon(0% 100%, 100% 100%, 100% 100%, 0 100%)',
-        //     opacity: 0,
-        //     y:50,
-        //     duration: 1,
-        //     stagger:0.3
-        // })
-        // .from('.paintings',{
-        //     scale:0.8,
-        //     opacity:0,
-        //     duration:0.5,
-        //     stagger:{
-        //         from:'random',
-        //         amount:0.5
-        //     }
-        // },"-=0.8")
+        let length = 10
+        let boxshadow = ''
+        for (var i = 0; i <= length; i++) {
+            boxshadow = boxshadow + `${i}px ${i}px 0 hsl(0, 0%, ${90 - i}%),`
+        }
+        let body = document.getRootNode().body
+        body.style.setProperty('--boxShadow', boxshadow)
     })
 
     return (
@@ -62,10 +87,10 @@ function Banner() {
                     <Link to='/products' className='shopnow-button'>Shop now</Link>
                 </div>
                 <div className="PerspectiveBanner-right">
-                    <Masonry className='asd' columns={3}>
+                    <Masonry className='asd' columns={3} spacing={3}>
                         {
                             images.map((image, index) =>
-                                <img name='painting' className='paintings wiggle' src={image} alt="" />
+                                <img key={index} className='paintings' src={image} alt="" />
                             )
                         }
                     </Masonry>

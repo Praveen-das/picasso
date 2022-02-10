@@ -6,6 +6,7 @@ import Header from '../Components/Header/Header'
 import Section1 from '../Components/Section1/Section1'
 import Tiles from '../Components/Tiles/Tiles'
 import TrayMaterials from '../Components/Tray/Tray'
+import Tray from '../Components/ProductsTray/Tray'
 
 import './style.css'
 
@@ -14,11 +15,12 @@ function HomePage() {
         <>
             <Header />
             <Banner />
-            <Tiles />
+            {/* <Tiles />
+            <Tray/>
             <TrayMaterials />
             <Section1 />
             <Artists/>
-            <Footer/>
+            <Footer/> */}
         </>
     )
 }
