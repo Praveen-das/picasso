@@ -1,20 +1,33 @@
 .PerspectiveBanner {
   box-sizing: border-box;
   width: 100%;
-  display: grid;
-  grid-template-columns: 50% 50%;
-  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   /* background: linear-gradient(to left, rgba(0, 0, 0, 0.301) 30%, white,white); */
   padding: 0 5rem;
   overflow: hidden;
 }
 .PerspectiveBanner-left {
-  height: 85vh;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: flex-start;
-  transform: translateY(-30px)
+  transform: translateY(-30px);
+  border-radius: 0 20% 20% 0;
+  z-index: 100;
+}
+.backdrop{
+  left: -10rem;
+  top: -3rem;
+  position: absolute;
+  background: rgba(255, 142, 142, 0.781);
+  width: 100%;
+  height: 150%;
+  filter: blur(40px);
+  backdrop-filter: blur(20px);
+  border-radius: 0 20% 20% 0;
 }
 .PerspectiveBanner-right{
   width: 100%;

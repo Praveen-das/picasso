@@ -82,6 +82,7 @@ function Banner() {
         <>
             <div className="PerspectiveBanner" id='banner'>
                 <div className="PerspectiveBanner-left">
+                    <span className='backdrop'></span>
                     <label className='pb-label' htmlFor="">Every Purchase Will Be Made With Pleasure</label>
                     <p className='pb-label2' htmlFor="">Buy or sell your favourate paintings</p>
                     <Link to='/products' className='shopnow-button'>Shop now</Link>
