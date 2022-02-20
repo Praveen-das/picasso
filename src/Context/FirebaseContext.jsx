@@ -165,8 +165,8 @@ export default function FirebaseContext({ children }) {
                 })
                 setAdminProducts(adminCollections.filter(o => o !== false))
                 setAllProducts(allCollections)
+                setLoading(false)
             })
-            setLoading(false)
         }
         loadContent()
     }, [])
@@ -409,7 +409,7 @@ export default function FirebaseContext({ children }) {
     
     return (
         <Firebase.Provider value={value}>
-            {children}
+            { !loading && children}
         </Firebase.Provider>
     )
 }

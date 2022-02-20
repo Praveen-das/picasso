@@ -6,7 +6,7 @@ function TrayMaterials() {
     return (
         <>
             <div className="tray-material-wrapper">
-                <label className='tile-title' htmlFor="">SHOP BY MATERIAL</label>
+                <label className='tile-title' htmlFor="">SHOP BY CATE</label>
                 <hr />
                 <div className="tray-materials">
                     {materials.map((material, index) =>

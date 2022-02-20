@@ -1,18 +1,46 @@
+@font-face {
+    font-family: a;
+    src: url(../../Assets/Font/Montserrat-Black.ttf);
+}
+@font-face {
+    font-family: b;
+    src: url(../../Assets/Font/Montserrat-Bold.ttf);
+}
+@font-face {
+    font-family: c;
+    src: url(../../Assets/Font/Montserrat-ExtraBold.ttf);
+}
+
 .productsTray-wrapper{
     box-sizing: border-box;
     width: 100%;
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding: 2rem;
+    overflow: hidden;
 }
+
 .categoryTitle{
-    font-size: 2rem;
+    line-height: 65%;
+    font-family: c;
+    font-size: 12rem;
     font-weight: 700;
     display: flex;
     padding-bottom: 2rem;
-    justify-content: center;
+    white-space: nowrap;
+    color: black;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke: 3px rgb(41, 41, 41);
+  /* transform: translateX(100%); */
 }
-.card_wrapper{
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-    gap: 10px;
+.more{
+    font-weight: 900;
+    font-size: 1.4rem;
+    line-height: 4rem;
+    float: right;
+}
+.card_container{
+    position: relative;
+    display: flex;
+    width: 100% ;
 }

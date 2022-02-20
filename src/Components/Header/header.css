@@ -5,14 +5,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: fixed;
+    /* position: fixed;
     top: 0;
-    left: 0;
+    left: 0; */
     padding: 0 2rem;
-    background: rgba(255, 255, 255, 0.815);
+    background: rgb(255, 255, 255);
     z-index: 100;
     transition: 0.18s;
-    backdrop-filter: blur(50px);
+    box-shadow: 0 3px 20px var(--shadow);
+}
+.navbar a:any-link{
+    color: #33364d;
 }
 .navbar .left{
     display: flex;
@@ -24,6 +27,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+.header_brandName{
+    font-weight: 800;
 }
 .logo img{
     border-radius: 50%;
@@ -41,6 +47,9 @@
     right: -20px;
     top: 2px;
     opacity: 0.7;
+}
+#search{
+    transform: translateY(2px);
 }
 .searchbar{
     margin-left: 2rem;

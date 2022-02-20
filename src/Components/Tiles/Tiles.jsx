@@ -25,7 +25,7 @@ function Tray() {
     return (
         <>
             <div className="tile-wrapper">
-                <label className='tile-title' htmlFor="">SHOP BY CATEGORY</label>
+                <label className='tile-title' htmlFor="">TOP CATEGORIES</label>
                 <hr />
                 <div className="tile-category">
                     {categories.map((category, index) =>

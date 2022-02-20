@@ -9,6 +9,7 @@ import { useFirebase } from '../../Context/FirebaseContext'
 import DropDown from '../DropDown/DropDown'
 import Avatar from '../Avatar/Avatar'
 import Badge from '@mui/material/Badge';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Header() {
     const [toggleHeader, setToggleHeader] = useState(false)
@@ -44,18 +45,21 @@ function Header() {
                 <div className="left">
                     <Link to='/'>
                         <span className="logo">
-                            <img src={logo} alt="" />
-                            <label htmlFor="logo">PICASSO.</label>
+                            {/* <img src={logo} alt="" /> */}
+                            <label className='header_brandName' htmlFor="logo">ARTWORLD.</label>
                         </span>
                     </Link>
-                    <label className='catagory' htmlFor="">CATEGORY</label>
-                    <div className="searchbox-wrapper">
+                    {/* <label className='catagory' htmlFor="">CATEGORY</label> */}
+                    {/* <div className="searchbox-wrapper">
                         <input className='searchbar' type="text" />
-                    </div>
+                    </div> */}
                 </div>
                 <div className="right">
+                    <span>
+                        <SearchIcon id='search' sx={{fontSize:20}}/>
+                    </span>
                     <Link to='/shop' className='shop' htmlFor="">SHOP</Link>
-                    <Link to='/seller' className='marketplace' htmlFor="">SELL</Link>
+                    {/* <Link to='/seller' className='marketplace' htmlFor="">SELL</Link> */}
                     <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge>
