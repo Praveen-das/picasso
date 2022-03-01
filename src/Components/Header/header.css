@@ -5,14 +5,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* position: fixed;
-    top: 0;
-    left: 0; */
+    position: relative;
     padding: 0 2rem;
     background: rgb(255, 255, 255);
     z-index: 100;
     transition: 0.18s;
-    box-shadow: 0 3px 20px var(--shadow);
+    box-shadow: 0 0px 15px 5px var(--shadow);
 }
 .navbar a:any-link{
     color: #33364d;
@@ -83,9 +81,6 @@
     align-items: center;
     gap: 2rem;
     font-size: 0.8em;
-}
-.create{
-    padding-right: .8rem;
 }
 .shop,
 .marketplace,

@@ -18,10 +18,11 @@
     flex-direction: column;
     padding: 2rem;
     overflow: hidden;
+    height: 100%;
 }
 
-.categoryTitle{
-    line-height: 65%;
+.brand_title{
+    line-height: 75%;
     font-family: c;
     font-size: 12rem;
     font-weight: 700;
@@ -40,7 +41,6 @@
     float: right;
 }
 .card_container{
-    position: relative;
-    display: flex;
-    width: 100% ;
+    /* overflow: hidden; */
+    height: 100%;
 }

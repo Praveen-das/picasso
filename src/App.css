@@ -4,6 +4,7 @@
 :root{
     --brand: #1a7ffd;
     --shadow: #bbcded;
+    --overlay : rgba(0, 0, 0, 0.932);
     /* --brand: #2994ff; */
     --brandGradient: linear-gradient(30deg, #aa23ff,#2081ff);
     --Title: 'Oswald', sans-serif;
@@ -35,3 +36,58 @@ body{
     background: rgba(0, 0, 0, 0.103);
     color:hsl(0, 0%, 24%);
 }
+
+.button_text {
+    /* clip-path: polygon(0% 0%, 130% 0%, 130% 130%, 0 130%); */
+    font-size: 1em;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.button_primary {
+    /* clip-path: polygon(0% 0%, 130% 0%, 130% 130%, 0 130%); */
+    font-size: 1em;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 5px 5px 15px 5px var(--shadow);
+    white-space: nowrap;
+}
+.button_secondary {
+    /* clip-path: polygon(0% 0%, 130% 0%, 130% 130%, 0 130%); */
+    font-size: 1em;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    background: black;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+    /* box-shadow: 5px 5px 15px 5px var(--shadow); */
+}
+.MuiRating-root *{
+    color: unset;
+}
+.productsTray-wrapper .swiper,
+.Banner .swiper{
+    padding-top: 3rem !important;
+    padding-bottom: 5px !important;
+    height: 100%;
+}
+.productsTray-wrapper .swiper >*,
+.Banner .swiper >*{
+    box-sizing: border-box !important;
+}
+.productsTray-wrapper .swiper .swiper-slide,
+.Banner .swiper .swiper-slide {
+    width: auto !important;
+    height: 100%;
+}
+

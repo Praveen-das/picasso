@@ -1,7 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 import { IKContext } from 'imagekitio-react'
+import gsap from 'gsap';
+import scrollTrigger from 'gsap/ScrollTrigger';
 
 export function useHelper() {
     return useContext(ContextProvider)
@@ -49,9 +51,18 @@ export default function HelperContext({ children }) {
         }
     });
 
+    const ScrollTrigger = (elements, options, actions) => {
+        useEffect(() => {
+            gsap.registerPlugin(scrollTrigger)
+            gsap.timeline({
+                scrollTrigger: actions
+            }).from(elements, options)
+        }, [elements, options, actions])
+    }
 
     const value = {
-        theme
+        theme,
+        ScrollTrigger
     }
     return (
         <ContextProvider.Provider value={value}>

@@ -35,7 +35,7 @@
     color: var(--brand);
 }
 
-#productImage{
+#dashbord_product--image{
     display: flex;
     margin: 10px auto;
     width: 80px;

@@ -88,7 +88,7 @@ function Products() {
                                 ).map((data, index) =>
                                     <tr key={index}>
                                         <td>{index + 1}</td>
-                                        <td><img id='productImage' src={data.image[data.defaultImage]+'/tr:w-100'} alt="" /></td>
+                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage]+'/tr:w-100'} alt="" /></td>
                                         <td>{data.name}</td>
                                         <td>{data.id}</td>
                                         <td>{data.quantity}</td>

@@ -9,44 +9,42 @@ function Card({ product }) {
     const { addToWishlist, removeFromWishlist, userData } = useFirebase()
 
     return (
-        <Link to='/shop/product' state={product} className="card">
+        <Link to='/shop/product' state={product}>
             <div className='product_card'>
                 <label className='product_name' htmlFor="">Monroe in color</label>
                 <label className='product_artist' htmlFor="">John doe</label>
-                <div className="painting_wrapper">
-                    <img className='paintings swiper-lazy' src={product.image[product.defaultImage] + '/tr:w-500'} alt="" />
-                    <span className='painting_overlay'>
-                        <label htmlFor="">VIEW ARTWORK</label>
-                    </span>
+                <img className='painting' src={product.image[product.defaultImage] + '/tr:w-700'} alt="" />
+                <div className="product_card--actions">
+                    <div className="favourite-wrapper">
+                        {
+                            userData && userData.wishlist &&
+                                userData.wishlist.filter((o) => o === product.id)[0] ?
+                                <img
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        removeFromWishlist(product.id)
+                                    }}
+                                    className='favourite'
+                                    src={favourite_active}
+                                    alt=""
+                                /> :
+                                <img
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        addToWishlist(product.id)
+                                    }}
+                                    className='favourite'
+                                    src={favourite_normal}
+                                    alt=""
+                                />
+                        }
+                    </div>
+                    <label htmlFor="">VIEW ARTWORK</label>
                 </div>
             </div>
             {/* <img className='product-image' src={product.image[product.defaultImage]+'/tr:w-500'} alt="" />
             <div className="product-details">
                 <label className='product-title' htmlFor="">{product.name}</label>
-                <div className="favourite-wrapper">
-                    {
-                        userData && userData.wishlist &&
-                            userData.wishlist.filter((o) => o === product.id)[0] ?
-                            <img
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    removeFromWishlist(product.id)
-                                }}
-                                className='favourite'
-                                src={favourite_active}
-                                alt=""
-                            /> :
-                            <img
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    addToWishlist(product.id)
-                                }}
-                                className='favourite'
-                                src={favourite_normal}
-                                alt=""
-                            />
-                    }
-                </div>
             </div> */}
         </Link>
     )

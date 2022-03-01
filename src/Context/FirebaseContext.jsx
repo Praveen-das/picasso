@@ -172,6 +172,7 @@ export default function FirebaseContext({ children }) {
     }, [])
 
     const [userData, setUserData] = useState()
+    const [recentlyViewed, setRecentlyViewed] = useState()
 
     useEffect(() => {
         if (!currentUser) return
@@ -179,17 +180,19 @@ export default function FirebaseContext({ children }) {
         onSnapshot(docRef, (snapshot) => {
             if (snapshot.exists()) {
                 setUserData(snapshot.data())
+                if (!snapshot.data().recently_viewed) return
+                setRecentlyViewed(snapshot.data().recently_viewed.reverse())
             }
         });
     }, [currentUser])
 
-    const [reviews, setReviews] = useState()
+    const [reviews, setReviews] = useState([])
     const [weightedRating, setWeightedRating] = useState()
 
     useEffect(() => {
         let queryRef = query(collection(db, "reviews"))
         onSnapshot(queryRef, (snapshot) => {
-            setReviews(snapshot.docs.map((o) => { return { ...o.data(), review_id: o.id } }));
+            setReviews(snapshot.docs.map((doc) => { return { ...doc.data(), review_id: doc.id } }));
         });
     }, [])
 
@@ -354,18 +357,27 @@ export default function FirebaseContext({ children }) {
             quantity: increment(-quantity)
         }).then(() => console.log('quantity updated'))
     }
-
-    const productRating = (rating, productId) => {
-        let procuctIdKey = productId.substring(0, 10)
+    const productRating = (review, rating, productId) => {
+        let productIdKey = productId.substring(0, 10)
         let userIdKey = currentUser.uid.substring(0, 10)
-        let reviewId = procuctIdKey.concat(userIdKey)
+        let reviewId = productIdKey.concat(userIdKey)
 
         const docRef = doc(db, 'reviews', reviewId)
         setDoc(docRef, {
             rating: rating,
+            review: review,
             user_id: currentUser.uid,
+            username: currentUser.displayName,
+            user_image: currentUser.photoURL,
             product_id: productId
-        }, { merge: true })
+        }, { merge: true }).then(() => console.log('product rated'))
+    }
+
+    const handleRecentlyViewed = (product) => {
+        const docRef = doc(db, 'userdata', currentUser.uid)
+        setDoc(docRef, { recently_viewed: arrayUnion(product) }, { merge: true })
+            .then(() => console.log('new product added'))
+            .catch((err) => console.log(err))
     }
 
     const value = {
@@ -394,6 +406,8 @@ export default function FirebaseContext({ children }) {
         weightedRating,
         reviews,
         getAverageRating,
+        handleRecentlyViewed,
+        recentlyViewed,
         ///////////////authentication
         currentUser,
         userData,
@@ -406,10 +420,10 @@ export default function FirebaseContext({ children }) {
         verifyEmail,
         updateUserPassword
     }
-    
+
     return (
         <Firebase.Provider value={value}>
-            { !loading && children}
+            {!loading && children}
         </Firebase.Provider>
     )
 }
