@@ -10,6 +10,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddAddress from '../Profile/AddAddress';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
@@ -19,7 +21,7 @@ import { Mousewheel } from "swiper"
 import EmptyCart from './EmptyCart';
 
 function Checkout() {
-    const { userData, allProducts, makeOrder, handleAvailableQuantity } = useFirebase()
+    const { userData, allProducts, makeOrder, handleAvailableQuantity, removeFromCart } = useFirebase()
     const [address, setAddress] = useState()
     const [isDefault, setIsDefault] = useState(0)
     let { state } = useLocation()
@@ -153,14 +155,19 @@ function Checkout() {
                             {
                                 cart && cart.map((product, index) =>
                                     <div key={index} className="checkout__product">
-                                        <img src={product.image[product.defaultImage] + '/tr:w-100'} alt="" />
-                                        <div className='checkout__product--details'>
-                                            <div><label className='checkout__product--name' htmlFor="">{product.name}</label></div>
-                                            <Typography width='90%' variant='caption' fontSize={14}>{product.description}</Typography>
+                                        <div className='product_imgNQty'>
+                                            <img src={product.image[product.defaultImage] + '/tr:w-100'} alt="" />
+                                            <div className='product_qty'>
+                                                <QuantityInput quantity={quantity} setQuantity={setQuantity} index={index} />
+                                            </div>
                                         </div>
-                                        <div className='checkout__product--price'>
-                                            <label htmlFor="">Rs. {product.price * quantity[index]}</label>
-                                            <QuantityInput quantity={quantity} setQuantity={setQuantity} index={index} />
+                                        <div className='checkout__product--details'>
+                                            <label className='checkout__product--name' htmlFor="">{product.name}</label>
+                                            <Typography width='90%' variant='caption' fontSize={14}>{product.description}</Typography>
+                                            <label className='checkout__product--price' htmlFor="">Rs. {product.price * quantity[index]}</label>
+                                            <Button onClick={() => removeFromCart(product.id)} className='checkout__product--deleteBtn'>
+                                                remove
+                                            </Button>
                                         </div>
                                     </div>
                                 )

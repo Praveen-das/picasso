@@ -13,7 +13,7 @@
 
 body{
     margin: 0;
-    padding: 0 !important;
+    padding: 0;
     overflow: visible !important;
     /* cursor:url(./Assets/Icons/brush.png),auto; */
     color: #33364d;
@@ -48,7 +48,6 @@ body{
     transition: 0.2s;
 }
 .button_primary {
-    /* clip-path: polygon(0% 0%, 130% 0%, 130% 130%, 0 130%); */
     font-size: 1em;
     padding: 1rem 2rem;
     font-weight: 600;
@@ -60,7 +59,6 @@ body{
     white-space: nowrap;
 }
 .button_secondary {
-    /* clip-path: polygon(0% 0%, 130% 0%, 130% 130%, 0 130%); */
     font-size: 1em;
     padding: 1rem 2rem;
     font-weight: 600;

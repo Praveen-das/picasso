@@ -70,11 +70,10 @@ function Product() {
                     <div id="buyItem">
                         <QuantityInput quantity={quantity} setQuantity={setQuantity} index={0} />
                     </div>
-                    <div style={{ display: 'flex', gap: 10 }}>
-                        <button onClick={handleCheckout} style={{ width: '40%' }} className='button_secondary'>BUY NOW</button>
-                        <button {...handleCartButton()} style={{ width: '40%' }} className='button_primary' />
+                    <div className='product_btns'>
+                        <button onClick={handleCheckout} className='button_secondary'>BUY NOW</button>
+                        <button {...handleCartButton()} className='button_primary' />
                     </div>
-                    <hr />
                 </div>
             </div>
             <hr style={{ width: '100%' }} />

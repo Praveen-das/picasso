@@ -1,6 +1,6 @@
-import { Avatar, Rating } from '@mui/material'
+import Rating from '@mui/material/Rating'
+import Avatar from '@mui/material/Avatar'
 import React, { useEffect } from 'react'
-import ProductRating from '../ProductRating'
 import './style.css'
 
 function Review({ data }) {
@@ -9,9 +9,6 @@ function Review({ data }) {
             return { src: data.user_image }
         return { children: data.username[0].toUpperCase() }
     }
-    useEffect(() => {
-        // console.log();
-    }, [data])
 
     return (
         <>

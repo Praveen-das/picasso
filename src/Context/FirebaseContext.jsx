@@ -314,6 +314,7 @@ export default function FirebaseContext({ children }) {
     }
 
     const removeFromCart = (product) => {
+        console.log(product);
         const docRef = doc(db, 'userdata', currentUser.uid)
         setDoc(docRef, { cart: arrayRemove(product) }, { merge: true })
             .then(() => console.log('removed from cart'))
