@@ -18,25 +18,23 @@ export default function Seller() {
     const Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
         padding: '1rem',
-        marginTop: '-3rem',
-        minHeight: '80vh',
+        // marginTop: '-2rem',
+        minHeight: '100px',
         color: theme.palette.text.primary,
-        borderRadius: '10px'
+        borderRadius: '10px',
+        boxShadow: '-5px 5px 20px 2px var(--shadow)'
     }));
 
     return (
-        <Grid container sx={{ flexGrow: 1, bgcolor: 'background.paper' }} mt={5}>
-            <Grid item xs={1} minWidth={200} pl={1}>
-                <div className='tabWrapper'>
-                    <Link to='/' className="admin-logo">
-                        <img src={logo} alt="" />
-                        <label htmlFor="">Picasso.</label>
-                    </Link>
-                    <Tabs textColor='primary' orientation="vertical" value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <Tab sx={{ alignItems: 'flex-start' }} label="Dashboard" />
-                        <Tab sx={{ alignItems: 'flex-start' }} label="Products" />
-                    </Tabs>
+        <Grid container sx={{ flexGrow: 1, bgcolor: 'background.paper' }}>
+            <Grid item xs={1} minWidth={200}>
+                <div className='admin_brandName--wrapper'>
+                    <Link to='/' className='header_brandName admin_brandName'>ARTWORLD</Link>
                 </div>
+                <Tabs textColor='primary' orientation="vertical" value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab sx={{ alignItems: 'center' }} label="Dashboard" />
+                    <Tab sx={{ alignItems: 'center' }} label="Products" />
+                </Tabs>
             </Grid>
             <Grid item xs >
                 <TabPanel value={value} index={0}>

@@ -1,17 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useFirebase } from '../../../Context/FirebaseContext'
 import './products.css'
 import AddProduct from '../AddProduct/AddProduct'
 import AlertMessage from '../../Alert/Alert'
+import Search from '../../Search/Search'
 
 function Products() {
     const [toggleEditButton, setToggleEditButton] = useState(false)
     const [toggleAddProduct, setToggleAddProduct] = useState({ open: false })
     const [dialog, setDialog] = useState('')
+    const [query, setQuery] = useState()
+    const { adminProducts, removeProduct, updateProduct, handleSearch, searchFor } = useFirebase()
+    const [searchResult, setSearchResult] = useState()
 
-    const { adminProducts, removeProduct, updateProduct, handleSearch, searchResult } = useFirebase()
+    useEffect(() => {
+        if (!query) return setSearchResult()
+        searchFor(query).then(data => {
+            setSearchResult(data)
+        })
+    }, [query])
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -58,7 +67,9 @@ function Products() {
                 <AddProduct setToggleAddProduct={setToggleAddProduct} toggleAddProduct={toggleAddProduct} />
                 <div id="dashboard">
                     <div className="actionbar">
-                        <input id='search' onChange={(e) => handleSearch(e.target.value)} type="text" />
+                        <span style={{ marginLeft: 'auto' }}>
+                            <Search onTheFly={true} callback={(q) => setQuery(q)} />
+                        </span>
                         <div className="actions">
                             <button color='secondary' onClick={() => handleAction('add')} className='addProduct'>
                                 <Icon className='faAddIcon' icon={faPlus} /> ADD
@@ -88,7 +99,7 @@ function Products() {
                                 ).map((data, index) =>
                                     <tr key={index}>
                                         <td>{index + 1}</td>
-                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage]+'/tr:w-100'} alt="" /></td>
+                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
                                         <td>{data.name}</td>
                                         <td>{data.id}</td>
                                         <td>{data.quantity}</td>

@@ -1,8 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useState } from "react";
-import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where, getDocs } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
-import { db, storage, auth } from "../Config/Firebase/Firebase";
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { db, auth } from "../Config/Firebase/Firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, reload, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import ReAuthenticate from "../Components/ReAuthenticate/ReAuthenticate";
 import reactDom from "react-dom";
@@ -16,7 +15,6 @@ export function useFirebase() {
 export default function FirebaseContext({ children }) {
     const [adminProducts, setAdminProducts] = useState([])
     const [allProducts, setAllProducts] = useState([])
-    const [uploadProgress, setUploadProgress] = useState()
     const [searchResult, setSearchResult] = useState()
     const [currentUser, setCurrentUser] = useState()
     const [profilePicture, setProfilePicture] = useState()
@@ -222,6 +220,7 @@ export default function FirebaseContext({ children }) {
     }, [currentUser])
 
     const handleSearch = (searchQuery) => {
+        if (!searchQuery) return setSearchResult('')
         var result = adminProducts.filter((product) => {
             return filterSearch(searchQuery, product.name, product.id)
         })
@@ -266,31 +265,6 @@ export default function FirebaseContext({ children }) {
     const updateProduct = async (productId, updates) => {
         const productRef = doc(db, 'products', productId);
         await updateDoc(productRef, updates)
-    }
-
-    const uploadImage = (file) => {
-        return Promise.all(file.map((data) => feedImages(data)))
-    }
-
-    const feedImages = (file) => {
-        return new Promise((resolve, reject) => {
-            const storageRef = ref(storage, `user/${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setUploadProgress(progress)
-                },
-                (error) => {
-                    console.log(error)
-                    reject(error)
-                },
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        resolve(downloadURL)
-                    })
-                })
-        })
     }
 
     const addToWishlist = (product) => {
@@ -381,13 +355,19 @@ export default function FirebaseContext({ children }) {
             .catch((err) => console.log(err))
     }
 
+    const searchFor = async (searchQuery) => {
+        let queryRef = searchQuery.toLowerCase()
+        const q = query(collection(db, "products"), where('name', '>=', queryRef), where('name', '<=', queryRef + '\uf8ff'));
+        const data = await getDocs(q)
+        const results = data.docs.map(doc => doc.data())
+        return results
+    }
+
     const value = {
         /////////////////product
         addProductToDatabase,
         removeProduct,
         updateProduct,
-        uploadImage,
-        uploadProgress,
         handleSearch,
         searchResult,
         addUserAddress,
@@ -409,6 +389,7 @@ export default function FirebaseContext({ children }) {
         getAverageRating,
         handleRecentlyViewed,
         recentlyViewed,
+        searchFor,
         ///////////////authentication
         currentUser,
         userData,

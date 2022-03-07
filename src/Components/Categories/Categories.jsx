@@ -3,6 +3,7 @@ import './categories.css'
 import { categories } from '../../Assets/URLs/categories'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger';
+import { Link } from 'react-router-dom';
 
 function TrayMaterials() {
     useEffect(() => {
@@ -24,7 +25,8 @@ function TrayMaterials() {
                 <label className='tile-title brand_title' htmlFor="">SHOP BY CATEGORIES</label>
                 <div className="category-cards">
                     {categories.map((category, index) =>
-                        <div
+                        <Link
+                            to={`/category/${category.type}`}
                             key={index}
                             className='cards category'
                             style={{ backgroundImage: `url(${category.url})` }}
@@ -33,7 +35,7 @@ function TrayMaterials() {
                             <span className='category_overlay' >
                                 <label htmlFor="">EXPLORE</label>
                             </span>
-                        </div>
+                        </Link>
                     )}
                 </div>
             </div>

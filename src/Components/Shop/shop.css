@@ -7,12 +7,25 @@
 .caption_card{
     min-width: 400px;
 }
-.shop_products p{
-    text-align: center;
-    line-height: 5rem;
+.shop_title--shop,
+.shop_title--result,
+.shop_title--category{
+    line-height: 2rem;
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: 5px;
+}
+.shop_title--result{
+    font-size: 1.5rem;
+    margin-top: 3rem;
+
+}
+.shop_title--category{
+    text-transform: uppercase;
+}
+.shop_title--shop,
+.shop_title--category{
+    text-align: center;
 }
 .shop_card{
     position: relative;

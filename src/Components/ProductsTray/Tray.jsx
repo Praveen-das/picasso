@@ -44,7 +44,9 @@ function Tray({ height, data, title, parent, from, to, more }) {
         <>
             <div className="productsTray-wrapper">
                 {title && <label className='categoryTitle brand_title' htmlFor="">{title}</label>}
-                {more && <Link to='/#'><label className='more' htmlFor="">VIEW ALL</label></Link>}
+                {more && <span>
+                    <Link to='/shop' className='more'>VIEW ALL</Link>
+                </span>}
                 <div className="card_container">
                     <Swiper
                         slidesPerView='auto'

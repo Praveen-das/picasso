@@ -10,24 +10,34 @@ import { useNavigate } from 'react-router-dom'
 import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
 import Tray from '../ProductsTray/Tray';
+import { Rating } from '@mui/material';
 
 function Product() {
     const { state } = useLocation()
     const [quantity, setQuantity] = useState([1])
     let navigate = useNavigate()
-    const { handleRecentlyViewed, userData, recentlyViewed, removeFromCart, addToCart } = useFirebase()
+    const { handleRecentlyViewed, getAverageRating, reviews, userData, recentlyViewed, removeFromCart, addToCart } = useFirebase()
     const [defaultImg, setDefaultImg] = useState(0)
     const AltImgRef = useRef()
+    const [rating, setRating] = useState([])
 
     const handleCheckout = () => {
         state.item_quantity = Object.values(quantity)
         navigate('/checkout', { state: state })
     }
-
     useEffect(() => {
-        // handleRecentlyViewed(state)
-        console.log(state.quantity);
-    }, [state])
+        if (!reviews) return
+        setRating([])
+        let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
+        console.log(ratings);
+        for (let i = 0; i < 5; i++) {
+            setRating(pre => [...new Set([...pre, ratings.map((o) => o[i])])])
+        }
+    }, [reviews, state])
+
+    // useEffect(() => {
+    //     // handleRecentlyViewed(state)
+    // }, [state])
 
     const handleCartButton = () => {
         if (userData && userData.cart) {
@@ -58,10 +68,7 @@ function Product() {
                 </div>
                 <div className="right">
                     <label id='productTitle'>{state.name}</label>
-                    {/* <div className="canvas-dimension-CW-wrapper">
-                        <div className='canvas-dimension'>
-                        </div>
-                    </div> */}
+                    <Rating name="read-only" value={rating && getAverageRating(rating)} readOnly />
                     <label id='productType'>CANVAS</label>
                     <label id='productDimension'>Dimension : 12 x 30</label>
                     <label id='productDimension'>Available : {state.quantity}</label>

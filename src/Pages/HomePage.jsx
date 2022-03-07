@@ -3,7 +3,6 @@ import Banner from '../Components/Banner/Banner'
 import Artists from '../Components/Artists/Artists'
 import Footer from '../Components/Footer/Footer'
 import Header from '../Components/Header/Header'
-import Tiles from '../Components/Tiles/Tiles'
 import Categories from '../Components/Categories/Categories'
 import Tray from '../Components/ProductsTray/Tray'
 
@@ -17,7 +16,6 @@ function HomePage() {
         <>
             <Header />
             <Banner />
-            {/* <Tiles /> */}
             <AboutUs/>
             <Categories />
             <div className="category1">

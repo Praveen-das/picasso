@@ -14,10 +14,12 @@ function App() {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/shop' element={<ShoppingPage />} />
-          <Route path='/seller' element={<SellerPage />} />
+          <Route path='/sell' element={<SellerPage />} />
           <Route path='/my-profile' element={<ProfilePage />} />
           <Route path='/shop/product' element={<ProductPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
+          <Route path='/search/:query' element={<ShoppingPage />} />
+          <Route path='/category/:category' element={<ShoppingPage />} />
         </Routes>
       </Router>
     </>

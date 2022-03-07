@@ -5,28 +5,54 @@ import {
 import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
 import { useFirebase } from '../../Context/FirebaseContext'
+import RightIcon from '@mui/icons-material/ChevronRight';
+import LeftIcon from '@mui/icons-material/ChevronLeft';
+import Signin from './Signin'
 import './login.css'
+import Signup from './Signup';
 
 function Login({ model, setModel }) {
     const [loginCredential, setLoginCredential] = useState()
     const { userSignIn } = useFirebase()
+    const [isToggled, setIsToggled] = useState(false)
 
     const box_style = {
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
         bgcolor: 'background.paper',
         boxShadow: 5,
-        p: '3rem 2rem',
-        zIndex: 100
+        zIndex: 100,
+        height: 600,
+        display: 'grid',
+        placeItems: 'center',
+        gridTemplateColumns: '1fr 1fr',
+        overflow: 'hidden'
     };
 
     const handleLogin = async (e) => {
         e.preventDefault()
         await userSignIn(loginCredential)
         setModel({ login: false, signup: false })
+    }
+
+    const leftBoxStyle = {
+        transform: `translateX(${isToggled ? '100%' : 0})`,
+        boxShadow: `${isToggled ? 'none' : '5px 0 20px var(--shadow)'}`,
+        zIndex: isToggled ? 'unset' : 2
+    }
+    const rightBoxStyle = {
+        transform: `translateX(${isToggled ? '-100%' : 0})`,
+        boxShadow: isToggled ? '5px 0 20px var(--shadow)' : 'none',
+    }
+    const signinStyle = {
+        pointerEvents: `${isToggled ? 'none' : 'all'}`,
+        opacity: `${isToggled ? 0 : 1}`
+    }
+    const signupStyle = {
+        pointerEvents: `${isToggled ? 'all' : 'none'}`,
+        opacity: `${isToggled ? 1 : 0}`,
     }
 
     return (
@@ -37,59 +63,36 @@ function Login({ model, setModel }) {
                 onClose={() => setModel({ login: false, signup: false })}
             >
                 <Box sx={box_style}>
-                    <form action='submit' onSubmit={(e) => handleLogin(e)}>
-                        <Grid container minWidth={300} spacing={1.5}>
-                            <Grid item xs={12} mb={2} textAlign='center'>
-                                <Typography sx={{ color: 'var(--brand)' }} variant='h5'>Log in</Typography>
-                            </Grid>
-                            {/* <Grid item xs={12} display='flex' justifyContent='space-evenly'>
-                                    <IconButton aria-label="delete">
-                                        <Google sx={{ fontSize: 30, color: '#DB4437' }} />
-                                    </IconButton>
-                                    <IconButton aria-label="delete">
-                                        <Facebook sx={{ fontSize: 30, color: '#4267B2' }} />
-                                    </IconButton>
-                                    <IconButton aria-label="delete">
-                                        <Twitter sx={{ fontSize: 30, color: '#1DA1F2' }} />
-                                    </IconButton>
-                                </Grid> */}
-                            {/* <Grid item xs={12} m='1rem 0'>
-                                    <Divider sx={{fontSize:'16px',color:'hsl(0, 0%, 46%)'}}>or</Divider>
-                                </Grid> */}
-                            <InputField type='email' size='large' xs={12} md={12} label='Email' onChange={(e) => setLoginCredential(pre => { return { ...pre, email: e.target.value } })} />
+                    <Grid style={leftBoxStyle} className='login_left' item width={{ xs: '300px', md: '500px' }} spacing={4}>
+                        <div style={{ opacity: isToggled ? 0 : 1 }} className='signup_hero'>
                             <Grid item xs={12}>
-                                <TextField hidden size='large' variant='standard' inputProps={{ autoComplete: 'new-password' }} label='Password' type='password' fullWidth onChange={(e) => setLoginCredential(pre => { return { ...pre, password: e.target.value } })} />
+                                <Typography variant='h5' fontSize='2rem'>Hello Friend !</Typography>
                             </Grid>
-                            <Grid item xs={12} display='flex' justifyContent='space-between' alignItems='center'>
-                                <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>
-                                    <Checkbox size='small' sx={{
-                                        paddingLeft: 0,
-                                        '&.Mui-checked': {
-                                            color: 'var(--brand)',
-                                        },
-                                        transform: 'translateY(-1px)'
-                                    }} />
-                                    Remember me</Typography>
-                                <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>Forgot password ?</Typography>
+                            <Grid item xs={12}>
+                                <Typography lineHeight={1.4} variant='h2' fontSize={18}>Signup now and start your journey with us</Typography>
                             </Grid>
-                            <Grid item xs={12} >
-                                <Button type='submit' size='large' sx={{ background: 'var(--brandGradient)', borderRadius: '50px', fontSize: '12px' }} variant='contained' fullWidth>Log in</Button>
+                            <button onClick={() => setIsToggled(!isToggled)} className='signup_btn' sx={{ background: 'white' }} type='submit' variant='contained'><RightIcon sx={{ width: '1.3em', height: '1.3em' }} /></button>
+                        </div>
+                        <div style={{ opacity: isToggled ? 1 : 0 }} className='signin_hero'>
+                            <Grid item xs={12}>
+                                <Typography variant='h5' fontSize='2rem'>Welcome Back !</Typography>
                             </Grid>
-                            <Grid item xs={12} mt={1} textAlign="center">
-                                <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>Not registered yet ?
-                                    <button
-                                        onClick={() => setModel({
-                                            login: false,
-                                            signup: true
-                                        })}
-                                        className='create-account' htmlFor="">Create an account</button>
-                                </Typography>
+                            <Grid item xs={12}>
+                                <Typography lineHeight={1.4} variant='h2' fontSize={18} >To keep connected with us, please login with your personal details</Typography>
                             </Grid>
-                        </Grid>
-                    </form>
+                            <button onClick={() => setIsToggled(!isToggled)} className='signup_btn' sx={{ background: 'white' }} type='submit' variant='contained'><LeftIcon sx={{ width: '1.3em', height: '1.3em' }} /></button>
+                        </div>
+                    </Grid>
+                    <Grid style={rightBoxStyle} className='login_right' item width={{ xs: '300px', md: '500px' }} spacing={4}>
+                        <div className='signinStyle' style={signinStyle}>
+                            <Signin />
+                        </div>
+                        <div className='signupStyle' style={signupStyle}>
+                            <Signup />
+                        </div>
+                    </Grid>
                 </Box>
-            </Modal
-            >
+            </Modal>
         </>
     )
 }

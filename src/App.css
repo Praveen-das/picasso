@@ -88,4 +88,16 @@ body{
     width: auto !important;
     height: 100%;
 }
+a:hover{
+    color: var(--brand) !important;
+}
+
+/* //////scrollbar////// */
+
+::-webkit-scrollbar {
+    width: 3px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--brand); 
+}
 

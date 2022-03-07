@@ -2,12 +2,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1rem;
 }
 .actions{
     display: flex;
     gap: 10px;
     justify-content: right;
-    margin-bottom: 1rem;
 }
 .addProduct,
 .editProducts{
