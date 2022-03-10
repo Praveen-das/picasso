@@ -48,9 +48,9 @@ function Header() {
                     <Search callback={(query) => handleSearch(query)} />
                     <Link to='/shop' className='shop' htmlFor="">SHOP</Link>
                     <Link to='/sell' className='marketplace' htmlFor="">SELL</Link>
-                    <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
+                    {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
-                    </Badge>
+                    </Badge> */}
                     {
                         currentUser ?
                             <DropDown menu={

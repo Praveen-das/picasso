@@ -9,9 +9,7 @@
     border: 1px solid #bbcded67;
     transition: 0.1s;
 }
-.swiper-wrapper{
-    transition: 0.5s 'width' !important;
-}
+
 .swiper-slide:last-child > *{
     width: 100%;
 }
