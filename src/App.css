@@ -30,7 +30,7 @@ body{
     font-family: var(--subTitle);
     font-weight: 600;
     text-decoration: none;
-    color: #202020;
+    /* color: #202020; */
 }
 ::selection{
     background: rgba(0, 0, 0, 0.103);

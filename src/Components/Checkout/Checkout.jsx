@@ -10,8 +10,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddAddress from '../Profile/AddAddress';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
@@ -22,8 +20,7 @@ import EmptyCart from './EmptyCart';
 
 function Checkout() {
     const { userData, allProducts, makeOrder, handleAvailableQuantity, removeFromCart } = useFirebase()
-    const [address, setAddress] = useState()
-    const [isDefault, setIsDefault] = useState(0)
+    const [defaultAddress, setDefaultAddress] = useState(0)
     let { state } = useLocation()
     const [quantity, setQuantity] = useState(state ? state.item_quantity : [1])
     const [cart, setCart] = useState()
@@ -39,47 +36,66 @@ function Checkout() {
     }, [state, quantity, cart])
 
     useEffect(() => {
-        setIsDefault(0)
-        setAddress(userData && userData.address[0]);
+
         if (state) {
             return setCart([state])
         }
         if (allProducts && userData) {
             if (!userData.cart) return setCart()
-            userData.cart.forEach((o, i) => setQuantity(pre => [...pre, [1]]))
+            userData.cart.forEach(() => setQuantity(pre => [...pre, [1]]))
             setCart(allProducts.filter((o) => userData.cart.includes(o.id)))
         }
     }, [allProducts, userData, state])
 
-    if (userData)
-        userData.address.forEach((o) => o.isDefault = isDefault)
+    useEffect(() => {
+        if (!userData) return
+        userData.address && userData.address.forEach((o) => o.defaultAddress = 0)
+        setDefaultAddress(userData.address[userData.address.length - 1])
+    }, [userData])
 
-    const handleAddress = (e, index, data) => {
-        setAddress(data);
-        setIsDefault(index)
+    const handleAddress = (index) => {
+        userData.address.forEach((o) => o.defaultAddress = index)
+        setDefaultAddress(userData.address[index])
     }
 
     useEffect(() => {
         setPaymentMethod('card')
     }, [])
 
-    const handleCheckout = async () => {
-        if (!paymentMethod) return
-        await makeOrder({
-            product: state,
-            seller_id: state.uid,
+    const createInvoice = (data) => {
+        const invoice = {
+            product: data,
+            seller_id: data.uid,
             user_id: userData.uid,
             paymentMethod: paymentMethod,
             status: 'processing',
-            address: address,
+            address: defaultAddress,
             totalAmount: totalAmount,
             product_quantity: quantity[0]
+        }
+        return invoice
+    }
+
+    const handleCheckout = () => {
+        if (!paymentMethod) return
+        if (!userData) return
+        if (state) {
+            console.log(quantity);
+            // makeOrder(state)
+            // handleAvailableQuantity(state.id, quantity[0])
+            return
+        }
+        console.log(quantity);
+        cart?.forEach((item, index) => {
+            // makeOrder(createInvoice(item)).then(() =>
+            //     handleAvailableQuantity(item.id, quantity[0])
+            // )
         })
-        await handleAvailableQuantity(state.id, quantity[0])
+
     }
 
     useEffect(() => {
-        if (userData)
+        if (userData && userData.address)
             userData.address = userData.address.reverse()
     }, [userData])
 
@@ -94,44 +110,53 @@ function Checkout() {
                     <Grid item xs={12} mb={4} ml={-4}>
                         <Typography variant="h5" sx={{ fontWeight: '800' }}>Payment info</Typography>
                     </Grid>
-                    <Grid item xs={12} mb={1}>
+                    <Grid item xs={12} mb={2}>
                         <Typography sx={{ color: 'var(--brand)' }} variant="h4" fontSize={18}>Delivery address</Typography>
                     </Grid>
-                    <Grid item gap={2} xs={12} display='flex'>
-                        <Swiper
-                            slidesPerView={2}
-                            spaceBetween={15}
-                            mousewheel={true}
-                            modules={[Mousewheel]}
-                            className="checkout_swiper"
-                            initialSlide={0}
-                        >
-                            {
-                                userData?.address.map((user, index) =>
-                                    <SwiperSlide key={index}>
-                                        <div
-                                            className="checkout__address"
-                                            onClick={(e) => handleAddress(e, index, user)}
-                                            style={
+                    <Grid item gap={2} xs={
+                        userData &&
+                            userData.address ? userData.address.length > 1 ? 12 : 6 : 1
+                    } display='flex'>
+                        {
+                            userData && userData.address &&
+                            <Swiper
+                                slidesPerView={
+                                    userData &&
+                                        userData.address.length > 1 ? 2 : 1
+                                }
+                                spaceBetween={15}
+                                mousewheel={true}
+                                modules={[Mousewheel]}
+                                className="checkout_swiper"
+                                initialSlide={0}
+                            >
+                                {
+                                    userData.address.map((user, index) =>
+                                        <SwiperSlide key={index}>
+                                            <div
+                                                className="checkout__address"
+                                                onClick={(e) => handleAddress(index)}
+                                                style={
+                                                    {
+                                                        transform: user.defaultAddress === index && 'translate(-4px,-4px)',
+                                                        boxShadow: user.defaultAddress === index && '8px 8px 10px 2px var(--shadow)'
+                                                    }
+                                                }>
                                                 {
-                                                    transform: user.isDefault === index && 'translate(-4px,-4px)',
-                                                    boxShadow: user.isDefault === index && '8px 8px 10px 2px var(--shadow)'
+                                                    user.defaultAddress === index &&
+                                                    <div className="checkout__address--checked">
+                                                        <CheckCircleIcon sx={{ color: 'var(--brand)', fontSize: '25px' }} />
+                                                    </div>
                                                 }
-                                            }>
-                                            {
-                                                user.isDefault === index &&
-                                                <div className="checkout__address--checked">
-                                                    <CheckCircleIcon sx={{ color: 'var(--brand)', fontSize: '25px' }} />
-                                                </div>
-                                            }
-                                            <Typography variant='h5' fontSize={15}>{user.name}</Typography>
-                                            <Typography variant='h3' color='ThreeDDarkShadow' lineHeight={1.3} fontSize={13}>{user.address} {user.postalCode}</Typography>
-                                            <Typography>{user.phoneNumber}</Typography>
-                                        </div>
-                                    </SwiperSlide>
-                                )
-                            }
-                        </Swiper>
+                                                <Typography variant='h5' fontSize={15}>{user.name}</Typography>
+                                                <Typography variant='h3' color='ThreeDDarkShadow' lineHeight={1.3} fontSize={13}>{user.address} {user.postalCode}</Typography>
+                                                <Typography>{user.phoneNumber}</Typography>
+                                            </div>
+                                        </SwiperSlide>
+                                    )
+                                }
+                            </Swiper>
+                        }
                         <Button variant='contained' onClick={() => setOpen(true)} sx={
                             {
                                 borderRadius: '10px',
@@ -165,9 +190,9 @@ function Checkout() {
                                             <label className='checkout__product--name' htmlFor="">{product.name}</label>
                                             <Typography width='90%' variant='caption' fontSize={14}>{product.description}</Typography>
                                             <label className='checkout__product--price' htmlFor="">Rs. {product.price * quantity[index]}</label>
-                                            <Button onClick={() => removeFromCart(product.id)} className='checkout__product--deleteBtn'>
+                                            {!state && <Button onClick={() => removeFromCart(product.id)} className='checkout__product--deleteBtn'>
                                                 remove
-                                            </Button>
+                                            </Button>}
                                         </div>
                                     </div>
                                 )

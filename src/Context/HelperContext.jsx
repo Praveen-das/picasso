@@ -1,9 +1,10 @@
 import { ThemeProvider } from '@emotion/react';
-import { createTheme } from '@mui/material';
+import { Button, createTheme } from '@mui/material';
 import React, { createContext, useContext, useEffect } from 'react'
 import { IKContext } from 'imagekitio-react'
 import gsap from 'gsap';
 import scrollTrigger from 'gsap/ScrollTrigger';
+import styled from '@emotion/styled';
 
 export function useHelper() {
     return useContext(ContextProvider)
@@ -51,6 +52,18 @@ export default function HelperContext({ children }) {
         }
     });
 
+    // const WhiteButton = styled(Button)(({ theme }) => ({
+    //     color: theme.palette.getContrastText('#fff'),
+    //     backgroundColor: '#fff',
+    //     '&:hover': {
+    //         backgroundColor: '#999',
+    //     },
+    //     padding:'7px 2rem',
+    //     fontSize:'1rem',
+    //     borderRadius:'50px',
+    //     boxShadow: 'inset 2px 2px 5px 0px var(--shadow)'
+    // }));
+
     const ScrollTrigger = (elements, options, actions) => {
         useEffect(() => {
             gsap.registerPlugin(scrollTrigger)
@@ -62,8 +75,11 @@ export default function HelperContext({ children }) {
 
     const value = {
         theme,
-        ScrollTrigger
+        ScrollTrigger,
+        // WhiteButton
     }
+    
+
     return (
         <ContextProvider.Provider value={value}>
             <ThemeProvider theme={theme}>

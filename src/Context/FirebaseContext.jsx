@@ -67,7 +67,7 @@ export default function FirebaseContext({ children }) {
     const userSignIn = (credential) => {
         // const email = credential.email
         // const password = credential.password
-        const email = 'praveendask97@gmail.com'
+        const email = 'asd@asd.com'
         const password = 'asdasdasd'
 
         signInWithEmailAndPassword(auth, email, password)
@@ -302,18 +302,13 @@ export default function FirebaseContext({ children }) {
             .catch((err) => console.log(err))
     }
 
-    const makeOrder = (checkoutData) => {
-        try {
-            const docRef = collection(db, 'orders')
-            addDoc(docRef, {
-                ...checkoutData,
-                date_added: serverTimestamp()
-            }, { merge: true })
-                .then(() => console.log('new order received'))
-                .catch((err) => console.log(err))
-        } catch (error) {
-            console.log(error);
-        }
+    const makeOrder = async (checkoutData) => {
+        const docRef = collection(db, 'orders')
+        await addDoc(docRef, {
+            ...checkoutData,
+            date_ordered: serverTimestamp(),
+            delivery_date: getDeliveryDate()
+        }, { merge: true })
     }
 
     const handleOrder = async (status, orderId) => {
@@ -363,6 +358,20 @@ export default function FirebaseContext({ children }) {
         return results
     }
 
+    const getDeliveryDate = () => {
+        var today = new Date();
+
+        var deliveryDate = today;
+        var total_days = 9;
+        for (var days = 1; days <= total_days; days++) {
+            deliveryDate = new Date(today.getTime() + (days * 24 * 60 * 60 * 1000));
+            if (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+                total_days++
+            }
+        }
+        return deliveryDate.toDateString() + ' ' + deliveryDate.toLocaleTimeString()
+    }
+
     const value = {
         /////////////////product
         addProductToDatabase,
@@ -390,6 +399,7 @@ export default function FirebaseContext({ children }) {
         handleRecentlyViewed,
         recentlyViewed,
         searchFor,
+        getDeliveryDate,
         ///////////////authentication
         currentUser,
         userData,

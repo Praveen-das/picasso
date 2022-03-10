@@ -10,27 +10,16 @@ import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
 import { useFirebase } from '../../Context/FirebaseContext';
 
-function Signup({ model, setModel }) {
+function Signup({ setModel }) {
     const [signupCredential, setSignupCredential] = useState()
     const [error, setError] = useState()
 
     const { signupUsingEmailPassword } = useFirebase()
 
-    const box_style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 5,
-        p: '3rem 2rem',
-        zIndex: 100
-    };
-
     const handleSignup = async (e) => {
         e.preventDefault()
         await signupUsingEmailPassword(signupCredential)
+            .then(() => setModel(false))
             .catch((error) => {
                 console.log(error);
                 switch (error.code) {
@@ -47,7 +36,6 @@ function Signup({ model, setModel }) {
                         break;
                 }
             })
-        setModel({ login: false, signup: false })
     }
 
     return (

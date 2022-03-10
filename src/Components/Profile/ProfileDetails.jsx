@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Grid, Typography, Button, Divider } from '@mui/material'
 import TextField from '@mui/material/TextField';
 import Avatar from '../Avatar/Avatar';
 import { useFirebase } from '../../Context/FirebaseContext'
-import { useEffect } from 'react/cjs/react.development';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
-import './styles.css'
 import ChangePassword from '../ChangePassword/ChangePassword';
+import { IKUpload } from 'imagekitio-react'
+import './styles.css'
 
 function ProfileDetails() {
     const { currentUser, updateUserCredentials, updateProfilePicture, verifyEmail, uploadImage } = useFirebase()
@@ -21,12 +21,22 @@ function ProfileDetails() {
     useEffect(() => {
         const fullName = currentUser.displayName.split(' ')
         if (fullName.length > 2) {
+            if (fullName[2].length <= 2) {
+                setFirstName(fullName[0]);
+                setLastName(fullName.slice(1).join(' '));
+                return
+            }
             setFirstName(fullName.slice(0, -1).join(' '))
             setLastName(fullName.slice(-1).join(' '))
             return
         }
-        setFirstName(fullName[0])
-        setLastName(fullName[1])
+        if (fullName.length === 2) {
+            console.log('sadasdasd');
+            setFirstName(fullName[0])
+            setLastName(fullName[1])
+            return
+        }
+        setFirstName(...fullName)
     }, [currentUser])
 
     const handleProfileUpdation = () => {
@@ -35,7 +45,7 @@ function ProfileDetails() {
     }
 
     const handleInput = () => {
-        document.getElementById('input_file').click();
+        document.getElementById('IKUploader').click()
     }
 
     const handleProfilePicture = (e) => {
@@ -52,8 +62,16 @@ function ProfileDetails() {
                 <div id='avatar'>
                     <Avatar sx={{ width: 80, height: 80 }} displayName={currentUser.displayName} profilePicture={currentUser.photoURL} />
                     <button className='imageUpdateBtn' onClick={() => handleInput()}>
-                        <input type="file" id='input_file' hidden onInput={(e) => handleProfilePicture(e)} />
                         <CameraAltRoundedIcon fontSize='30px' color='secondary' />
+                        <IKUpload
+                            id='IKUploader'
+                            folder={"/products-images"}
+                            onError={(err) => console.log(err)}
+                            onSuccess={(res) => {
+                                updateProfilePicture(res.thumbnailUrl)
+                            }}
+                            hidden
+                        />
                     </button>
                 </div>
                 <div>
@@ -72,11 +90,11 @@ function ProfileDetails() {
             <Grid container columnSpacing={8} rowSpacing={4} p={2}>
                 <Grid item xs={6}>
                     <Typography variant='h6' color='primary'>First Name</Typography>
-                    <TextField value={firstName} variant='standard' fullWidth onChange={(e) => setFirstName(e.target.value)}></TextField>
+                    <TextField value={firstName} variant='standard' fullWidth onChange={(e) => setFirstName(e.target.value)} />
                 </Grid>
                 <Grid item xs={6}>
                     <Typography variant='h6' color='primary'>Last Name</Typography>
-                    <TextField value={lastName} variant='standard' fullWidth onChange={(e) => setLastName(e.target.value)}></TextField>
+                    <TextField value={lastName} variant='standard' fullWidth onChange={(e) => setLastName(e.target.value)} />
                 </Grid>
                 <Grid item xs={6}>
                     <Typography variant='h6' color='primary'>Email Address</Typography>

@@ -25,7 +25,7 @@ function Dashboard() {
     useEffect(() => {
         if (!availableOrders) return
         setOrders(availableOrders.sort((x, y) => {
-            return new Date(x.date_added.toDate()) - new Date(y.date_added.toDate())
+            return new Date(x.date_ordered.toDate()) - new Date(y.date_ordered.toDate())
         }).reverse());
     }, [availableOrders])
 
@@ -92,8 +92,8 @@ function Dashboard() {
                                         <td>{index + 1}</td>
                                         <td>{product.order_id}</td>
                                         <td>{
-                                            product.date_added.toDate().toDateString() + ' ' +
-                                            product.date_added.toDate().toLocaleTimeString()
+                                            product.date_ordered.toDate().toDateString() + ' ' +
+                                            product.date_ordered.toDate().toLocaleTimeString()
                                         }</td>
                                         <td>{product.paymentMethod}</td>
                                         <td>45645</td>

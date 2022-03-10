@@ -6,6 +6,7 @@ import './products.css'
 import AddProduct from '../AddProduct/AddProduct'
 import AlertMessage from '../../Alert/Alert'
 import Search from '../../Search/Search'
+import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 
 function Products() {
     const [toggleEditButton, setToggleEditButton] = useState(false)
@@ -14,6 +15,8 @@ function Products() {
     const [query, setQuery] = useState()
     const { adminProducts, removeProduct, updateProduct, handleSearch, searchFor } = useFirebase()
     const [searchResult, setSearchResult] = useState()
+    const [productId, setProductId] = useState()
+
 
     useEffect(() => {
         if (!query) return setSearchResult()
@@ -44,13 +47,21 @@ function Products() {
 
                 break;
             case 'delete':
-                setDialog({
-                    open: true,
-                    confirmationMessage: 'Press CONFIRM to remove product',
-                    successMessage: 'Product removed successfully',
-                    onConfirmation: () => removeProduct(product.id),
-                    type: 'confirmation'
-                })
+                setDialog(!dialog)
+                setProductId(product.id)
+                confirmAction(
+                    'Remove Product',
+                    'Press Confirm to Remove your product',
+                    () => removeProduct(product.id)
+                )
+                // asd({ dialog: true })
+                // setDialog({
+                //     open: true,
+                //     confirmationMessage: 'Press CONFIRM to remove product',
+                //     successMessage: 'Product removed successfully',
+                //     onConfirmation: () => removeProduct(product.id),
+                //     type: 'confirmation'
+                // })
                 break;
             default:
                 break;
@@ -59,11 +70,21 @@ function Products() {
 
     return (
         <>
+            {/* <ConfirmationDialog
+                title='Remove Product'
+                message='Press Confirm to Remove your product'
+                dialog={dialog}
+                setDialog={setDialog}
+                callBackAction={{
+                    confirm: () => removeProduct(productId),
+                    close: () => setDialog(false)
+                }}
+            /> */}
             <div className="dashboard-wrapper">
-                <AlertMessage
+                {/* <AlertMessage
                     dialog={dialog}
                     setDialog={setDialog}
-                />
+                /> */}
                 <AddProduct setToggleAddProduct={setToggleAddProduct} toggleAddProduct={toggleAddProduct} />
                 <div id="dashboard">
                     <div className="actionbar">

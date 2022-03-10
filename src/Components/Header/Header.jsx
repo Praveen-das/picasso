@@ -16,7 +16,7 @@ import Search from '../Search/Search'
 
 function Header() {
     const [toggleHeader, setToggleHeader] = useState(false)
-    const [model, setModel] = useState({ login: false, signup: false })
+    const [model, setModel] = useState(false)
     const scrollValue = useRef(0)
 
     const navigate = useNavigate()
@@ -30,7 +30,6 @@ function Header() {
     return (
         <>
             <Login model={model} setModel={setModel} />
-            <Signup model={model} setModel={setModel} />
             <div
                 className="navbar"
                 style={{
@@ -53,8 +52,7 @@ function Header() {
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge>
                     {
-                        currentUser &&
-                            currentUser ?
+                        currentUser ?
                             <DropDown menu={
                                 <Avatar displayName={currentUser.displayName} profilePicture={currentUser.photoURL} />
                             }>
@@ -62,7 +60,7 @@ function Header() {
                                 <div onClick={() => signout()}>Logout</div>
                             </DropDown>
                             :
-                            <button onClick={() => setModel({ login: true, signup: false })} className="login">LOG IN</button>
+                            <button onClick={() => setModel(!model)} className="login">LOG IN</button>
                     }
                 </div>
             </div>

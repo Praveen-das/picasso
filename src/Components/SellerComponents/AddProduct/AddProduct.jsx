@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './addProduct.css'
-import { Grid, Typography, Backdrop, Button, ThemeProvider, CircularProgress, Modal, IconButton, Chip, Stack, Tooltip } from '@mui/material'
+import { Grid, Typography, Backdrop, Button, ThemeProvider, CircularProgress, Modal, IconButton, Chip, Stack, Tooltip, TextField } from '@mui/material'
 import InputField from '../../TextField/InputField'
 import { useFirebase } from '../../../Context/FirebaseContext'
 import CloseIcon from '@mui/icons-material/Close';
@@ -46,18 +46,12 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                 setProduct('')
                 setLoading(false)
                 setImageTemplate([])
+                setImageURL([])
                 setDialog({
                     open: true,
                     successMessage: 'Product added successfully',
                     type: 'success'
                 })
-                break;
-
-            case 'reset':
-                console.log('reset');
-                setProduct('')
-                setNewTag([])
-                setImageTemplate([])
                 break;
 
             case 'update':
@@ -82,6 +76,7 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                 setProduct([])
                 setNewTag([])
                 setImageTemplate([])
+                setImageURL([])
                 break;
             default:
                 break;
@@ -99,17 +94,24 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
         overflow: 'hidden'
     };
 
-    const handleTag = (input) => {
-        setNewTag(newTag?.filter(o => o !== input))
+    const handleTag = (action, input) => {
+        switch (action) {
+            case 'add':
+                tag && setNewTag(pre => [tag, ...pre])
+                setTag('')
+                break;
+            case 'remove':
+                setNewTag(newTag?.filter(o => o !== input))
+                break;
+
+            default:
+                break;
+        }
     }
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <AlertMessage
-                    dialog={dialog}
-                    setDialog={setDialog}
-                />
                 <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                     open={loading}
@@ -135,16 +137,20 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
 
                             </div>
                             <Grid container minWidth={300} padding='1em 2em 2em 2em' spacing={1} columnSpacing={3}>
-                                <Grid item sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} xs={12} >
-                                </Grid>
                                 <InputField required xs={12} value={product && product.name} label='Product Name' onChange={(e) => setProduct(pre => { return { ...pre, name: e.target.value } })} />
                                 <InputField xs={12} md={12} value={product && product.description} label='Description' rows={3} onChange={(e) => setProduct(pre => { return { ...pre, description: e.target.value } })} />
                                 <InputField required xs={3} md={2} value={product && product.category} label='Category' onChange={(e) => setProduct(pre => { return { ...pre, category: e.target.value } })} />
                                 <InputField required xs={3} md={2} value={product && product.material} label='Material' onChange={(e) => setProduct(pre => { return { ...pre, material: e.target.value } })} />
                                 <InputField required xs={6} md={2} value={product && product.dimension} label='Dimension' onChange={(e) => setProduct(pre => { return { ...pre, dimension: e.target.value } })} />
-                                <InputField md={2} required xs={3} value={product && product.quantity} label='Quantity' onChange={(e) => setProduct(pre => { return { ...pre, quantity: e.target.value } })} />
-                                <InputField required xs={2} value={product && product.price} label='Price' onChange={(e) => setProduct(pre => { return { ...pre, price: e.target.value } })} />
-                                <InputField xs={6} md={2} value={product && product.discount} label='Discount' onChange={(e) => setProduct(pre => { return { ...pre, discount: e.target.value } })} />
+                                <Grid item xs={2}>
+                                    <TextField variant='standard' size='small' type='number' required value={product && product.quantity} label='Quantity' onChange={(e) => setProduct(pre => { return { ...pre, quantity: e.target.value } })} />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <TextField variant='standard' size='small' type='number' required value={product && product.price} label='Price' onChange={(e) => setProduct(pre => { return { ...pre, price: e.target.value } })} />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <TextField variant='standard' size='small' type='number' required value={product && product.discount} label='Discount' onChange={(e) => setProduct(pre => { return { ...pre, discount: e.target.value } })} />
+                                </Grid>
                                 <Grid item xs={12} mt={2}>
                                     <Tooltip placement="bottom-start" arrow title="Add Tags for better search availability">
                                         <span>
@@ -152,11 +158,11 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                                         </span>
                                     </Tooltip>
                                     <Stack direction="row" spacing={1}>
-                                        <InputField onChange={(e) => setTag(e.target.value)} md={2} label='Add tag' />
-                                        <Button onClick={() => tag && setNewTag(pre => [tag, ...pre])} sx={{ height: '25px', alignSelf: 'flex-end' }}>Add</Button>
+                                        <InputField id='tagInput' value={tag} onChange={(e) => setTag(e.target.value)} md={2} label='Add tag' />
+                                        <Button onClick={() => handleTag('add')} sx={{ height: '25px', alignSelf: 'flex-end' }}>Add</Button>
                                         {
                                             newTag && newTag.length > 0 && newTag.map((o, i) => (
-                                                <Chip key={i} sx={{ alignSelf: 'flex-end' }} size='small' label={o} variant="outlined" onDelete={() => handleTag(o)} />
+                                                <Chip key={i} sx={{ alignSelf: 'flex-end' }} size='small' label={o} variant="outlined" onDelete={() => handleTag('remove', o)} />
                                             ))
                                         }
                                     </Stack>
@@ -194,18 +200,18 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                                         </Button>
                                     </div>
                                 </Grid>
-                                    <span style={{ display: 'flex',marginLeft:'auto',marginTop:-45, gap: 10 }}>
-                                        <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('close')}>CANCEL</Button>
-                                        {
-                                            toggleAddProduct.action === 'update' ?
-                                                <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('update')}>
-                                                    UPDATE
-                                                </Button> :
-                                                <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large'>
-                                                    ADD <input type="submit" hidden />
-                                                </Button>
-                                        }
-                                    </span>
+                                <span style={{ display: 'flex', marginLeft: 'auto', marginTop: -45, gap: 10 }}>
+                                    <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('close')}>CANCEL</Button>
+                                    {
+                                        toggleAddProduct.action === 'update' ?
+                                            <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('update')}>
+                                                UPDATE
+                                            </Button> :
+                                            <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large'>
+                                                ADD <input type="submit" hidden />
+                                            </Button>
+                                    }
+                                </span>
                             </Grid>
                         </form>
                     </Box>

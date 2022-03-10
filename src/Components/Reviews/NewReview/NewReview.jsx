@@ -8,12 +8,11 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating'
 import './newReview.css'
 import { useFirebase } from '../../../Context/FirebaseContext'
-import ConfirmationDialog from '../../ConfirmationDialog/ConfirmationDialog';
+import ConfirmationDialog, { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog';
 
 function NewReview({ data, open, setOpen }) {
     const [review, setReview] = useState({ title: '', review: '' })
     const [rating, setRating] = useState()
-    const [dialog, setDialog] = useState(false)
     const ratingRef = useRef()
     const { productRating, reviews, currentUser } = useFirebase()
 
@@ -31,9 +30,20 @@ function NewReview({ data, open, setOpen }) {
         e.preventDefault()
         if (reviews.find((doc) =>
             Object.values(doc).includes(currentUser.uid) &&
-            Object.values(doc).includes(data.id)))
-            return setDialog(!dialog)
+            Object.values(doc).includes(data.id))) {
+            confirmAction(
+                'Already reviewed',
+                'Press CONFIRM if you want to modify existing review.',
+                () => {
+                    productRating(review, rating, data.id)
+                    setReview({ title: '', review: '' })
+                    setOpen(!open)
+                }
+            )
+            return
+        }
         productRating(review, rating, data.id)
+        setReview({ title: '', review: '' })
         setOpen(!open)
     }
 
@@ -46,25 +56,25 @@ function NewReview({ data, open, setOpen }) {
         }
         setRating(ratingArray)
     }
+    const handleClose = () => {
+        setOpen(!open)
+        setReview({ title: '', review: '' })
+        setRating('')
+    }
 
     return (
         <>
-            <ConfirmationDialog
-                callBackAction={{
-                    confirm: () => productRating(review, rating, data.id),
-                    close: () => setOpen(!open)
-                }}
-                dialog={dialog}
-                setDialog={setDialog}
-                title='Already reviewed'
-                message='Press CONFIRM if you want to modify existing review.' />
             <Modal
                 open={open}
-                onClose={() => setOpen(!open)}
+                onClose={handleClose}
             >
                 <Box sx={box_style}>
                     <div className='newReview'>
-                        <IconButton onClick={() => setOpen(!open)} sx={{ position: 'absolute', top: 5, right: 5 }}><CloseIcon /></IconButton>
+                        <IconButton
+                            onClick={handleClose}
+                            sx={{ position: 'absolute', top: 5, right: 5 }}>
+                            <CloseIcon />
+                        </IconButton>
                         <label className='newReview_customer--name' htmlFor="">Hey {data.name}</label>
                         <p>Tell us about your experience</p>
                         <img className='button_primary' src={data.image[data.defaultImage]} alt="" />

@@ -11,7 +11,7 @@
     display: grid;
     place-items: center;
     background: white;
-    transition: 1s;
+    transition: transform, 1s;
 }
 .login_left{
     text-align: center;
@@ -21,7 +21,7 @@
 .signinStyle,
 .signupStyle{
     position: absolute;
-    transition: 0.5s 0.2s;
+    transition: transform, 0.5s 0.2s;
 }
 .signup_btn{
     width: 70px;
@@ -47,5 +47,5 @@
     inset: 0;
     margin: auto;
     padding: 0 5em;
-    transition: 1s;
+    transition: transform, 1s;
 }

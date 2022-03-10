@@ -18,7 +18,6 @@ export default function Seller() {
     const Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
         padding: '1rem',
-        // marginTop: '-2rem',
         minHeight: '100px',
         color: theme.palette.text.primary,
         borderRadius: '10px',

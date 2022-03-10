@@ -11,15 +11,17 @@ import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
 import Tray from '../ProductsTray/Tray';
 import { Rating } from '@mui/material';
+import Login from '../Login/Login';
 
 function Product() {
     const { state } = useLocation()
     const [quantity, setQuantity] = useState([1])
     let navigate = useNavigate()
-    const { handleRecentlyViewed, getAverageRating, reviews, userData, recentlyViewed, removeFromCart, addToCart } = useFirebase()
+    const { handleRecentlyViewed, getAverageRating, reviews, userData, currentUser, recentlyViewed, removeFromCart, addToCart } = useFirebase()
     const [defaultImg, setDefaultImg] = useState(0)
     const AltImgRef = useRef()
     const [rating, setRating] = useState([])
+    const [model, setModel] = useState(false)
 
     const handleCheckout = () => {
         state.item_quantity = Object.values(quantity)
@@ -29,7 +31,6 @@ function Product() {
         if (!reviews) return
         setRating([])
         let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
-        console.log(ratings);
         for (let i = 0; i < 5; i++) {
             setRating(pre => [...new Set([...pre, ratings.map((o) => o[i])])])
         }
@@ -51,10 +52,15 @@ function Product() {
                 onClick: () => addToCart(state.id)
             }
         }
+        return {
+            children: 'ADD TO CART',
+            onClick: () => setModel(!model)
+        }
     }
 
     return (
         <>
+            <Login model={model} setModel={setModel} />
             <div className='productContainer'>
                 <div className="left">
                     <div className="alt_images">
@@ -84,8 +90,13 @@ function Product() {
                 </div>
             </div>
             <hr style={{ width: '100%' }} />
-            <label className='recently_viewed' htmlFor="">Recently viewed</label>
-            <Tray height={300} data={recentlyViewed} from='110%' to='-50%' parent='productContainer_wrapper' />
+            {
+                currentUser &&
+                <>
+                    <label className='recently_viewed' htmlFor="">Recently viewed</label>
+                    <Tray height={300} data={recentlyViewed} from='110%' to='-50%' parent='productContainer_wrapper' />
+                </>
+            }
             <Reviews state={state} />
         </>
     )

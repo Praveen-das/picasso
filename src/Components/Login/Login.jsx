@@ -12,8 +12,6 @@ import './login.css'
 import Signup from './Signup';
 
 function Login({ model, setModel }) {
-    const [loginCredential, setLoginCredential] = useState()
-    const { userSignIn } = useFirebase()
     const [isToggled, setIsToggled] = useState(false)
 
     const box_style = {
@@ -21,8 +19,7 @@ function Login({ model, setModel }) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        bgcolor: 'background.paper',
-        boxShadow: 5,
+        // boxShadow: 5,
         zIndex: 100,
         height: 600,
         display: 'grid',
@@ -30,12 +27,6 @@ function Login({ model, setModel }) {
         gridTemplateColumns: '1fr 1fr',
         overflow: 'hidden'
     };
-
-    const handleLogin = async (e) => {
-        e.preventDefault()
-        await userSignIn(loginCredential)
-        setModel({ login: false, signup: false })
-    }
 
     const leftBoxStyle = {
         transform: `translateX(${isToggled ? '100%' : 0})`,
@@ -59,8 +50,8 @@ function Login({ model, setModel }) {
         <>
             <Modal
                 sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={model.login}
-                onClose={() => setModel({ login: false, signup: false })}
+                open={model}
+                onClose={() => setModel(!model)}
             >
                 <Box sx={box_style}>
                     <Grid style={leftBoxStyle} className='login_left' item width={{ xs: '300px', md: '500px' }} spacing={4}>
@@ -85,10 +76,10 @@ function Login({ model, setModel }) {
                     </Grid>
                     <Grid style={rightBoxStyle} className='login_right' item width={{ xs: '300px', md: '500px' }} spacing={4}>
                         <div className='signinStyle' style={signinStyle}>
-                            <Signin />
+                            <Signin setModel={setModel} />
                         </div>
                         <div className='signupStyle' style={signupStyle}>
-                            <Signup />
+                            <Signup setModel={setModel} />
                         </div>
                     </Grid>
                 </Box>

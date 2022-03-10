@@ -15,7 +15,7 @@ function Avatar({ displayName, sx, profilePicture }) {
 
         for (i = 0; i < 3; i += 1) {
             const value = (hash >> (i * 8)) & 0xff;
-            color += `00${value.toString(16)}`.substr(-2);
+            color += `00${value.toString(16)}`.substring(-2);
         }
         return color;
     }
@@ -25,6 +25,7 @@ function Avatar({ displayName, sx, profilePicture }) {
         if (profilePicture)
             return { src: profilePicture }
 
+        if (!displayName) return
         const name = displayName.toUpperCase()
         const haveLastName = name.trim().indexOf(' ') !== -1
 

@@ -3,15 +3,18 @@ import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
 import { useFirebase } from '../../Context/FirebaseContext'
 import './login.css'
+import { useHelper } from '../../Context/HelperContext'
 
-function Signin() {
+function Signin({ setModel }) {
     const [loginCredential, setLoginCredential] = useState()
     const { userSignIn } = useFirebase()
 
     const handleLogin = async (e) => {
         e.preventDefault()
         await userSignIn(loginCredential)
+        setModel(false)
     }
+
     return (
         <>
             <form action='submit' onSubmit={(e) => handleLogin(e)}>

@@ -9,6 +9,9 @@
     border: 1px solid #bbcded67;
     transition: 0.1s;
 }
+.swiper-wrapper{
+    transition: 0.5s 'width' !important;
+}
 .swiper-slide:last-child > *{
     width: 100%;
 }
@@ -67,9 +70,9 @@
     margin-top: auto;
 }
 .checkout__product--details{
-    display: flex;
-    flex-direction: column;
-    margin-left: 1rem;
+    display: grid;
+    grid-template-rows: 25% 25% 22% 28%;
+    margin-left: 2rem;
 }
 .checkout__product--name{
     text-transform: capitalize;
