@@ -4,42 +4,45 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import './search.css'
 
-function Search({ onTheFly, callback }) {
+function Search({ onKeyUp, onClick }) {
     const previousValue = useRef()
     const searchbox_wrapper = useRef()
     const searchbox = useRef()
     const [searchQuery, setSearchQuery] = useState()
     const [active, setActive] = useState(false)
+    let timer;
 
     document.onclick = (e) => {
         if (!active) return
         if (searchbox_wrapper.current && !searchbox_wrapper.current.contains(e.target)) {
-            if (onTheFly) {
-                if (!searchQuery)
-                    setActive(false)
-                    // callback('')
-                return
-            }
             setActive(false)
             setSearchQuery()
             searchbox.current.value = ''
         }
     }
 
-    const onEnterKeyPressed = (e) => {
+    const handleSearch = (e) => {
         if (e.code === 'Enter' || e.code === 'NumpadEnter')
-            return callback(searchQuery)
+            return onKeyUp(e)
+
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            onKeyUp(e);
+        }, 300)
     }
 
-    const handleSearch = (input) => {
-        callback(input)
-        setSearchQuery(input)
-    }
+    // useEffect(() => {
+    //     let timer = setTimeout(() => {
+    //         callback(searchQuery);
+    //     }, 300)
+    //     return () => clearTimeout(timer)
+    // }, [searchQuery])
+
     const handleClearSearch = () => {
         setActive(false)
         searchbox.current.value = ''
         setSearchQuery()
-        callback('')
+        onKeyUp('')
     }
 
     useEffect(() => {
@@ -57,29 +60,20 @@ function Search({ onTheFly, callback }) {
             return
         }
     }, [active, previousValue])
+
     return (
         <>
             <span className='searchbox_wrapper' ref={searchbox_wrapper}>
-                <input onKeyUp={(e) => onEnterKeyPressed(e)} onChange={(e) => {
-                    onTheFly ?
-                        handleSearch(e.target.value)
-                        :
-                        setSearchQuery(e.target.value)
-                }}
+                <input onKeyUp={(e) => handleSearch(e)}
                     ref={searchbox} autoComplete='off' id='searchbox' type="text" />
                 {
-                    onTheFly ?
-                        searchQuery ?
-                            <IconButton onClick={() => handleClearSearch()}>
-                                <ClearIcon id='search' sx={{ fontSize: 20 }} />
-                            </IconButton> :
-                            <IconButton onClick={() => searchQuery ? callback(searchQuery) : setActive(!active)}>
-                                <SearchIcon id='search' sx={{ fontSize: 20 }} />
-                            </IconButton> :
-                        <IconButton onClick={() => searchQuery ? callback(searchQuery) : setActive(!active)}>
+                    searchQuery ?
+                        <IconButton onClick={() => handleClearSearch()}>
+                            <ClearIcon id='search' sx={{ fontSize: 20 }} />
+                        </IconButton> :
+                        <IconButton onClick={() => searchQuery ? onClick(searchQuery) : setActive(!active)}>
                             <SearchIcon id='search' sx={{ fontSize: 20 }} />
                         </IconButton>
-
                 }
             </span>
         </>

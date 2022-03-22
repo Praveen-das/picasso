@@ -1,6 +1,5 @@
 import React from 'react'
 import Banner from '../Components/Banner/Banner'
-import Artists from '../Components/Artists/Artists'
 import Footer from '../Components/Footer/Footer'
 import Header from '../Components/Header/Header'
 import Categories from '../Components/Categories/Categories'
@@ -24,7 +23,6 @@ function HomePage() {
             <div className="category2">
                 <Tray more height={400} data={allProducts} from='-130%' to='10%' parent='category2' title='BEST SELLING' />
             </div>
-            <Artists />
             <Footer />
         </>
     )

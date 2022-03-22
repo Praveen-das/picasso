@@ -3,19 +3,21 @@ import { useFirebase } from '../../Context/FirebaseContext'
 import './shop.css'
 import Card from '../Card/Card'
 import Masonry from '@mui/lab/Masonry';
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 function Shop() {
     const { allProducts, searchFor } = useFirebase()
-    const { state } = useLocation()
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState()
     const { query, category } = useParams()
 
     useEffect(() => {
         if (query) {
+            console.time()
             searchFor(query).then(data => {
+                if (!data) return setProducts([])
                 setProducts(data);
             })
+            console.timeEnd()
             return
         }
         if (category) {
@@ -28,6 +30,21 @@ function Shop() {
         setProducts(allProducts)
     }, [query, category])
 
+    const sort = (array, method) => {
+        if (method === 'asc')
+            return array.sort((a, b) => {
+                if (a < b) return -1
+                if (a > b) return 1
+                return 0
+            })
+        if (method === 'des')
+            return array.sort((a, b) => {
+                if (a > b) return -1
+                if (a < b) return 1
+                return 0
+            })
+    }
+
     return (
         <>
             <div className="shop_products">
@@ -36,9 +53,9 @@ function Shop() {
                         <p className='shop_title--category' htmlFor="">{category}</p> :
                         query ?
                             products && products.length === 0 ?
-                                <p className='shop_title--result' htmlFor="">Found {products && products.length} Match</p> :
+                                <p className='shop_title--result' htmlFor="">Found 0 Match</p> :
                                 products && products.length === 1 ?
-                                    <p className='shop_title--result' htmlFor="">Found only {products && products.length} Match</p> :
+                                    <p className='shop_title--result' htmlFor="">Found only 1 Match</p> :
                                     <p className='shop_title--result' htmlFor="">Found {products && products.length} Matches</p> :
                             <p className='shop_title--shop' htmlFor="">New modern artworks by up & comming artists</p>
                 }

@@ -17,14 +17,17 @@ import Search from '../Search/Search'
 function Header() {
     const [toggleHeader, setToggleHeader] = useState(false)
     const [model, setModel] = useState(false)
+    const [query, setQuery] = useState()
     const scrollValue = useRef(0)
-
     const navigate = useNavigate()
 
     const { currentUser, userData, signout } = useFirebase()
 
-    const handleSearch = (query) => {
-        navigate(`/search/${query}`)
+    const handleSearch = (e) => {
+        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+            if(!e.target.value) return
+            navigate(`/search/${e.target.value}`)
+        }
     }
 
     return (
@@ -45,7 +48,7 @@ function Header() {
                     </Link>
                 </div>
                 <div className="right">
-                    <Search callback={(query) => handleSearch(query)} />
+                    <Search onKeyUp={(e) => handleSearch(e)} />
                     <Link to='/shop' className='shop' htmlFor="">SHOP</Link>
                     <Link to='/sell' className='marketplace' htmlFor="">SELL</Link>
                     {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">

@@ -1,5 +1,5 @@
 import { createContext, useContext, useLayoutEffect, useState } from "react";
-import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where, getDocs } from "firebase/firestore";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where, getDocs, limit } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
 import { db, auth } from "../Config/Firebase/Firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, reload, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
@@ -151,22 +151,21 @@ export default function FirebaseContext({ children }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const loadContent = async () => {
-            let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
-            await onSnapshot(queryRef, (snapshot) => {
-                const adminCollections = snapshot.docs.map(doc => {
-                    // return doc.data().uid === '123' && { ...doc.data(), id: doc.id }
-                    return { ...doc.data(), id: doc.id }
-                })
-                const allCollections = snapshot.docs.map(doc => {
-                    return { ...doc.data(), id: doc.id }
-                })
-                setAdminProducts(adminCollections.filter(o => o !== false))
-                setAllProducts(allCollections)
-                setLoading(false)
-            })
-        }
-        loadContent()
+        let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
+        onSnapshot(queryRef, (snapshot) => {
+            console.time()
+            let d
+            setAdminProducts(snapshot.docs.map(doc => {
+                // let d = doc.data().uid === '123' && { ...doc.data(), id: doc.id }
+                d = doc.data()
+                console.timeEnd()
+            }).filter(o => o !== false))
+            setAllProducts(snapshot.docs.map(doc => {
+                return { ...doc.data(), id: doc.id }
+            }))
+            setLoading(false)
+        })
+
     }, [])
 
     const [userData, setUserData] = useState()
@@ -219,6 +218,14 @@ export default function FirebaseContext({ children }) {
 
     }, [currentUser])
 
+    const filterSearch = (q, item1, item2) => {
+        const length = q.length
+        const item1Ref = item1.substring(0, length)
+        const item2Ref = item2.substring(0, length)
+        if ((q === item1Ref) || (q === item2Ref))
+            return true
+    }
+
     const handleSearch = (searchQuery) => {
         if (!searchQuery) return setSearchResult('')
         var result = adminProducts.filter((product) => {
@@ -229,14 +236,6 @@ export default function FirebaseContext({ children }) {
             return setSearchResult(result)
         if (result.length === 0)
             return setSearchResult('')
-    }
-
-    const filterSearch = (q, item1, item2) => {
-        const length = q.length
-        const item1Ref = item1.substring(0, length)
-        const item2Ref = item2.substring(0, length)
-        if ((q === item1Ref) || (q === item2Ref))
-            return true
     }
 
     const addProductToDatabase = async (data) => {

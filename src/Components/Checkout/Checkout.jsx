@@ -66,7 +66,7 @@ function Checkout() {
 
     const createInvoice = (data) => {
         const invoice = {
-            product: data,
+            products: data,
             seller_id: data.uid,
             user_id: userData.uid,
             paymentMethod: paymentMethod,
@@ -92,9 +92,6 @@ function Checkout() {
             )
         })
     }
-    useEffect(() => {
-        console.log(quantity);
-    }, [quantity])
 
     useEffect(() => {
         if (userData && userData.address)
@@ -115,7 +112,7 @@ function Checkout() {
                         </Grid>
                         <Grid item gap={2} xs={
                             userData &&
-                                userData.address ? userData.address.length > 1 ? 12 : 6 : 1
+                                userData.address ? userData.address.length > 1 ? 12 : 6.85 : 1
                         } display='flex'>
                             {
                                 userData && userData.address &&

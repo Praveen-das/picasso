@@ -13,7 +13,7 @@
 
 body{
     margin: 0;
-    padding: 0;
+    padding: 0 !important;
     overflow: visible !important;
     /* cursor:url(./Assets/Icons/brush.png),auto; */
     color: #33364d;

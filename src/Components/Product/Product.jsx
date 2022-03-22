@@ -30,12 +30,20 @@ function Product() {
     useEffect(() => {
         if (!reviews) return
         setRating([])
-        let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
+        // let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
+        let ratings = [
+            [0,1,0,0,0],
+            [0,1,0,0,0],
+            [0,1,0,0,0],
+            [0,0,0,1,0],
+            [0,0,0,0,1],
+            [0,0,0,0,1 ],
+        ]
         for (let i = 0; i < 5; i++) {
             setRating(pre => [...new Set([...pre, ratings.map((o) => o[i])])])
         }
     }, [reviews, state])
-
+    
     // useEffect(() => {
     //     // handleRecentlyViewed(state)
     // }, [state])
@@ -57,6 +65,8 @@ function Product() {
             onClick: () => setModel(!model)
         }
     }
+
+    console.log(getAverageRating(rating));
 
     return (
         <>

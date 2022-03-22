@@ -22,12 +22,12 @@
   gap: 10px;
 }
 .rows div {
-    position: relative;
+  position: relative;
   width: 100%;
   aspect-ratio: 1.8;
   max-height: 100px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.144);
+  box-shadow: 2px 2px 10px 0.5px var(--shadow);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -58,7 +58,7 @@
     content: 'ORDER PENDING';
 }
 .order-cancel::before {
-    content: 'ORDER CANCELL';
+    content: 'ORDER CANCELLED';
 }
 .order-return::before {
     content: 'ORDER RETURN';

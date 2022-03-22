@@ -1,4 +1,3 @@
-
 .checkout__address,
 .checkout__product--wrapper,
 .checkout__wrapper{
@@ -9,7 +8,9 @@
     border: 1px solid #bbcded67;
     transition: 0.1s;
 }
-
+.swiper{
+    width: 100% !important;
+}
 .swiper-slide:last-child > *{
     width: 100%;
 }
@@ -19,6 +20,7 @@
     padding-right: 6px !important;
 }
 .checkout__address{
+    width: 100%;
     height: 100px;
     display: flex;
     flex-direction: column;
