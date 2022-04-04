@@ -26,17 +26,11 @@ function Search({ onKeyUp, onClick }) {
             return onKeyUp(e)
 
         clearTimeout(timer)
+        
         timer = setTimeout(() => {
             onKeyUp(e);
         }, 300)
     }
-
-    // useEffect(() => {
-    //     let timer = setTimeout(() => {
-    //         callback(searchQuery);
-    //     }, 300)
-    //     return () => clearTimeout(timer)
-    // }, [searchQuery])
 
     const handleClearSearch = () => {
         setActive(false)

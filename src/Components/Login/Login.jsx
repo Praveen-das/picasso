@@ -1,10 +1,7 @@
 import {
-    Box, Grid, Typography, TextField, Button, Modal
-    , Checkbox
+    Box, Grid, Typography,  Modal
 } from '@mui/material'
 import React, { useState } from 'react'
-import InputField from '../TextField/InputField'
-import { useFirebase } from '../../Context/FirebaseContext'
 import RightIcon from '@mui/icons-material/ChevronRight';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import Signin from './Signin'

@@ -1,31 +1,23 @@
-import { useRef, useState, useLayoutEffect } from 'react'
+import { useState } from 'react'
 import './header.css'
-import logo from '../../Assets/Icons/logo.png'
-import { useEffect } from 'react/cjs/react.development'
 import { Link } from 'react-router-dom'
 import Login from '../Login/Login'
-import Signup from '../Signup/Signup'
 import { useFirebase } from '../../Context/FirebaseContext'
 import DropDown from '../DropDown/DropDown'
 import Avatar from '../Avatar/Avatar'
-import Badge from '@mui/material/Badge';
-import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
 import Search from '../Search/Search'
 
 
 function Header() {
-    const [toggleHeader, setToggleHeader] = useState(false)
     const [model, setModel] = useState(false)
-    const [query, setQuery] = useState()
-    const scrollValue = useRef(0)
     const navigate = useNavigate()
 
-    const { currentUser, userData, signout } = useFirebase()
+    const { currentUser, signout } = useFirebase()
 
     const handleSearch = (e) => {
         if (e.code === 'Enter' || e.code === 'NumpadEnter') {
-            if(!e.target.value) return
+            if (!e.target.value) return
             navigate(`/search/${e.target.value}`)
         }
     }
@@ -35,9 +27,6 @@ function Header() {
             <Login model={model} setModel={setModel} />
             <div
                 className="navbar"
-                style={{
-                    top: toggleHeader ? '-4rem' : '0'
-                }}
             >
                 <div className="left">
                     <Link to='/'>
@@ -55,7 +44,7 @@ function Header() {
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge> */}
                     {
-                        currentUser ?
+                        (currentUser) ?
                             <DropDown menu={
                                 <Avatar displayName={currentUser.displayName} profilePicture={currentUser.photoURL} />
                             }>

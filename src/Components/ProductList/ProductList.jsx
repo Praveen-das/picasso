@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Status from '../Status/Status';
 import './productList.css'
 import { useFirebase } from '../../Context/FirebaseContext'
@@ -8,8 +8,7 @@ import Alert from '../Alert/Alert'
 
 function ProductList({ product }) {
     const [dialog, setDialog] = useState('')
-    const { handleOrder, getDeliveryDate } = useFirebase()
-
+    const { handleOrder } = useFirebase()
 
     const handleOrders = () => {
         setDialog({

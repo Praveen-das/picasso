@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    box-shadow: 5px 5px 10px 5px var(--shadow);
     padding: 1em 2em;
 }
 .customer-profile{

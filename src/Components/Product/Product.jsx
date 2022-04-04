@@ -1,9 +1,5 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import './product.css'
 import { useFirebase } from '../../Context/FirebaseContext';
 import { useNavigate } from 'react-router-dom'
@@ -20,33 +16,35 @@ function Product() {
     const { handleRecentlyViewed, getAverageRating, reviews, userData, currentUser, recentlyViewed, removeFromCart, addToCart } = useFirebase()
     const [defaultImg, setDefaultImg] = useState(0)
     const AltImgRef = useRef()
-    const [rating, setRating] = useState([])
+    const [rating, setRating] = useState(null)
     const [model, setModel] = useState(false)
 
     const handleCheckout = () => {
         state.item_quantity = Object.values(quantity)
         navigate('/checkout', { state: state })
     }
+
     useEffect(() => {
         if (!reviews) return
-        setRating([])
-        // let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
-        let ratings = [
-            [0,1,0,0,0],
-            [0,1,0,0,0],
-            [0,1,0,0,0],
-            [0,0,0,1,0],
-            [0,0,0,0,1],
-            [0,0,0,0,1 ],
-        ]
-        for (let i = 0; i < 5; i++) {
-            setRating(pre => [...new Set([...pre, ratings.map((o) => o[i])])])
-        }
-    }, [reviews, state])
-    
-    // useEffect(() => {
-    //     // handleRecentlyViewed(state)
-    // }, [state])
+        let ratings = reviews.map((o) => o.product_id === state.id && o.rating).filter((o) => o !== false)
+
+        let sortedRating = ratings.reduce((acc, cur) => {
+            acc[cur] += 1
+            return acc
+        }, [0, 0, 0, 0, 0, 0])
+
+        setRating(getAverageRating(sortedRating));
+    }, [reviews, state, getAverageRating])
+
+    useEffect(() => {
+        if (recentlyViewed?.map(({ id }) => id).includes(state.id)) return
+
+        let timer = setTimeout(() => {
+            handleRecentlyViewed(state)
+        }, 300)
+
+        return (() => clearTimeout(timer))
+    }, [recentlyViewed, handleRecentlyViewed, state])
 
     const handleCartButton = () => {
         if (userData && userData.cart) {
@@ -66,8 +64,6 @@ function Product() {
         }
     }
 
-    console.log(getAverageRating(rating));
-
     return (
         <>
             <Login model={model} setModel={setModel} />
@@ -84,7 +80,7 @@ function Product() {
                 </div>
                 <div className="right">
                     <label id='productTitle'>{state.name}</label>
-                    <Rating name="read-only" value={rating && getAverageRating(rating)} readOnly />
+                    <Rating name="read-only" value={rating && rating} readOnly />
                     <label id='productType'>CANVAS</label>
                     <label id='productDimension'>Dimension : 12 x 30</label>
                     <label id='productDimension'>Available : {state.quantity}</label>

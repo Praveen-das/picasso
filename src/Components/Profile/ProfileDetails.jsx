@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Grid, Typography, Button, Divider } from '@mui/material'
 import TextField from '@mui/material/TextField';
 import Avatar from '../Avatar/Avatar';
@@ -9,7 +9,7 @@ import { IKUpload } from 'imagekitio-react'
 import './styles.css'
 
 function ProfileDetails() {
-    const { currentUser, updateUserCredentials, updateProfilePicture, verifyEmail, uploadImage } = useFirebase()
+    const { currentUser, updateUserCredentials, updateProfilePicture, verifyEmail } = useFirebase()
     const [userCredentials, setUserCredentials] = useState({
         displayName: currentUser.displayName ? currentUser.displayName : '',
         email: currentUser.email ? currentUser.email : '',
@@ -31,7 +31,6 @@ function ProfileDetails() {
             return
         }
         if (fullName.length === 2) {
-            console.log('sadasdasd');
             setFirstName(fullName[0])
             setLastName(fullName[1])
             return
@@ -46,13 +45,6 @@ function ProfileDetails() {
 
     const handleInput = () => {
         document.getElementById('IKUploader').click()
-    }
-
-    const handleProfilePicture = (e) => {
-        const file = e.target.files[0]
-        uploadImage([file]).then((downloadURL) => {
-            updateProfilePicture(...downloadURL)
-        })
     }
 
     return (

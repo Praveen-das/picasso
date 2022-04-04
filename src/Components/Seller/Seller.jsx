@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles';
 import { TabPanel } from './TabPannel';
 import Dashboard from '../SellerComponents/Dashboard/Dashboard';
 import Products from '../SellerComponents/Products/Products';
-import logo from '../../Assets/Icons/logo.png'
 import { Link } from 'react-router-dom'
 import './style.css'
 

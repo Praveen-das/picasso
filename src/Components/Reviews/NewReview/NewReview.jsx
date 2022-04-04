@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
-import ProductRating from '../ProductRating'
+import React, { useState } from 'react'
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal'
@@ -8,13 +7,12 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating'
 import './newReview.css'
 import { useFirebase } from '../../../Context/FirebaseContext'
-import ConfirmationDialog, { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog';
+import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog';
 
 function NewReview({ data, open, setOpen }) {
     const [review, setReview] = useState({ title: '', review: '' })
-    const [rating, setRating] = useState()
-    const ratingRef = useRef()
-    const { productRating, reviews, currentUser } = useFirebase()
+    const [rating, setRating] = useState(0)
+    const { AddProductReview, reviews, currentUser } = useFirebase()
 
     const box_style = {
         position: 'absolute',
@@ -35,27 +33,18 @@ function NewReview({ data, open, setOpen }) {
                 'Already reviewed',
                 'Press CONFIRM if you want to modify existing review.',
                 () => {
-                    productRating(review, rating, data.id)
+                    AddProductReview(review, rating, data.id)
                     setReview({ title: '', review: '' })
                     setOpen(!open)
                 }
             )
             return
         }
-        productRating(review, rating, data.id)
+        AddProductReview(review, rating, data.id)
         setReview({ title: '', review: '' })
         setOpen(!open)
     }
 
-    const handleRating = (value) => {
-        let ratingArray = [0, 0, 0, 0, 0]
-        ratingArray[value - 1] = 1
-        if (!value || ratingRef.current === value) {
-            ratingArray = [0, 0, 0, 0, 0]
-            ratingRef.current = ''
-        }
-        setRating(ratingArray)
-    }
     const handleClose = () => {
         setOpen(!open)
         setReview({ title: '', review: '' })
@@ -79,37 +68,36 @@ function NewReview({ data, open, setOpen }) {
                         <p>Tell us about your experience</p>
                         <img className='button_primary' src={data.image[data.defaultImage]} alt="" />
                         <label className='rate_this_product' htmlFor="">Rate this product</label>
-                        <form action="submit" onSubmit={(e) => handleSubmit(e)}>
-                            <Rating
-                                aria-required
-                                name="simple-controlled"
-                                // value={rating}
-                                onChange={(event, newValue) => handleRating(newValue)}
-                            />
-                            <TextField
-                                sx={{ mt: 1 }}
-                                required
-                                value={review && review.title}
-                                onChange={(e) => setReview(pre => ({ ...pre, title: e.target.value }))}
-                                fullWidth
-                                size='small'
-                                id="outlined-basic"
-                                label="Title"
-                                variant="outlined" />
-                            <TextField
-                                sx={{ mt: 1 }}
-                                required
-                                value={review && review.review}
-                                onChange={(e) => setReview(pre => ({ ...pre, review: e.target.value }))}
-                                fullWidth
-                                size='small'
-                                id="outlined-basic"
-                                rows={4}
-                                multiline
-                                label="Review"
-                                variant="outlined" />
-                            <button className='button_secondary newReview_button'>Submit your review</button>
-                        </form>
+                        <Rating
+                            aria-required
+                            name="simple-controlled"
+                            onChange={(event, newValue) => setRating(newValue)}
+                        />
+                        <TextField
+                            autoComplete='off'
+                            sx={{ mt: 1 }}
+                            required
+                            value={review && review.title}
+                            onChange={(e) => setReview(pre => ({ ...pre, title: e.target.value }))}
+                            fullWidth
+                            type='text'
+                            size='small'
+                            id="outlined-basic"
+                            label="Title"
+                            variant="outlined" />
+                        <TextField
+                            sx={{ mt: 1 }}
+                            required
+                            value={review && review.review}
+                            onChange={(e) => setReview(pre => ({ ...pre, review: e.target.value }))}
+                            fullWidth
+                            size='small'
+                            id="outlined-basic"
+                            rows={4}
+                            multiline
+                            label="Review"
+                            variant="outlined" />
+                        <button onClick={(e) => handleSubmit(e)} className='button_secondary newReview_button'>Submit your review</button>
                     </div>
                 </Box>
             </Modal>

@@ -1,10 +1,12 @@
-import { createContext, useContext, useLayoutEffect, useState } from "react";
-import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where, getDocs, limit } from "firebase/firestore";
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where, getDocs, limit, startAfter } from "firebase/firestore";
 import { useEffect } from "react/cjs/react.development";
 import { db, auth } from "../Config/Firebase/Firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, reload, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import ReAuthenticate from "../Components/ReAuthenticate/ReAuthenticate";
 import reactDom from "react-dom";
+import Fuse from 'fuse.js'
+import { SecurityUpdateWarningOutlined } from "@mui/icons-material";
 
 const Firebase = createContext()
 
@@ -12,14 +14,68 @@ export function useFirebase() {
     return useContext(Firebase)
 }
 
+function myQuery(lastVisibleElement, ...queryConstraints) {
+    const queryConstraintsStartAfter = queryConstraints.reduce((pre, data, index) => {
+        if (index === queryConstraints.length - 1)
+            pre.push(startAfter(lastVisibleElement))
+        pre.push(data)
+        return pre
+    }, [])
+
+    if (lastVisibleElement) {
+        return query(...queryConstraintsStartAfter)
+    }
+    return query(...queryConstraints)
+}
+
+
+
+const useSearch = (target) => {
+    const [searchQuery, setSearchQuery] = useState('')
+    const [result, setResult] = useState({ data: [], searching: true })
+    const { currentUser } = useFirebase()
+
+    useEffect(() => {
+        let q
+
+        if (!currentUser) return
+        if (target === 'adminProducts')
+            q = query(collection(db, "products"), where('uid', '==', currentUser.uid));
+        if (target === 'allProducts')
+            q = query(collection(db, "products"));
+
+        getDocs(q).then((data) => {
+            const searchResult = data.docs.reduce((p, c) => {
+                let newResult = c.data()
+                newResult.id = c.id
+                p.push(newResult)
+                return p
+            }, [])
+
+            // const fuse = new Fuse(searchResult, {
+            //     keys: [
+            //         { name: 'name', weight: 3 },
+            //         { name: 'tags', weight: 2 },
+            //         { name: 'id', weight: 1 }]
+            // })
+
+            // const fused = fuse.search(searchQuery)
+
+            // const fusedResult = fused.reduce((p, c) => {
+            //     p.push(c.item)
+            //     return p
+            // }, [])
+
+            // setResult({ data: fusedResult, searching: false })
+        })
+
+    }, [target, searchQuery, currentUser])
+
+    return { result, setSearchQuery, }
+}
+
 export default function FirebaseContext({ children }) {
-    const [adminProducts, setAdminProducts] = useState([])
-    const [allProducts, setAllProducts] = useState([])
-    const [searchResult, setSearchResult] = useState()
     const [currentUser, setCurrentUser] = useState()
-    const [profilePicture, setProfilePicture] = useState()
-    const [userOrders, setUserOrders] = useState([])
-    const [availableOrders, setAvailableOrders] = useState([])
 
     const signupUsingEmailPassword = async (credential) => {
         const email = credential.email
@@ -79,10 +135,7 @@ export default function FirebaseContext({ children }) {
     const reAuthenticateUser = (email, password) => {
         const user = auth.currentUser;
 
-        const credential = EmailAuthProvider.credential(
-            'praveendask97@gmail.com',
-            'asdasdasd'
-        );
+        const credential = EmailAuthProvider.credential(email, password);
 
         reauthenticateWithCredential(user, credential).then(() => {
             reactDom.unmountComponentAtNode(document.getElementById('portal'))
@@ -136,106 +189,85 @@ export default function FirebaseContext({ children }) {
         }
     }
 
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user)
-        }, (error) => console.log(error))
-        return unsubscribe
-    }, [currentUser])
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        let queryRef = query(collection(db, "products"), orderBy('date_modified', 'desc'))
-        onSnapshot(queryRef, (snapshot) => {
-            console.time()
-            let d
-            setAdminProducts(snapshot.docs.map(doc => {
-                // let d = doc.data().uid === '123' && { ...doc.data(), id: doc.id }
-                d = doc.data()
-                console.timeEnd()
-            }).filter(o => o !== false))
-            setAllProducts(snapshot.docs.map(doc => {
-                return { ...doc.data(), id: doc.id }
-            }))
             setLoading(false)
-        })
-
-    }, [])
-
-    const [userData, setUserData] = useState()
-    const [recentlyViewed, setRecentlyViewed] = useState()
-
-    useEffect(() => {
-        if (!currentUser) return
-        let docRef = doc(db, "userdata", currentUser.uid)
-        onSnapshot(docRef, (snapshot) => {
-            if (snapshot.exists()) {
-                setUserData(snapshot.data())
-                if (!snapshot.data().recently_viewed) return
-                setRecentlyViewed(snapshot.data().recently_viewed.reverse())
-            }
-        });
+        }, (error) => console.log(error))
+        return () => unsubscribe
     }, [currentUser])
 
-    const [reviews, setReviews] = useState([])
-    const [weightedRating, setWeightedRating] = useState()
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    useEffect(() => {
-        let queryRef = query(collection(db, "reviews"))
-        onSnapshot(queryRef, (snapshot) => {
-            setReviews(snapshot.docs.map((doc) => { return { ...doc.data(), review_id: doc.id } }));
-        });
-    }, [])
+    const useDatabase = (dataType) => {
+        const [page, setPage] = useState()
+        const [dataLoading, setDataLoading] = useState(true)
+        const [data, setData] = useState([])
+        let { currentUser } = useFirebase()
+        const snapshotRef = useRef()
+
+        const next = useCallback(() => {
+            setPage(snapshotRef.current.docs[snapshotRef.current.docs.length - 1])
+        }, [])
+
+        useEffect(() => {
+            // setDataLoading(true)
+            let queryRef
+            let docRef
+
+            try {
+                if (dataType === 'allProducts')
+                    queryRef = myQuery(page, collection(db, "products"), limit(2))
+                if (dataType === 'adminProducts')
+                    queryRef = myQuery(page, collection(db, "products"), where('uid', '==', currentUser.uid))
+                if (dataType === 'productReviews')
+                    queryRef = myQuery(page, collection(db, "reviews"), limit(2))
+                if (dataType === 'user_orders')
+                    queryRef = myQuery(page, collection(db, "orders"), where("user_id", "==", currentUser.uid), limit(2))
+                if (dataType === 'seller_orders')
+                    queryRef = myQuery(page, collection(db, "orders"), where("seller_id", "==", currentUser.uid), limit(2))
+                if (dataType === 'userdata')
+                    docRef = doc(db, "userdata", currentUser.uid)
+
+                if (queryRef)
+                    onSnapshot(queryRef, (snapshot) => {
+                        snapshotRef.current = snapshot
+                        let snapshotData = (snapshot.docs.reduce((pre, doc) => {
+                            let newData = doc.data()
+                            newData.id = doc.id
+                            pre.push(newData)
+                            return pre
+                        }, []))
+                        setData(snapshotData)
+                        setDataLoading(false)
+                    })
+                if (docRef) {
+                    onSnapshot(docRef, (snapshot) => {
+                        if (snapshot.exists()) {
+                            setData(snapshot.data())
+                            setDataLoading(false)
+                        }
+                    });
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+        }, [page, currentUser, dataType])
+
+        return useMemo(() => ({ data, next, dataLoading }), [data, next, dataLoading])
+    }
 
     const getAverageRating = (array) => {
-        let sum = array.map((o) => o.reduce((x, y) => x + y, 0))
-        let rating = (5 * sum[4] + 4 * sum[3] + 3 * sum[2] + 2 * sum[1] + 1 * sum[0]) / (sum[4] + sum[3] + sum[2] + sum[1] + sum[0])
+        if (array === null) return
+        let rating = (array[5] * 5 + array[4] * 4 + array[3] * 3 + array[2] * 2 + array[1] * 1) / (array[5] + array[4] + array[3] + array[2] + array[1])
+        if (Number.isNaN(rating)) return 0
         return rating
-    }
-
-    useEffect(() => {
-        if (!currentUser) return
-        const q1 = query(collection(db, "orders"), where("user_id", "==", currentUser.uid));
-        const q2 = query(collection(db, "orders"), where("seller_id", "==", 'asdasdasdasd'));
-
-        onSnapshot(q1, (snapshot) => {
-            setAvailableOrders(snapshot.docs.map((doc) => {
-                return { ...doc.data(), order_id: doc.id }
-            }))
-        })
-
-        onSnapshot(q2, (snapshot) => {
-            setUserOrders(snapshot.docs.map((doc) => {
-                return { ...doc.data(), order_id: doc.id }
-            }))
-        })
-
-    }, [currentUser])
-
-    const filterSearch = (q, item1, item2) => {
-        const length = q.length
-        const item1Ref = item1.substring(0, length)
-        const item2Ref = item2.substring(0, length)
-        if ((q === item1Ref) || (q === item2Ref))
-            return true
-    }
-
-    const handleSearch = (searchQuery) => {
-        if (!searchQuery) return setSearchResult('')
-        var result = adminProducts.filter((product) => {
-            return filterSearch(searchQuery, product.name, product.id)
-        })
-
-        if (result)
-            return setSearchResult(result)
-        if (result.length === 0)
-            return setSearchResult('')
     }
 
     const addProductToDatabase = async (data) => {
@@ -326,10 +358,10 @@ export default function FirebaseContext({ children }) {
             quantity: increment(-quantity)
         }).then(() => console.log('quantity updated'))
     }
-    const productRating = (review, rating, productId) => {
+    const AddProductReview = (review, rating, productId) => {
         let productIdKey = productId.substring(0, 10)
         let userIdKey = currentUser.uid.substring(0, 10)
-        let reviewId = productIdKey.concat(userIdKey)
+        let reviewId = productIdKey.concat(userIdKey) + 'zxczxczxc'
 
         const docRef = doc(db, 'reviews', reviewId)
         setDoc(docRef, {
@@ -347,14 +379,6 @@ export default function FirebaseContext({ children }) {
         setDoc(docRef, { recently_viewed: arrayUnion(product) }, { merge: true })
             .then(() => console.log('new product added'))
             .catch((err) => console.log(err))
-    }
-
-    const searchFor = async (searchQuery) => {
-        let queryRef = searchQuery.toLowerCase()
-        const q = query(collection(db, "products"), where('name', '>=', queryRef), where('name', '<=', queryRef + '\uf8ff'));
-        const data = await getDocs(q)
-        const results = data.docs.map(doc => doc.data())
-        return results
     }
 
     const getDeliveryDate = () => {
@@ -376,38 +400,28 @@ export default function FirebaseContext({ children }) {
         addProductToDatabase,
         removeProduct,
         updateProduct,
-        handleSearch,
-        searchResult,
         addUserAddress,
-        ///////////////admin cart order
-        adminProducts,
-        allProducts,
+        useSearch,
         addToWishlist,
         removeFromWishlist,
         addToCart,
         removeFromCart,
         makeOrder,
-        userOrders,
-        availableOrders,
+        AddProductReview,
+        ///////////////admin cart order
+        useDatabase,
         handleOrder,
         handleAvailableQuantity,
-        productRating,
-        weightedRating,
-        reviews,
         getAverageRating,
         handleRecentlyViewed,
-        recentlyViewed,
-        searchFor,
         getDeliveryDate,
         ///////////////authentication
         currentUser,
-        userData,
         signupUsingEmailPassword,
         userSignIn,
         signout,
         updateUserCredentials,
         updateProfilePicture,
-        profilePicture,
         verifyEmail,
         updateUserPassword
     }

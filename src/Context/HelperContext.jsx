@@ -1,10 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
-import { Button, createTheme } from '@mui/material';
+import { createTheme } from '@mui/material';
 import React, { createContext, useContext, useEffect } from 'react'
 import { IKContext } from 'imagekitio-react'
 import gsap from 'gsap';
 import scrollTrigger from 'gsap/ScrollTrigger';
-import styled from '@emotion/styled';
 
 export function useHelper() {
     return useContext(ContextProvider)

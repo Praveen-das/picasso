@@ -21,11 +21,11 @@ function AlertMessage({ dialog, setDialog }) {
     useEffect(() => {
         if (!dialog) return
         if (dialog.isConfirmed || dialog.type === 'success')
-            var timer = setTimeout (() => {
+            var timer = setTimeout(() => {
                 setDialog(pre => { return { ...pre, open: false } })
             }, 2000)
         return (() => clearTimeout(timer))
-    }, [dialog && dialog.isConfirmed])
+    }, [dialog, setDialog])
 
     if (!dialog) return ''
     return (

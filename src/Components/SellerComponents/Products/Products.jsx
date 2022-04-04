@@ -4,7 +4,6 @@ import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useFirebase } from '../../../Context/FirebaseContext'
 import './products.css'
 import AddProduct from '../AddProduct/AddProduct'
-import AlertMessage from '../../Alert/Alert'
 import Search from '../../Search/Search'
 import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 
@@ -12,18 +11,17 @@ function Products() {
     const [toggleEditButton, setToggleEditButton] = useState(false)
     const [toggleAddProduct, setToggleAddProduct] = useState({ open: false })
     const [dialog, setDialog] = useState('')
-    const [query, setQuery] = useState()
-    const { adminProducts, removeProduct, updateProduct, handleSearch, searchFor } = useFirebase()
-    const [searchResult, setSearchResult] = useState()
-    const [productId, setProductId] = useState()
+    const [data, setData] = useState([])
+    const { useSearch, removeProduct, updateProduct,useDatabase } = useFirebase()
 
+    const { getData, loading } = useDatabase()
+    const { result, setSearchQuery } = useSearch('adminProducts')
 
     useEffect(() => {
-        if (!query) return setSearchResult()
-        searchFor(query).then(data => {
-            setSearchResult(data)
+        getData('adminProducts').then(data => {
+            setData(data)
         })
-    }, [query])
+    }, [getData])
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -48,20 +46,11 @@ function Products() {
                 break;
             case 'delete':
                 setDialog(!dialog)
-                setProductId(product.id)
                 confirmAction(
                     'Remove Product',
                     'Press Confirm to Remove your product',
                     () => removeProduct(product.id)
                 )
-                // asd({ dialog: true })
-                // setDialog({
-                //     open: true,
-                //     confirmationMessage: 'Press CONFIRM to remove product',
-                //     successMessage: 'Product removed successfully',
-                //     onConfirmation: () => removeProduct(product.id),
-                //     type: 'confirmation'
-                // })
                 break;
             default:
                 break;
@@ -89,7 +78,7 @@ function Products() {
                 <div id="dashboard">
                     <div className="actionbar">
                         <span style={{ marginLeft: 'auto' }}>
-                            <Search onTheFly={true} callback={(q) => setQuery(q)} />
+                            <Search onKeyUp={(e) => setSearchQuery(e.target.value)} />
                         </span>
                         <div className="actions">
                             <button color='secondary' onClick={() => handleAction('add')} className='addProduct'>
@@ -115,25 +104,27 @@ function Products() {
                         </thead>
                         <tbody>
                             {
-                                (
-                                    searchResult && searchResult ? searchResult : adminProducts
-                                ).map((data, index) =>
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
-                                        <td>{data.name}</td>
-                                        <td>{data.id}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.discount}</td>
-                                        <td>{data.price}</td>
-                                        {toggleEditButton && <td>
-                                            <div className='action'>
-                                                <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
-                                                <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
-                                            </div>
-                                        </td>}
-                                    </tr>
-                                )
+                                ((!result.searching) || (!loading)) ?
+                                    (
+                                        result.data.length > 0 ? result.data : data
+                                    )?.map((data, index) =>
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
+                                            <td>{data.name}</td>
+                                            <td>{data.id}</td>
+                                            <td>{data.quantity}</td>
+                                            <td>{data.discount}</td>
+                                            <td>{data.price}</td>
+                                            {toggleEditButton && <td>
+                                                <div className='action'>
+                                                    <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
+                                                    <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
+                                                </div>
+                                            </td>}
+                                        </tr>
+                                    ) :
+                                    'Loading...'
                             }
                         </tbody>
                     </table>

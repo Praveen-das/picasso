@@ -1,21 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './addProduct.css'
-import { Grid, Typography, Backdrop, Button, ThemeProvider, CircularProgress, Modal, IconButton, Chip, Stack, Tooltip, TextField } from '@mui/material'
+import { Grid, Typography, Backdrop, Button, ThemeProvider, CircularProgress, Modal, Chip, Stack, Tooltip, TextField } from '@mui/material'
 import InputField from '../../TextField/InputField'
 import { useFirebase } from '../../../Context/FirebaseContext'
-import CloseIcon from '@mui/icons-material/Close';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { Box } from '@mui/system'
-import AlertMessage from '../../Alert/Alert'
 import { useHelper } from '../../../Context/HelperContext'
 import { IKUpload } from 'imagekitio-react'
-import DoneIcon from '@mui/icons-material/Done';
 
 function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
     const [loading, setLoading] = useState(false)
     const [product, setProduct] = useState()
     const [defaultImage, setDefaultImage] = useState(0)
-    const [dialog, setDialog] = useState('')
     const [imageURL, setImageURL] = useState([])
     const [imageTemplate, setImageTemplate] = useState([])
     const { theme } = useHelper()
@@ -29,7 +25,7 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
         setNewTag(toggleAddProduct.payload.tags)
     }, [toggleAddProduct])
 
-    const { addProductToDatabase } = useFirebase()
+    const { addProductToDatabase, currentUser } = useFirebase()
 
     const handleActions = async (action, e) => {
         switch (action) {
@@ -40,18 +36,13 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                 product.image = imageURL
                 product.defaultImage = defaultImage
                 product.tags = newTag
-                product.uid = 'asdasdasdasd'
+                product.uid = currentUser.uid
                 addProductToDatabase(product)
                 setNewTag([])
                 setProduct('')
                 setLoading(false)
                 setImageTemplate([])
                 setImageURL([])
-                setDialog({
-                    open: true,
-                    successMessage: 'Product added successfully',
-                    type: 'success'
-                })
                 break;
 
             case 'update':
@@ -61,11 +52,6 @@ function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
                 await toggleAddProduct.isConfirmed(product)
                 setToggleAddProduct({
                     open: false
-                })
-                setDialog({
-                    open: true,
-                    successMessage: 'Product updated successfully',
-                    type: 'success'
                 })
                 setProduct([])
                 setNewTag([])

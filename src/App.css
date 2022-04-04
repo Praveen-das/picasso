@@ -75,7 +75,6 @@ body{
 }
 .productsTray-wrapper .swiper,
 .Banner .swiper{
-    padding-top: 3rem !important;
     padding-bottom: 5px !important;
     height: 100%;
 }

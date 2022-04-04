@@ -1,15 +1,13 @@
 import { Button } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Review from './Review/Review'
 import NewReview from './NewReview/NewReview'
 import './reviews.css'
 import { useFirebase } from '../../Context/FirebaseContext'
-import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog'
 
 function Reviews({ state }) {
-  const { reviews, currentUser } = useFirebase()
+  const { reviews } = useFirebase()
   const [open, setOpen] = useState(false)
-  const [dialog, setDialog] = useState(false)
 
   return (
     <>

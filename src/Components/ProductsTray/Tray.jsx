@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Card from '../Card/Card'
 import './tray.css'
-import { useFirebase } from '../../Context/FirebaseContext'
-import Masonry from '@mui/lab/Masonry';
-import { IKContext, IKImage } from 'imagekitio-react';
 import { Link } from 'react-router-dom';
 
 import gsap from 'gsap'
@@ -38,8 +35,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
             }
         })
         tl.from(`.${parent} .card_wrapper`, { stagger: 0.1, duration: 0.1, opacity: 0 })
-    }, [])
-
+    }, [from, to, parent])
     return (
         <>
             <div className="productsTray-wrapper">

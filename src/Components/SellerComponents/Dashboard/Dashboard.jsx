@@ -1,33 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './dashboard.css'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { faClock, faEdit, faHandHoldingUsd, faTimesCircle, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faHandHoldingUsd, faTimesCircle, faUndo } from '@fortawesome/free-solid-svg-icons'
 import { useFirebase } from '../../../Context/FirebaseContext'
 import Status from '../../Status/Status'
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, IconButton, OutlinedInput } from '@mui/material'
+import { IconButton } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import AlertMessage from '../../Alert/Alert'
 
 function Dashboard() {
-    const { availableOrders, handleOrder } = useFirebase()
+    const { handleOrder, useDatabase } = useFirebase()
+    const { data } = useDatabase()
     const [toggleEdit, setToggleEdit] = useState()
     const [status, setStatus] = useState()
     const [dialog, setDialog] = useState('')
     const [orders, setOrders] = useState([])
 
     useEffect(() => {
-        if (!availableOrders) return
-        setOrders(availableOrders.sort((x, y) => {
+        setOrders(data.sort((x, y) => {
             return new Date(x.date_ordered.toDate()) - new Date(y.date_ordered.toDate())
         }).reverse());
-    }, [availableOrders])
+    }, [data])
 
     const options = ['Delivering', 'Delivered', 'Cancelled']
 
@@ -43,7 +38,7 @@ function Dashboard() {
         })
     }
 
-    if (!availableOrders) return
+    if (!orders) return ''
     return (
         <>
             <AlertMessage dialog={dialog} setDialog={setDialog} />

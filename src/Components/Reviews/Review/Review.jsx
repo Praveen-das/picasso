@@ -1,6 +1,6 @@
 import Rating from '@mui/material/Rating'
 import Avatar from '@mui/material/Avatar'
-import React, { useEffect } from 'react'
+import React from 'react'
 import './style.css'
 
 function Review({ data }) {
@@ -21,12 +21,11 @@ function Review({ data }) {
                         className='customer_rating'
                         name="read-only" 
                         size='small'
-                        value={data.rating.map((o, i) => o === 1 && i + 1).filter(o => o !== false)[0]} readOnly />
+                        value={data.rating} readOnly />
                     </div>
                 </div>
                 <label className='review_title' htmlFor="">{data.review.title}</label>
-                {/* <p className='review'>{data.review.review}</p> */}
-                <p className='review'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam omnis non iste eum fuga dignissimos in! Esse doloremque inventore at!</p>
+                <p className='review'>{data.review.review}</p>
             </div>
         </>
     )
