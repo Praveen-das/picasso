@@ -1,10 +1,12 @@
 import { Box, Button, Grid, Modal, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { useFirebase } from '../../Context/FirebaseContext';
+import { useStore } from '../../Context/Store';
+import { useAuth } from '../../Hooks/useAuth';
 
-function ChangePassword({ openModel, closeModel }) {
+function ChangePassword() {
     const [password, setPassword] = useState('')
-    const { updateUserPassword } = useFirebase()
+    const { updateUserPassword } = useAuth()
+    const toggled = useStore(state => state.model.toggle)
 
     const box_style = {
         position: 'absolute',
@@ -27,8 +29,8 @@ function ChangePassword({ openModel, closeModel }) {
         <>
             <Modal
                 sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={openModel}
-                onClose={() => closeModel(!openModel)}
+                open={toggled}
+                onClose={() => useStore.setState(state => state.model.toggle = false)}
             >
                 <Box sx={box_style}>
                     <Grid container rowSpacing={5}>

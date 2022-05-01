@@ -1,7 +1,8 @@
-#avatar{
+#avatar {
     position: relative;
 }
-.imageUpdateBtn{
+
+.imageUpdateBtn {
     border: none;
     border-radius: 50px;
     background: var(--brand);
@@ -14,6 +15,29 @@
     bottom: 0;
     cursor: pointer;
 }
-.imageUpdateBtn:hover{
+
+.imageUpdateBtn:hover {
     filter: brightness(1.1);
+}
+
+.MuiAccordion-root {
+    box-shadow: none !important;
+}
+
+.MuiAccordionSummary-gutters {
+    padding: 0 !important;
+}
+
+#accordion_style {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 25% auto auto;
+    align-items: center;
+}
+
+.accordionDetails_style {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 40px
 }

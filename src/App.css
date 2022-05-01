@@ -2,7 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
 
 :root{
-    --brand: #1a7ffd;
+    --brand: #356ff1;
+    /* --brand: #ff7300; */
+    /* --brand: #1a7ffd; */
     --shadow: #bbcded;
     --overlay : rgba(0, 0, 0, 0.932);
     /* --brand: #2994ff; */
@@ -99,4 +101,5 @@ a:hover{
 ::-webkit-scrollbar-thumb {
     background: var(--brand); 
 }
+
 

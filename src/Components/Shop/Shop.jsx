@@ -1,33 +1,46 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useFirebase } from '../../Context/FirebaseContext'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
-import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { useParams } from 'react-router-dom'
-
-const skeleton = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+import { useStore } from '../../Context/Store';
+import { useHelper } from '../../Hooks/useHelper';
 
 function Shop() {
-    const { useSearch, useDatabase } = useFirebase()
-    const { data, dataLoading, next } = useDatabase('allProducts')
-    const [products, setProducts] = useState([])
-    const { query, category } = useParams()
-    const { search, searching } = useSearch('allProducts')
+    const getDataFromDB = useStore(state => state.getDataFromDB)
+    const { skeleton } = useHelper()
+
+    const [docs, setDocs] = useState({})
+    const [next, setNext] = useState()
 
     useEffect(() => {
-        if (query) {
-            search('allProducts', query).then(res => {
-                if (!res) return setProducts([])
-                setProducts(res);
-            })
-            return
-        }
-        if (category) {
-            return
-        }
-        setProducts(data && data)
-    }, [query, category, data, search])
+        getDataFromDB('allProducts', next).then((res) => {
+            setDocs(pre => (
+                JSON.stringify(pre) !== '{}' ?
+                    {
+                        data: [...pre.data, ...res.data],
+                        lastElement: res.lastElement
+                    } : res
+            ));
+        })
+    }, [next, getDataFromDB])
+
+    // const { query, category } = useParams()
+    // const { search, searching } = useSearch('allProducts')
+
+    // useEffect(() => {
+    //     if (query) {
+    //         search('allProducts', query).then(res => {
+    //             if (!res) return setProducts([])
+    //             setProducts(res);
+    //         }) 
+    //         return
+    //     }
+    //     if (category) {
+    //         return
+    //     }
+    //     setProducts(data && data)
+    // }, [query, category, data, search])
 
     // const sort = (array, method) => {
     //     if (method === 'asc')
@@ -50,7 +63,6 @@ function Shop() {
 
     return useMemo(() =>
         <div className="shop_products">
-            {console.log('rendered')}
             <div className="zxc">
                 <span />
                 <span />
@@ -79,30 +91,34 @@ function Shop() {
                 <hr /> */}
             <div className="images_tray">
                 {
-                    !dataLoading ? products?.map((product, index) =>
+                    docs.data?.map((product, index) =>
                         // <div className='image_wrapper'>
                         //     <img key={index} src={product.image[0]} alt="" />
                         // </div>
                         <div className='image_wrapper' key={index} style={{ marginBottom: '5rem' }}>
                             {
-                                products.length === index + 1 ?
+                                docs.data.length === index + 1 ?
                                     <Card product={product} lastItem /> :
                                     <Card product={product} />
                             }
                         </div>
-                    ) :
-                        skeleton.map((o, index) => {
-                            const random = getRandom()
-                            return <Box key={index} height={250} width={`calc(100% / ${random}) `} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
-                                <Skeleton />
-                                <Skeleton sx={{ my: '4px' }} width="60%" />
-                                <Skeleton variant='rectangular' height={'250px'} />
-                            </Box>
-                        })
+                    )
+                    // :
+                    //     skeleton.map((o, index) => {
+                    //         const random = getRandom()
+                    //         return <Box key={index} height={250} width={`calc(100% / ${random}) `} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
+                    //             <Skeleton />
+                    //             <Skeleton sx={{ my: '4px' }} width="60%" />
+                    //             <Skeleton variant='rectangular' height={'250px'} />
+                    //         </Box>
+                    //     })
                 }
             </div>
-            <button onClick={() => next()}>next</button>
-        </div>, [products, category, query, searching, dataLoading, next, getRandom]
+            <button onClick={() => {
+                docs.lastElement &&
+                    setNext(docs.lastElement)
+            }}>next</button>
+        </div>, [docs]
     )
 }
 

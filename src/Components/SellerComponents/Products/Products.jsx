@@ -6,22 +6,28 @@ import './products.css'
 import AddProduct from '../AddProduct/AddProduct'
 import Search from '../../Search/Search'
 import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
+import { useDatabase } from '../../../Hooks/useDatabase'
+import { useStore } from '../../../Context/Store'
 
 function Products() {
+    const { useSearch } = useFirebase()
+    const { removeProduct, updateProduct } = useDatabase()
+    const getDataFromDB = useStore(state => state.getDataFromDB)
+    const uid = useStore(state => state.auth.user?.uid)
+    const loading = false
+
     const [toggleEditButton, setToggleEditButton] = useState(false)
     const [toggleAddProduct, setToggleAddProduct] = useState({ open: false })
     const [dialog, setDialog] = useState('')
     const [data, setData] = useState([])
-    const { useSearch, removeProduct, updateProduct,useDatabase } = useFirebase()
 
-    const { getData, loading } = useDatabase()
     const { result, setSearchQuery } = useSearch('adminProducts')
 
     useEffect(() => {
-        getData('adminProducts').then(data => {
-            setData(data)
+        getDataFromDB('adminProducts', undefined, uid).then(res => {
+            setData(res.data)
         })
-    }, [getData])
+    }, [getDataFromDB,uid])
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -104,27 +110,28 @@ function Products() {
                         </thead>
                         <tbody>
                             {
-                                ((!result.searching) || (!loading)) ?
-                                    (
-                                        result.data.length > 0 ? result.data : data
-                                    )?.map((data, index) =>
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
-                                            <td>{data.name}</td>
-                                            <td>{data.id}</td>
-                                            <td>{data.quantity}</td>
-                                            <td>{data.discount}</td>
-                                            <td>{data.price}</td>
-                                            {toggleEditButton && <td>
-                                                <div className='action'>
-                                                    <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
-                                                    <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
-                                                </div>
-                                            </td>}
-                                        </tr>
-                                    ) :
-                                    'Loading...'
+                                // ((!result.searching) || (!loading)) ?
+                                //     (result.data.length > 0 ? result.data : data
+                                //     )
+                                data?.map((data, index) =>
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
+                                        <td>{data.name}</td>
+                                        <td>{data.id}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.discount}</td>
+                                        <td>{data.price}</td>
+                                        {toggleEditButton && <td>
+                                            <div className='action'>
+                                                <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
+                                                <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
+                                            </div>
+                                        </td>}
+                                    </tr>
+                                ) 
+                            //     :
+                            // 'Loading...'
                             }
                         </tbody>
                     </table>

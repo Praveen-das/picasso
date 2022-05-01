@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import Review from './Review/Review'
 import NewReview from './NewReview/NewReview'
 import './reviews.css'
@@ -31,4 +31,4 @@ function Reviews({ state }) {
   )
 }
 
-export default Reviews
+export default memo(Reviews)

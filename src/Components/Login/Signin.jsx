@@ -1,17 +1,17 @@
 import { Grid, Typography, TextField, Button, Checkbox } from '@mui/material'
 import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
-import { useFirebase } from '../../Context/FirebaseContext'
 import './login.css'
+import { useStore } from '../../Context/Store'
 
 function Signin({ setModel }) {
     const [loginCredential, setLoginCredential] = useState()
-    const { userSignIn } = useFirebase()
+    const signin = useStore(state => state.auth?.signin)
 
     const handleLogin = async (e) => {
         e.preventDefault()
-        await userSignIn(loginCredential)
-        setModel(false)
+        await signin(loginCredential)
+        await setModel(false)
     }
 
     return (

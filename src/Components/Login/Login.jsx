@@ -1,7 +1,7 @@
 import {
     Box, Grid, Typography,  Modal
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import RightIcon from '@mui/icons-material/ChevronRight';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import Signin from './Signin'
@@ -24,7 +24,7 @@ function Login({ model, setModel }) {
         gridTemplateColumns: '1fr 1fr',
         overflow: 'hidden'
     };
-
+    // grid spacing 4 removed 54 74
     const leftBoxStyle = {
         transform: `translateX(${isToggled ? '100%' : 0})`,
         boxShadow: `${isToggled ? 'none' : '5px 0 20px var(--shadow)'}`,
@@ -51,7 +51,7 @@ function Login({ model, setModel }) {
                 onClose={() => setModel(!model)}
             >
                 <Box sx={box_style}>
-                    <Grid style={leftBoxStyle} className='login_left' item width={{ xs: '300px', md: '500px' }} spacing={4}>
+                    <Grid style={leftBoxStyle} className='login_left' item width={{ xs: '300px', md: '500px' }}>
                         <div style={{ opacity: isToggled ? 0 : 1 }} className='signup_hero'>
                             <Grid item xs={12}>
                                 <Typography variant='h5' fontSize='2rem'>Hello Friend !</Typography>
@@ -71,7 +71,7 @@ function Login({ model, setModel }) {
                             <button onClick={() => setIsToggled(!isToggled)} className='signup_btn' sx={{ background: 'white' }} type='submit' variant='contained'><LeftIcon sx={{ width: '1.3em', height: '1.3em' }} /></button>
                         </div>
                     </Grid>
-                    <Grid style={rightBoxStyle} className='login_right' item width={{ xs: '300px', md: '500px' }} spacing={4}>
+                    <Grid style={rightBoxStyle} className='login_right' item width={{ xs: '300px', md: '500px' }}>
                         <div className='signinStyle' style={signinStyle}>
                             <Signin setModel={setModel} />
                         </div>
@@ -85,4 +85,4 @@ function Login({ model, setModel }) {
     )
 }
 
-export default Login
+export default memo(Login)

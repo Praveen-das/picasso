@@ -67,4 +67,4 @@ function Tray({ height, data, title, parent, from, to, more }) {
     )
 }
 
-export default Tray
+export default React.memo(Tray)

@@ -6,10 +6,13 @@ import ProfilePage from './Pages/ProfilePage';
 import SellerPage from './Pages/SellerPage';
 import ProductPage from './Pages/ProductPage';
 import CheckoutPage from './Pages/CheckoutPage';
+import Alert from './Components/Alert/Alert'
 
 function App() {
+  
   return (
     <>
+      <Alert />
       <Router>
         <Routes>
           <Route path='/' element={<HomePage />} />

@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import './checkout.css'
-import { useFirebase } from '../../Context/FirebaseContext';
+import { useDatabase } from '../../Hooks/useDatabase';
 import { useLocation } from 'react-router-dom';
 import QuantityInput from '../QuantityInput/QuantityInput';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -17,11 +17,19 @@ import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
 import EmptyCart from './EmptyCart';
+import { useStore } from '../../Context/Store';
 
 function Checkout() {
-    const { userData, allProducts, makeOrder, handleAvailableQuantity, removeFromCart } = useFirebase()
-    const [defaultAddress, setDefaultAddress] = useState(0)
+    const userData = useStore(state => state.auth.userData)
+    const getDataFromDB = useStore(state => state.getDataFromDB)
+    const { allProducts, makeOrder, handleAvailableQuantity, removeFromCart } = useDatabase()
     let { state } = useLocation()
+
+    useEffect(() => {
+        getDataFromDB('allProducts', undefined)
+    }, [])
+
+    const [defaultAddress, setDefaultAddress] = useState(0)
     const [quantity, setQuantity] = useState([])
     const [cart, setCart] = useState([])
     const [open, setOpen] = useState(false)

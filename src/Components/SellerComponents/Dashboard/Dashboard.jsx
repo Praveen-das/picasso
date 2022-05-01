@@ -9,33 +9,45 @@ import { IconButton } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import AlertMessage from '../../Alert/Alert'
+import { useDatabase } from '../../../Hooks/useDatabase'
+import { useStore } from '../../../Context/Store'
 
 function Dashboard() {
-    const { handleOrder, useDatabase } = useFirebase()
-    const { data } = useDatabase()
+    const uid = useStore(state => state.auth.user?.uid)
+    const getDataFromDB = useStore(state => state.getDataFromDB)
     const [toggleEdit, setToggleEdit] = useState()
+
+    const [data, setData] = useState([])
     const [status, setStatus] = useState()
     const [dialog, setDialog] = useState('')
     const [orders, setOrders] = useState([])
 
     useEffect(() => {
-        setOrders(data.sort((x, y) => {
-            return new Date(x.date_ordered.toDate()) - new Date(y.date_ordered.toDate())
-        }).reverse());
-    }, [data])
+        getDataFromDB('seller_orders', undefined, uid).then(res => {
+            console.log(res);
+            setOrders(res?.data)
+        })
+    }, [getDataFromDB, uid])
+
+
+    // useEffect(() => {
+    //     setOrders(data?.sort((x, y) => {
+    //         return new Date(x.date_ordered.toDate()) - new Date(y.date_ordered.toDate())
+    //     }).reverse());
+    // }, [data])
 
     const options = ['Delivering', 'Delivered', 'Cancelled']
 
     const handleOrders = (orderId) => {
-        setDialog({
-            open: true,
-            confirmationMessage: 'Press CONFIRM to apply changes',
-            successMessage: 'Order updated successfully',
-            onConfirmation: () => handleOrder(status, orderId).then(() => {
-                setToggleEdit(null)
-            }),
-            type: 'confirmation'
-        })
+        // setDialog({
+        //     open: true,
+        //     confirmationMessage: 'Press CONFIRM to apply changes',
+        //     successMessage: 'Order updated successfully',
+        //     onConfirmation: () => handleOrder(status, orderId).then(() => {
+        //         setToggleEdit(null)
+        //     }),
+        //     type: 'confirmation'
+        // })
     }
 
     if (!orders) return ''
@@ -87,8 +99,8 @@ function Dashboard() {
                                         <td>{index + 1}</td>
                                         <td>{product.order_id}</td>
                                         <td>{
-                                            product.date_ordered.toDate().toDateString() + ' ' +
-                                            product.date_ordered.toDate().toLocaleTimeString()
+                                            product?.date_ordered.toDate().toDateString() + ' ' +
+                                            product?.date_ordered.toDate().toLocaleTimeString()
                                         }</td>
                                         <td>{product.paymentMethod}</td>
                                         <td>45645</td>

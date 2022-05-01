@@ -17,25 +17,25 @@ export default function HelperContext({ children }) {
     const authenticationEndpoint = 'http://localhost:3001/auth'
 
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
-
+    
     const theme = createTheme({
         typography: {
             fontFamily: 'Montserrat',
-            h6: {
-                fontSize: 14,
-                fontWeight: 600,
-            },
-            h5: {
-                fontWeight: 700,
-            },
-            h4: {
-                fontWeight: 600,
-            },
-            subtitle2: {
-                fontSize: 13,
-                fontWeight: 600,
-                color: 'hsl(0, 0%, 30%)'
-            }
+            // h6: {
+            //     fontSize: 14,
+            //     fontWeight: 600,
+            // },
+            // h5: {
+            //     fontWeight: 700,
+            // },
+            // h4: {
+            //     fontWeight: 600,
+            // },
+            // subtitle2: {
+            //     fontSize: 13,
+            //     fontWeight: 600,
+            //     color: 'hsl(0, 0%, 30%)'
+            // }
         },
         palette: {
             primary: {

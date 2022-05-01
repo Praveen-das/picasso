@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import './banner.css'
 import gsap from 'gsap'
 import { Link } from 'react-router-dom'
@@ -8,9 +8,9 @@ import arrowLeft from '../../Assets/Icons/arrowLeft.svg'
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
+import { useAuth } from '../../Context/Store'
 
-function Banner(docs) {
-
+function Banner({ data }) {
     useEffect(() => {
         gsap.timeline({ defaults: { duration: 0.5 } })
             .from('.Banner-right,.direction', {
@@ -41,14 +41,13 @@ function Banner(docs) {
             }, -0.2)
     }, [])
 
-    return useMemo(() =>
+    return (
         <>
             <div className="Banner" id='banner'>
                 <div className="Banner-left">
                     <label className='brandName letterSpacing' htmlFor="">ARTWORLD</label>
                     <label className='p1' htmlFor="">Every Purchase Will Be Made With Pleasure</label>
                     <Link to='/shop' className='button_primary'>SHOP NOW</Link>
-                    <button onClick={() => docs.next()}>next</button>
                 </div>
                 <div className="Banner-right">
                     <Swiper
@@ -59,7 +58,7 @@ function Banner(docs) {
                         className="mySwiper"
                     >
                         {
-                            docs.data?.map((product, index) =>
+                            data?.map((product, index) =>
                                 <SwiperSlide key={index}>
                                     <div className="banner_card--wrapper">
                                         <Card product={product} />
@@ -77,7 +76,7 @@ function Banner(docs) {
                     <img src={arrowLeft} alt="" />
                 </span>
             </div>
-        </>, [docs]
+        </>
     )
 }
 

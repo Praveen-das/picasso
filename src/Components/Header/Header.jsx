@@ -2,18 +2,17 @@ import { useState } from 'react'
 import './header.css'
 import { Link } from 'react-router-dom'
 import Login from '../Login/Login'
-import { useFirebase } from '../../Context/FirebaseContext'
 import DropDown from '../DropDown/DropDown'
 import Avatar from '../Avatar/Avatar'
 import { useNavigate } from 'react-router-dom';
 import Search from '../Search/Search'
-
+import { useAuth } from '../../Hooks/useAuth'
 
 function Header() {
+    const signout = useAuth()
+    const user = useAuth(state => state.auth?.user)
     const [model, setModel] = useState(false)
     const navigate = useNavigate()
-
-    const { currentUser, signout } = useFirebase()
 
     const handleSearch = (e) => {
         if (e.code === 'Enter' || e.code === 'NumpadEnter') {
@@ -44,9 +43,9 @@ function Header() {
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge> */}
                     {
-                        (currentUser) ?
+                        user ?
                             <DropDown menu={
-                                <Avatar displayName={currentUser.displayName} profilePicture={currentUser.photoURL} />
+                                <Avatar displayName={user.displayName} profilePicture={user.photoURL} />
                             }>
                                 <Link to='/my-profile'>My Profile</Link>
                                 <div onClick={() => signout()}>Logout</div>

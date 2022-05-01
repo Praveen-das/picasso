@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import favourite_normal from '../../Assets/Icons/favourite-normal.svg'
 import favourite_active from '../../Assets/Icons/favourite-active.svg'
 import './card.css'
-import { useFirebase } from '../../Context/FirebaseContext'
 import { Link } from 'react-router-dom'
+import { useStore } from '../../Context/Store'
+import { useDatabase } from '../../Hooks/useDatabase'
 
 function Card({ product, lastItem }) {
     const [imageProperties, setImageProperties] = useState()
-    const { addToWishlist, removeFromWishlist, userData } = useFirebase()
+    const userData = useStore(state => state.userData)
+
+    const { addToWishlist, removeFromWishlist } = useDatabase()
 
     const getImageProperties = (e) => {
         let width = e.target.naturalWidth
@@ -37,8 +40,7 @@ function Card({ product, lastItem }) {
             <div className="product_card--actions">
                 <div className="favourite-wrapper">
                     {
-                        userData && userData.wishlist &&
-                            userData.wishlist.filter((o) => o === product.id)[0] ?
+                        userData?.wishlist?.filter((o) => o === product.id)[0] ?
                             <img
                                 onClick={(e) => {
                                     e.preventDefault()

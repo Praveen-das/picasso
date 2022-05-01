@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import './product.css'
 import { useFirebase } from '../../Context/FirebaseContext';
@@ -13,11 +13,12 @@ function Product() {
     const { state } = useLocation()
     const [quantity, setQuantity] = useState([1])
     let navigate = useNavigate()
-    const { handleRecentlyViewed, getAverageRating, reviews, userData, currentUser, recentlyViewed, removeFromCart, addToCart } = useFirebase()
+    const { handleRecentlyViewed, getAverageRating, reviews, useDatabase, currentUser, recentlyViewed, removeFromCart, addToCart } = useFirebase()
     const [defaultImg, setDefaultImg] = useState(0)
     const AltImgRef = useRef()
     const [rating, setRating] = useState(null)
     const [model, setModel] = useState(false)
+    const { data } = useDatabase('userdata')
 
     const handleCheckout = () => {
         state.item_quantity = Object.values(quantity)
@@ -47,21 +48,21 @@ function Product() {
     }, [recentlyViewed, handleRecentlyViewed, state])
 
     const handleCartButton = () => {
-        if (userData && userData.cart) {
-            if (userData.cart.filter((o) => o === state.id)[0])
-                return {
-                    children: 'REMOVE FROM CART',
-                    onClick: () => removeFromCart(state.id)
-                }
+        if (!data) return
+        if (data.cart && data.cart.filter((o) => o === state.id)[0])
             return {
-                children: 'ADD TO CART',
-                onClick: () => addToCart(state.id)
+                children: 'REMOVE FROM CART',
+                onClick: () => removeFromCart(state.id)
             }
-        }
         return {
             children: 'ADD TO CART',
-            onClick: () => setModel(!model)
+            onClick: () => addToCart(state.id)
         }
+        // }
+        // return {
+        //     children: 'ADD TO CART',
+        //     onClick: () => setModel(!model)
+        // }
     }
 
     return (

@@ -2,15 +2,18 @@ import {
     Box, Grid, Typography, TextField, Button, Modal
     , Checkbox
 } from '@mui/material'
-import React, { useState } from 'react'
-import InputField from '../TextField/InputField'
-// import { useFirebase } from '../../Context/FirebaseContext'
-// import './login.css'
+
+import React, { useRef, useState } from 'react'
+import './style.css'
+import { handleExceptions } from '../../Hooks/useExceptionHandler'
+import AlertBox from '../MUIComponents/AlertBox/AlertBox'
+import CButton from '../MUIComponents/Button'
 
 function ReAuthenticate({ reAuthenticateUser }) {
-    const [loginCredential, setLoginCredential] = useState()
-    // const { userSignIn } = useFirebase()
-    // const [model, setModel] = useState(true)
+    const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const email = useRef()
+    const password = useRef()
 
     const box_style = {
         position: 'absolute',
@@ -24,9 +27,21 @@ function ReAuthenticate({ reAuthenticateUser }) {
         zIndex: 100
     };
 
-    const handleReAuthentication = (e) => {
-        e.preventDefault()
-        reAuthenticateUser(loginCredential)
+    const handleReAuthentication = () => {
+        setError(false)
+        setLoading(true)
+        reAuthenticateUser(email.current?.value, password.current?.value)
+            .then(() => setLoading(false))
+            .catch(error => {
+                setLoading(false)
+                setError(handleExceptions(error))
+            })
+    }
+
+    const textFieldProps = {
+        variant: 'standard',
+        fullWidth: true,
+        inputProps: { autoComplete: 'new-password' }
     }
 
     return (
@@ -36,32 +51,53 @@ function ReAuthenticate({ reAuthenticateUser }) {
                 open={true}
             >
                 <Box sx={box_style}>
-                    <form action="submit" onSubmit={(e) => handleReAuthentication(e)}>
-                        <Grid container minWidth={300} spacing={1.5}>
-                            <Grid item xs={12} mb={2} textAlign='center'>
-                                <Typography sx={{ color: 'var(--brand)', fontSize: 20 }} variant='h5'>Season expired, please login again.</Typography>
-                            </Grid>
-                            <InputField type='email' size='large' xs={12} md={12} label='Email' onChange={(e) => setLoginCredential(pre => { return { ...pre, email: e.target.value } })} />
-                            <Grid item xs={12}>
-                                <TextField hidden size='large' variant='standard' inputProps={{ autoComplete: 'new-password' }} label='Password' type='password' fullWidth onChange={(e) => setLoginCredential(pre => { return { ...pre, password: e.target.value } })} />
-                            </Grid>
-                            <Grid item xs={12} display='flex' justifyContent='space-between' alignItems='center'>
-                                <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>
-                                    <Checkbox size='small' sx={{
-                                        paddingLeft: 0,
-                                        '&.Mui-checked': {
-                                            color: 'var(--brand)',
-                                        },
-                                        transform: 'translateY(-1px)'
-                                    }} />
-                                    Remember me</Typography>
-                                <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>Forgot password ?</Typography>
-                            </Grid>
-                            <Grid item xs={12} mt={2}>
-                                <Button type='submit' size='large' sx={{ background: 'var(--brandGradient)', borderRadius: '50px', fontSize: '12px' }} variant='contained' fullWidth>Log in</Button>
-                            </Grid>
+                    <Grid container minWidth={300} spacing={1.5}>
+                        <Grid item xs={12} mb={2} textAlign='center'>
+                            <Typography sx={{ color: 'var(--brand)', fontSize: 20 }} variant='h5'>Season expired, please login again.</Typography>
                         </Grid>
-                    </form>
+                        <Grid item xs={12}>
+                            <div className='reauth_warning'>
+                                {
+                                    (error?.email || error?.password || error?.textField) && <AlertBox message={error?.email || error?.password || error?.textField} />
+                                }
+                            </div>
+                        </Grid>
+
+                        <Grid item xs={12} mb={2}>
+                            <TextField
+                                inputRef={email}
+                                error={(error?.textField || error?.email) !== undefined}
+                                label='Email'
+                                // type='email'
+                                {...textFieldProps}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                inputRef={password}
+                                error={(error?.textField || error?.password) !== undefined}
+                                label='Password'
+                                type='password'
+                                {...textFieldProps}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} display='flex' justifyContent='space-between' alignItems='center'>
+                            <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>
+                                <Checkbox size='small' sx={{
+                                    paddingLeft: 0,
+                                    '&.Mui-checked': {
+                                        color: 'var(--brand)',
+                                    },
+                                    transform: 'translateY(-1px)'
+                                }} />
+                                Remember me</Typography>
+                            <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>Forgot password ?</Typography>
+                        </Grid>
+                        <Grid item xs={12} mt={2}>
+                            <CButton loading={loading} onClick={() => handleReAuthentication()} sx={{ background: 'var(--brandGradient)', borderRadius: '50px', fontSize: '12px' }} fullWidth>Log in</CButton>
+                        </Grid>
+                    </Grid>
                 </Box>
             </Modal
             >
