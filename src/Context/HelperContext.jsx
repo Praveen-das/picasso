@@ -19,6 +19,10 @@ export default function HelperContext({ children }) {
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
 
     const theme = createTheme({
+        root: {
+            marginTop: 0,
+            height: 0,
+        },
         typography: {
             fontFamily: 'Montserrat',
             // h6: {
