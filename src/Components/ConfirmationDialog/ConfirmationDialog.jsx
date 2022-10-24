@@ -25,12 +25,11 @@ function ConfirmationDialog({ removeDialog, title, message, onConfirmation }) {
 
     const box_style = {
         position: 'absolute',
-        top: '10px',
+        top: '20px',
         left: '50%',
         transform: 'translate(-50%, 0)',
         bgcolor: 'background.paper',
-        boxShadow: 5,
-        outline: 'none'
+        outline: 'none',
     };
 
     const handleSubmit = () => {
@@ -43,6 +42,7 @@ function ConfirmationDialog({ removeDialog, title, message, onConfirmation }) {
             <Modal
                 open={true}
                 onClose={() => removeDialog()}
+                closeAfterTransition
             >
                 <Box sx={box_style}>
                     <Slide in={true}>

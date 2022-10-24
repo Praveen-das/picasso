@@ -4,12 +4,13 @@ import Header from '../Components/Header/Header'
 import Product from '../Components/Product/Product'
 
 function ProductPage() {
+
     return (
-        <div>
-            <Header/>
-            <Product/>
-            <Footer/>
-        </div>
+        <>
+            <Header />
+            <Product />
+            <Footer />
+        </>
     )
 }
 

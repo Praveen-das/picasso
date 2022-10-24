@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal'
@@ -6,13 +6,17 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating'
 import './newReview.css'
-import { useFirebase } from '../../../Context/FirebaseContext'
 import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog';
+import { useStore } from '../../../Context/Store';
+import { useDatabase } from '../../../Hooks/useDatabase';
 
 function NewReview({ data, open, setOpen }) {
     const [review, setReview] = useState({ title: '', review: '' })
     const [rating, setRating] = useState(0)
-    const { AddProductReview, reviews, currentUser } = useFirebase()
+    const { AddProductReview } = useDatabase()
+    const currentUser = useStore(state => state.auth?.user)
+    const reviews = useStore(s => s.database.reviews)
+
 
     const box_style = {
         position: 'absolute',

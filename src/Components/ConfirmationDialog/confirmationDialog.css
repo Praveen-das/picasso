@@ -6,18 +6,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* gap: 0.5rem; */
+    border-radius: 10px;
     text-align: center;
     max-width: 350px;
-    /* border-radius: 15px; */
 }
 .dialog label{
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 800;
+    text-transform: uppercase;
 }
 .dialog p{
     color: rgb(109, 109, 109);
-    font-weight: 400;
+    font-weight: 500;
     font-size: 1rem;
     line-height: 22px;
 }
@@ -25,6 +25,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    gap: 1em;
     margin-top: 10px;
 }
 .dialog .button_text,
@@ -32,6 +33,7 @@
     font-size: 0.7rem;
     padding: 1em 2em;
     border-radius: 50px;
+    width: 100%;
 }
 .dialog .button_text{
     font-size: 0.8rem;

@@ -7,7 +7,7 @@ import React, { useRef, useState } from 'react'
 import './style.css'
 import { handleExceptions } from '../../Hooks/useExceptionHandler'
 import AlertBox from '../MUIComponents/AlertBox/AlertBox'
-import CButton from '../MUIComponents/Button'
+import LoadingButton from '@mui/lab/LoadingButton/LoadingButton'
 
 function ReAuthenticate({ reAuthenticateUser }) {
     const [error, setError] = useState(false)
@@ -95,7 +95,7 @@ function ReAuthenticate({ reAuthenticateUser }) {
                             <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>Forgot password ?</Typography>
                         </Grid>
                         <Grid item xs={12} mt={2}>
-                            <CButton loading={loading} onClick={() => handleReAuthentication()} sx={{ background: 'var(--brandGradient)', borderRadius: '50px', fontSize: '12px' }} fullWidth>Log in</CButton>
+                            <LoadingButton loading={loading} onClick={() => handleReAuthentication()} sx={{ background: 'var(--brandGradient)', borderRadius: '50px', fontSize: '12px' }} fullWidth>Log in</LoadingButton>
                         </Grid>
                     </Grid>
                 </Box>

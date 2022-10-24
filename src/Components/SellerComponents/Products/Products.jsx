@@ -10,45 +10,26 @@ import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
 
 function Products() {
-    const { useSearch } = useFirebase()
+    // const { useSearch } = useFirebase()
     const { removeProduct, updateProduct } = useDatabase()
-    const getDataFromDB = useStore(state => state.getDataFromDB)
+    const products = useStore(state => state?.database?.sellerProducts)
     const uid = useStore(state => state.auth.user?.uid)
     const loading = false
-
     const [toggleEditButton, setToggleEditButton] = useState(false)
-    const [toggleAddProduct, setToggleAddProduct] = useState({ open: false })
+    const [model, setModel] = useState('add')
     const [dialog, setDialog] = useState('')
-    const [data, setData] = useState([])
+    const [product, setProduct] = useState()
 
-    const { result, setSearchQuery } = useSearch('adminProducts')
-
-    useEffect(() => {
-        getDataFromDB('adminProducts', undefined, uid).then(res => {
-            setData(res.data)
-        })
-    }, [getDataFromDB,uid])
-
+    // const { result, setSearchQuery } = useSearch('adminProducts')
     const handleAction = (action, product) => {
         switch (action) {
-            case 'add':
-                setToggleAddProduct({
-                    open: true
-                })
-                break;
-            case 'edit':
-                toggleEditButton ?
-                    setToggleEditButton(false) :
-                    setToggleEditButton(true)
-                break;
             case 'update':
-                setToggleAddProduct({
+                setModel({
                     open: true,
                     action: 'update',
                     payload: product,
                     isConfirmed: (updates) => updateProduct(product.id, updates),
                 })
-
                 break;
             case 'delete':
                 setDialog(!dialog)
@@ -61,6 +42,11 @@ function Products() {
             default:
                 break;
         }
+    }
+
+    function _updateProduct(product) {
+        setModel('update')
+        setProduct(product)
     }
 
     return (
@@ -80,17 +66,17 @@ function Products() {
                     dialog={dialog}
                     setDialog={setDialog}
                 /> */}
-                <AddProduct setToggleAddProduct={setToggleAddProduct} toggleAddProduct={toggleAddProduct} />
+                <AddProduct setModel={setModel} model={model} _product={product} />
                 <div id="dashboard">
                     <div className="actionbar">
                         <span style={{ marginLeft: 'auto' }}>
-                            <Search onKeyUp={(e) => setSearchQuery(e.target.value)} />
+                            {/* <Search onKeyUp={(e) => setSearchQuery(e.target.value)} /> */}
                         </span>
                         <div className="actions">
-                            <button color='secondary' onClick={() => handleAction('add')} className='addProduct'>
+                            <button color='secondary' onClick={() => setModel('add')} className='addProduct'>
                                 <Icon className='faAddIcon' icon={faPlus} /> ADD
                             </button>
-                            <button onClick={() => handleAction('edit')} className='editProducts'>
+                            <button onClick={() => setToggleEditButton(pre => !pre)} className='editProducts'>
                                 <Icon className='faAddIcon' icon={faEdit} />EDIT
                             </button>
                         </div>
@@ -113,25 +99,25 @@ function Products() {
                                 // ((!result.searching) || (!loading)) ?
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
-                                data?.map((data, index) =>
-                                    <tr key={index}>
+                                products?.map((data, index) =>
+                                    < tr key={index} >
                                         <td>{index + 1}</td>
-                                        <td><img id='dashbord_product--image' src={data.image[data.defaultImage] + '/tr:w-100'} alt="" /></td>
-                                        <td>{data.name}</td>
-                                        <td>{data.id}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.discount}</td>
-                                        <td>{data.price}</td>
+                                        <td><img id='dashbord_product--image' src={data?.image[0] + '/tr:w-100'} alt="" /></td>
+                                        <td>{data?.name}</td>
+                                        <td>{data?.id}</td>
+                                        <td>{data?.quantity}</td>
+                                        <td>{data?.discount}</td>
+                                        <td>{data?.price}</td>
                                         {toggleEditButton && <td>
                                             <div className='action'>
-                                                <Icon className='actionButtons' onClick={() => handleAction('update', data)} icon={faEdit} />
+                                                <Icon className='actionButtons' onClick={() => _updateProduct(data)} icon={faEdit} />
                                                 <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
                                             </div>
                                         </td>}
                                     </tr>
-                                ) 
-                            //     :
-                            // 'Loading...'
+                                )
+                                //     :
+                                // 'Loading...'
                             }
                         </tbody>
                     </table>

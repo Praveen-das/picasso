@@ -11,23 +11,15 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AlertMessage from '../../Alert/Alert'
 import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
+import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 
 function Dashboard() {
+    const orders = useStore(state => state?.database?.sellerOrders)
+    const { handleOrder } = useDatabase()
     const uid = useStore(state => state.auth.user?.uid)
-    const getDataFromDB = useStore(state => state.getDataFromDB)
-    const [toggleEdit, setToggleEdit] = useState()
-
-    const [data, setData] = useState([])
+    const [toggleEdit, setToggleEdit] = useState(false)
     const [status, setStatus] = useState()
     const [dialog, setDialog] = useState('')
-    const [orders, setOrders] = useState([])
-
-    useEffect(() => {
-        getDataFromDB('seller_orders', undefined, uid).then(res => {
-            console.log(res);
-            setOrders(res?.data)
-        })
-    }, [getDataFromDB, uid])
 
 
     // useEffect(() => {
@@ -39,21 +31,17 @@ function Dashboard() {
     const options = ['Delivering', 'Delivered', 'Cancelled']
 
     const handleOrders = (orderId) => {
-        // setDialog({
-        //     open: true,
-        //     confirmationMessage: 'Press CONFIRM to apply changes',
-        //     successMessage: 'Order updated successfully',
-        //     onConfirmation: () => handleOrder(status, orderId).then(() => {
-        //         setToggleEdit(null)
-        //     }),
-        //     type: 'confirmation'
-        // })
+        confirmAction(
+            'Change order status',
+            'Press OK to confirm your action',
+            () => handleOrder(status, orderId).then(() => setToggleEdit(false))
+        )
     }
 
     if (!orders) return ''
     return (
         <>
-            <AlertMessage dialog={dialog} setDialog={setDialog} />
+            {/* <AlertMessage dialog={dialog} setDialog={setDialog} />
             <div className="dashboard-wrapper">
                 <div id="dashboard">
                     <div className="dashboard-items">
@@ -84,9 +72,8 @@ function Dashboard() {
                             <tr>
                                 <th>#</th>
                                 <th>Order id</th>
-                                <th>Order data</th>
+                                <th>Order date</th>
                                 <th>payment method</th>
-                                <th>order date</th>
                                 <th>total</th>
                                 <th>Status</th>
                                 <th>Edit</th>
@@ -97,13 +84,12 @@ function Dashboard() {
                                 orders?.map((product, index) =>
                                     <tr key={index} style={{ height: '70px' }}>
                                         <td>{index + 1}</td>
-                                        <td>{product.order_id}</td>
+                                        <td>{product.id}</td>
                                         <td>{
                                             product?.date_ordered.toDate().toDateString() + ' ' +
                                             product?.date_ordered.toDate().toLocaleTimeString()
                                         }</td>
                                         <td>{product.paymentMethod}</td>
-                                        <td>45645</td>
                                         <td>{product.totalAmount}</td>
                                         <td style={{ width: '120px' }}>
                                             {
@@ -115,17 +101,16 @@ function Dashboard() {
                                                         <option hidden className='status_options' value="Processing">Processing</option>
                                                         {
                                                             options.map((option, index) =>
-                                                                product.status === 'Cancelled' ?
-                                                                    <option disabled key={index} value={option}>{option}</option>
-                                                                    :
-                                                                    product.status === 'Delivering' && index === 0 ?
-                                                                        ''
-                                                                        :
-                                                                        product.status === 'Delivered' ?
-                                                                            index === 0 ? '' : index === 1 ? '' :
-                                                                                <option key={index} value={option}>{option}</option>
-                                                                            :
-                                                                            <option key={index} value={option}>{option}</option>
+                                                                <option
+                                                                    disabled={
+                                                                        product.status === 'Cancelled' ||
+                                                                        product.status === 'Delivering' && index === 0 ||
+                                                                        product.status === 'Delivered' && index !== 2
+                                                                    }
+                                                                    key={index}
+                                                                    value={option}>
+                                                                    {option}
+                                                                </option>
                                                             )
                                                         }
                                                     </select>
@@ -141,7 +126,7 @@ function Dashboard() {
                                                     }}>
                                                         <IconButton sx={{ padding: 0 }} onClick={() => setToggleEdit(null)} variant='contained'>
                                                             <ClearIcon /></IconButton>
-                                                        <IconButton sx={{ padding: 0 }} onClick={() => handleOrders(product.order_id)} variant='contained'>
+                                                        <IconButton sx={{ padding: 0 }} onClick={() => handleOrders(product.id)} variant='contained'>
                                                             <CheckIcon />
                                                         </IconButton>
                                                     </div> :
@@ -159,7 +144,7 @@ function Dashboard() {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 }

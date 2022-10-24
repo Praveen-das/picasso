@@ -2,11 +2,11 @@ import { Grid, Typography, TextField, Button, Checkbox } from '@mui/material'
 import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
 import './login.css'
-import { useStore } from '../../Context/Store'
+import { useAuth } from '../../Hooks/useAuth'
 
 function Signin({ setModel }) {
     const [loginCredential, setLoginCredential] = useState()
-    const signin = useStore(state => state.auth?.signin)
+    const { signin } = useAuth()
 
     const handleLogin = async (e) => {
         e.preventDefault()

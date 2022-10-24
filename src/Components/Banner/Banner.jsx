@@ -8,37 +8,23 @@ import arrowLeft from '../../Assets/Icons/arrowLeft.svg'
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
-import { useAuth } from '../../Context/Store'
+import { useStore } from '../../Context/Store'
+import Section from '../Devices/Section/Section'
 
-function Banner({ data }) {
-    useEffect(() => {
-        gsap.timeline({ defaults: { duration: 0.5 } })
-            .from('.Banner-right,.direction', {
-                opacity: 0,
-                delay: 0.5
-            })
-            .from('.brandName,.p1,.Banner .button_primary', {
-                'clipPath': 'polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)',
-                y: 50,
-                opacity: 0,
-                stagger: 0.1
-            })
-    }, [])
+function Banner() {
+    const data = useStore(state => state?.database?.allProducts)
 
     useEffect(() => {
-        gsap.timeline({ repeat: -1 })
-            .from('.direction img', {
-                scale: 1,
-                duration: 0.2,
-                stagger: 0.1,
-                reversed: true
-            })
-            .to('.direction img', {
-                scale: 1.2,
-                duration: 0.1,
-                stagger: 0.1,
-                reversed: true
-            }, -0.2)
+        const tl = gsap.timeline({ defaults: { duration: 0.2 } })
+        tl.from('.Banner-right', {
+            delay: 0.2,
+            opacity: 0
+        }).from('.brandName,.p1,.Banner .button_primary', {
+            'clipPath': 'polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)',
+            y: 50,
+            opacity: 0,
+            stagger: 0.1
+        })
     }, [])
 
     return (
@@ -53,6 +39,14 @@ function Banner({ data }) {
                     <Swiper
                         slidesPerView='auto'
                         spaceBetween={20}
+                        breakpoints={{
+                            // 425: {
+                            //     spaceBetween: 20
+                            // },
+                            320: {
+                                spaceBetween: 10
+                            },
+                        }}
                         mousewheel={true}
                         modules={[Mousewheel]}
                         className="mySwiper"
@@ -60,22 +54,16 @@ function Banner({ data }) {
                         {
                             data?.map((product, index) =>
                                 <SwiperSlide key={index}>
-                                    <div className="banner_card--wrapper">
-                                        <Card product={product} />
-                                    </div>
+                                    {/* <div className="banner_card--wrapper"> */}
+                                        <Card product={product} height={400} />
+                                    {/* </div> */}
                                 </SwiperSlide>
                             )
                         }
                     </Swiper>
                 </div>
-                <span className='direction'>
-                    <img src={arrowLeft} alt="" />
-                    <img src={arrowLeft} alt="" />
-                    <img src={arrowLeft} alt="" />
-                    <img src={arrowLeft} alt="" />
-                    <img src={arrowLeft} alt="" />
-                </span>
             </div>
+            {/* <Section /> */}
         </>
     )
 }

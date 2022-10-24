@@ -9,9 +9,10 @@ import CheckoutPage from './Pages/CheckoutPage';
 import Alert from './Components/Alert/Alert'
 
 function App() {
-  
+
   return (
     <>
+      <label style={{ position: 'fixed', top: 0, zIndex: 200 }} htmlFor="">{window.innerWidth}</label>
       <Alert />
       <Router>
         <Routes>

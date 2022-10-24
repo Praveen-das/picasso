@@ -36,6 +36,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
         })
         tl.from(`.${parent} .card_wrapper`, { stagger: 0.1, duration: 0.1, opacity: 0 })
     }, [from, to, parent])
+    
     return (
         <>
             <div className="productsTray-wrapper">
@@ -54,8 +55,8 @@ function Tray({ height, data, title, parent, from, to, more }) {
                         {
                             data?.map((product, index) =>
                                 <SwiperSlide key={index}>
-                                    <div className="card_wrapper" style={{ height: height }}>
-                                        <Card product={product} />
+                                    <div className="card_wrapper">
+                                        <Card height={height} product={product} />
                                     </div>
                                 </SwiperSlide>
                             )

@@ -5,25 +5,12 @@ import Box from '@mui/material/Box';
 import { useParams } from 'react-router-dom'
 import { useStore } from '../../Context/Store';
 import { useHelper } from '../../Hooks/useHelper';
+import gsap from 'gsap';
+import { Skeleton } from '@mui/material';
 
 function Shop() {
-    const getDataFromDB = useStore(state => state.getDataFromDB)
-    const { skeleton } = useHelper()
-
-    const [docs, setDocs] = useState({})
+    const docs = useStore(state => state.database.allProducts)
     const [next, setNext] = useState()
-
-    useEffect(() => {
-        getDataFromDB('allProducts', next).then((res) => {
-            setDocs(pre => (
-                JSON.stringify(pre) !== '{}' ?
-                    {
-                        data: [...pre.data, ...res.data],
-                        lastElement: res.lastElement
-                    } : res
-            ));
-        })
-    }, [next, getDataFromDB])
 
     // const { query, category } = useParams()
     // const { search, searching } = useSearch('allProducts')
@@ -61,20 +48,19 @@ function Shop() {
         return (Math.random() * 5) + 4
     }, [])
 
+    useEffect(() => {
+        const tl = gsap.timeline()
+        tl.from('.product_card', {
+            opacity: 0,
+            stagger: 0.1
+        })
+    }, [])
+
+    const [skeleton] = useState(new Array(20).fill())
+
+
     return useMemo(() =>
         <div className="shop_products">
-            <div className="zxc">
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-            </div>
             {/* {
                     searching ?
                         <Skeleton height={100} /> :
@@ -89,29 +75,23 @@ function Shop() {
                                 <p className='shop_title--shop' htmlFor="">New modern artworks by up & comming artists</p>
                 }
                 <hr /> */}
+            {/* <ul>
+                <li>Latest</li>
+                <li><div /></li>
+                <li>Popular</li>
+            </ul> */}
             <div className="images_tray">
                 {
-                    docs.data?.map((product, index) =>
-                        // <div className='image_wrapper'>
-                        //     <img key={index} src={product.image[0]} alt="" />
-                        // </div>
-                        <div className='image_wrapper' key={index} style={{ marginBottom: '5rem' }}>
-                            {
-                                docs.data.length === index + 1 ?
-                                    <Card product={product} lastItem /> :
-                                    <Card product={product} />
-                            }
-                        </div>
-                    )
-                    // :
-                    //     skeleton.map((o, index) => {
-                    //         const random = getRandom()
-                    //         return <Box key={index} height={250} width={`calc(100% / ${random}) `} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
-                    //             <Skeleton />
-                    //             <Skeleton sx={{ my: '4px' }} width="60%" />
-                    //             <Skeleton variant='rectangular' height={'250px'} />
-                    //         </Box>
-                    //     })
+                    docs ? docs.map((o, index) => (
+                        <Card key={docs.id} product={o} height={280} />
+                    )) :
+                        skeleton.map((o, i) => (
+                            <Box key={i} height={280} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
+                                <Skeleton />
+                                <Skeleton sx={{ my: '4px' }} width="60%" />
+                                <Skeleton variant='rectangular' height={'250px'} />
+                            </Box>
+                        ))
                 }
             </div>
             <button onClick={() => {

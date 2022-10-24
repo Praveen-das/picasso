@@ -12,12 +12,12 @@ export function useHelper() {
 const ContextProvider = createContext()
 
 export default function HelperContext({ children }) {
-    const urlEndpoint = 'https://ik.imagekit.io/1q7keivsfku/'
-    const publicKey = 'public_TgB5AGA3AeEiZhn3/24RR02eNbo='
-    const authenticationEndpoint = 'http://localhost:3001/auth'
+    const URL_ENDPOINT = 'https://ik.imagekit.io/1q7keivsfku/'
+    const PUBLIC_KEY = 'public_TgB5AGA3AeEiZhn3/24RR02eNbo='
+    const AUTH_ENDPOINT = 'http://localhost:3001/imagekit/auth'
 
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
-    
+
     const theme = createTheme({
         typography: {
             fontFamily: 'Montserrat',
@@ -77,15 +77,15 @@ export default function HelperContext({ children }) {
         ScrollTrigger,
         // WhiteButton
     }
-    
+
 
     return (
         <ContextProvider.Provider value={value}>
             <ThemeProvider theme={theme}>
                 <IKContext
-                    urlEndpoint={urlEndpoint}
-                    publicKey={publicKey}
-                    authenticationEndpoint={authenticationEndpoint}
+                    urlEndpoint={URL_ENDPOINT}
+                    publicKey={PUBLIC_KEY}
+                    authenticationEndpoint={AUTH_ENDPOINT}
                 >
                     {children}
                 </IKContext>

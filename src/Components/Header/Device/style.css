@@ -1,0 +1,80 @@
+#header_menu{
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 75%;
+    background: rgb(255, 255, 255);
+    box-shadow: 5px 0 15px var(--shadow);
+    transform: translateX(-110%);
+    transition: 0.5s;
+    z-index: 301;
+}
+#backdrop{
+    display: none;
+    transition: 0.5s;
+    position: fixed;
+    inset: 0;
+    background: rgb(255, 255, 255);
+    z-index: 300;
+}
+.backdrop--show{
+    animation: anim1 0.5s forwards;
+}
+.backdrop--hide{
+    animation: anim2 0.5s forwards;
+}
+@keyframes anim1{
+    0%{opacity: 0}
+    100%{opacity: 1}
+}
+@keyframes anim2{
+    100%{opacity: 0}
+    0%{opacity: 1}
+}
+#header_menu ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#menu_link{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0 20px 20px;
+    font-size: 18px;
+    color: var(--brandMain);
+}
+#header_menu li:hover{
+    background: rgba(0, 0, 0, 0.144);
+}
+#userProfile{
+    box-sizing: border-box;
+    display: flex;
+    padding: 2em 0 2em 15px;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+}
+#userProfile span{
+    height: 70px;
+    aspect-ratio: 1;
+    background: rgb(204, 204, 204);
+    border-radius: 50%;
+}
+.menu_icon{
+    /* transform: translateY(5px); */
+}
+#userProfile div{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+#varified{
+    font-weight: 400;
+    color: var(--brand);
+}
+#userName{
+    font-size: 22px;
+}

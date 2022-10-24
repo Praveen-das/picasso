@@ -2,12 +2,14 @@ import { Box, Grid, Paper, Tab, Tabs } from '@mui/material'
 import React, { useState } from 'react'
 import ProfileDetails from './ProfileDetails'
 import ManageAddress from './ManageAddress'
-import { styled } from '@mui/material/styles';
 import MyOrders from './MyOrders'
 
+import { styled } from '@mui/material/styles';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -21,7 +23,7 @@ function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box sx={{ p: { xs: 2, sm: 3 } }}>
                     {children}
                 </Box>
             )}
@@ -29,8 +31,35 @@ function TabPanel(props) {
     );
 }
 
+function CTabs({ children, value, onChange }) {
+    const sm = useMediaQuery('(min-width:600px)')
+    const md = useMediaQuery('(min-width:900px)')
+
+    if (md)
+        return (
+            <Tabs
+                textColor='primary'
+                orientation='vertical'
+                value={value}
+                onChange={onChange}
+                aria-label="basic tabs example"
+            >{children}</Tabs>
+        )
+    return (
+        <Tabs
+            variant="scrollable"
+            scrollButtons="auto"
+            textColor='primary'
+            orientation='horizontal'
+            value={value}
+            onChange={onChange}
+            aria-label="basic tabs example"
+        >{children}</Tabs>
+    )
+}
+
 function UserProfile() {
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(2);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -38,39 +67,43 @@ function UserProfile() {
 
     const Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
-        padding: '1rem',
-        // marginTop: '-2rem',
         position: 'relative',
         minHeight: 'calc(100vh - 9rem)',
         color: theme.palette.text.primary,
-        borderRadius: '10px',
-        boxShadow: '-5px 5px 20px 2px var(--shadow)'
+        borderRadius: '10px'
     }));
+
+    const tabStyling = {
+        sx: {
+            padding: { md: '2rem 3rem' },
+            boxShadow: { xs: 'none', md: '-5px 5px 20px 2px var(--shadow)' }
+
+        },
+        elevation: 0
+    }
 
     return (
         <Grid container sx={{ flexGrow: 1, bgcolor: 'background.paper' }}>
-            <Grid item sx={{
-                paddingTop: 3
-            }} xs={1} minWidth={250}>
-                <Tabs textColor='primary' orientation="vertical" value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab sx={{ ml: 2, minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
-                    <Tab sx={{ ml: 2, minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<PersonIcon fontSize='small' />} label="Personal Details" />
-                    <Tab sx={{ ml: 2, minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<HomeIcon fontSize='small' />} label="Manage Address" />
-                </Tabs>
+            <Grid item sx={{ paddingTop: { xs: 0, md: 3 }, paddingLeft: { xs: 0, sm: 1, md: 0 } }} xs={12} md={2} >
+                <CTabs value={value} onChange={handleChange}>
+                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
+                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<PersonIcon fontSize='small' />} label="Personal Details" />
+                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<HomeIcon fontSize='small' />} label="Manage Address" />
+                </CTabs>
             </Grid>
-            <Grid item xs>
+            <Grid item xs={12} md>
                 <TabPanel value={value} index={0}>
-                    <Item elevation={4} >
+                    <Item {...tabStyling} >
                         <MyOrders />
                     </Item>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Item elevation={4}>
+                    <Item {...tabStyling}>
                         <ProfileDetails />
                     </Item>
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Item elevation={4}>
+                    <Item {...tabStyling}>
                         <ManageAddress />
                     </Item>
                 </TabPanel>

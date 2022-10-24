@@ -1,7 +1,9 @@
-import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, serverTimestamp, setDoc, updateDoc, Timestamp, limit, query, where, startAfter, onSnapshot, getDocs } from "firebase/firestore";
 import { db } from "../Config/Firebase/Firebase";
+import { myQuery } from "../HelperFunctions__XXX/fetchData";
 import { useStore } from "../Context/Store";
 import { useHelper } from "./useHelper";
+import { useState } from "react";
 
 
 export const useDatabase = () => {
@@ -23,18 +25,26 @@ export const useDatabase = () => {
     }
 
     const addProductToDatabase = async (data) => {
-        try {
-            const productRef = collection(db, 'products')
-            const product = {
-                ...data,
-                date_modified: serverTimestamp()
-            }
-            addDoc(productRef, product).then(() => {
-                console.log('product added successfully');
-            })
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     const productRef = collection(db, 'products')
+        //     const product = {
+        //         ...data,
+        //         date_modified: serverTimestamp()
+        //     }
+        //     addDoc(productRef, product).then(() => {
+        //         console.log('product added successfully');
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        // const res = await fetch(
+        //     'http:/localhost:3001/products',
+        //     {
+        //         method: "POST",
+        //         body: data
+        //     }).then(o => o.json())
+        // console.log(res);
+        console.log(data);
     }
 
     const removeProduct = (id) => {
@@ -51,24 +61,83 @@ export const useDatabase = () => {
     }
 
     const addToCart = (product) => {
-        const docRef = doc(db, 'userdata', user.uid)
-        setDoc(docRef, { cart: arrayUnion(product) }, { merge: true })
-            .then(() => console.log('added to cart'))
-            .catch((err) => console.log(err))
+        return new Promise((res, rej) => {
+            const docRef = doc(db, 'userdata', user.uid)
+            setDoc(docRef, { cart: arrayUnion(product) }, { merge: true })
+                .then(() => {
+                    useStore.setState(state => ({
+                        alert: {
+                            ...state.alert,
+                            toggled: true,
+                            message: 'Product successfully added to your shopping cart'
+                        }
+                    }))
+                    res(true)
+                })
+                .catch((err) => rej(err.code))
+        })
     }
 
     const removeFromCart = (product) => {
-        const docRef = doc(db, 'userdata', user.uid)
-        setDoc(docRef, { cart: arrayRemove(product) }, { merge: true })
-            .then(() => console.log('removed from cart'))
-            .catch((err) => console.log(err))
+        return new Promise((res, rej) => {
+            const docRef = doc(db, 'userdata', user.uid)
+            setDoc(docRef, { cart: arrayRemove(product) }, { merge: true })
+                .then(() => {
+                    useStore.setState(state => ({
+                        alert: {
+                            ...state.alert,
+                            toggled: true,
+                            message: 'Product successfully removed from your shopping cart'
+                        }
+                    }))
+                    res(true)
+                })
+                .catch((err) => rej(err.code))
+        })
     }
 
-    const addUserAddress = (data) => {
+    const setDefaultAddress = (data) => {
         const docRef = doc(db, 'userdata', user.uid)
-        setDoc(docRef, { address: arrayUnion(data) }, { merge: true })
-            .then(() => console.log('new address added'))
-            .catch((err) => console.log(err))
+        setDoc(docRef, { defaultAddress: data }, { merge: true })
+            .then(() => {
+                useStore.setState(state => ({
+                    alert: {
+                        ...state.alert,
+                        toggled: true,
+                        message: 'Default address changed successfully'
+                    }
+                }))
+            })
+            .catch((err) => console.log(err.code))
+    }
+
+    const addUserAddress = (data, isDefault) => {
+        return new Promise((res, rej) => {
+            try {
+                if (
+                    !data.name ||
+                    !data.phoneNumber ||
+                    !data.email ||
+                    !data.pincode ||
+                    !data.address1 ||
+                    !data.cdt ||
+                    !data.state
+                )
+                    throw new Error('textField/empty-input')
+                if (!data.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+                    throw new Error('auth/invalid-email')
+            } catch (error) {
+                rej(error.message)
+                return
+            }
+
+            if (isDefault.current) setDefaultAddress(data)
+
+            const docRef = doc(db, 'userdata', user.uid)
+            setDoc(docRef, { address: arrayUnion(data) }, { merge: true })
+                .then(() => res(true))
+                .catch((err) => rej(err.code))
+        })
     }
 
     const makeOrder = async (checkoutData) => {
@@ -81,11 +150,8 @@ export const useDatabase = () => {
     }
 
     const handleOrder = async (status, orderId) => {
-        console.log(status);
         const docRef = doc(db, "orders", orderId);
-        await updateDoc(docRef, {
-            status: status
-        })
+        await updateDoc(docRef, { status: status })
             .then(() => console.log(`status changed to ${status}`))
             .catch((error) => console.log(error))
     }
@@ -113,8 +179,8 @@ export const useDatabase = () => {
         }, { merge: true }).then(() => console.log('product rated'))
     }
 
-    const handleRecentlyViewed = (product) => {
-        const docRef = doc(db, 'userdata', user.uid)
+    const addToRecentlyViewed = (product) => {
+        const docRef = doc(db, 'userdata', user?.uid)
         setDoc(docRef, { recently_viewed: arrayUnion(product) }, { merge: true })
             .then(() => console.log('new product added'))
             .catch((err) => console.log(err))
@@ -132,20 +198,37 @@ export const useDatabase = () => {
             .catch((err) => console.log(err))
     }
 
+    const getDataFromQuery = async (id) => {
+        const q = query(collection(db, 'products'), where('id', '==', id))
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs?.map(o => o.data())[0]
+    }
+
+    const getProductsById = async (data) => {
+        if (!data) return
+        if (Array.isArray(data)) {
+            let docs = await Promise.all(data.map(o => getDataFromQuery(o)))
+            docs = docs.filter(o => o !== undefined)
+            return docs
+        }
+    }
+
     return {
         addToWishlist,
         removeFromWishlist,
         AddProductReview,
-        handleRecentlyViewed,
+        addToRecentlyViewed,
         addProductToDatabase,
         removeProduct,
         updateProduct,
         addToCart,
         removeFromCart,
         addUserAddress,
+        setDefaultAddress,
         makeOrder,
         handleOrder,
         handleAvailableQuantity,
-        setActionExpiryDate
+        setActionExpiryDate,
+        getProductsById
     }
 }

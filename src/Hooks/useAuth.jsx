@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, reload, sendEmailVerification, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import reactDom from "react-dom";
 import ReAuthenticate from "../Components/ReAuthenticate/ReAuthenticate";
 import { auth, db } from "../Config/Firebase/Firebase";
 import { useStore } from "../Context/Store";
@@ -56,6 +55,7 @@ export const useAuth = () => {
             updateProfile(auth.currentUser, {
                 displayName: credential.username
             }).catch((error) => console.log(error))
+            
             try {
                 const userRef = doc(db, 'userdata', userCredential.user.uid)
                 const user_data = {

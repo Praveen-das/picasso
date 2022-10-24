@@ -1,24 +1,23 @@
-import { Grid, TextField } from '@mui/material'
+import { Grid, IconButton, TextField } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import React from 'react'
 
-function CustomTextField(props) {
+function CustomTextField({ xs, md, error, size, helperText, ...rest }) {
     return (
         <>
-            <Grid item xs={props.xs} md={props.md} >
+            <Grid item xs={xs} md={md} >
                 <TextField
-                    error={props.error && props.error}
-                    type={props.type}
-                    sx={props.sx}
-                    label={props.label}
-                    required={props.required}
+                    error={error && error}
+                    size={size ? size : 'small'}
+                    helperText={helperText && helperText}
+                    {...rest}
                     multiline
-                    rows={props.rows}
-                    value={props.value}
-                    size={props.size ? props.size : 'small'}
                     variant='standard'
-                    onChange={(e) => props.onChange(e)}
                     fullWidth
-                    helperText={props.helperText && props.helperText}
+                    // InputProps={{
+                    //     endAdornment: <IconButton size='small'><RefreshIcon fontSize='10px' /></IconButton>
+                    // }}
                 ></TextField>
             </Grid>
         </>

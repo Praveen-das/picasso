@@ -1,12 +1,14 @@
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, Button, Grid, TextField, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, IconButton, Grid, Typography } from "@mui/material"
+import NButton from "@mui/material/Button/Button"
 import { useEffect, useRef, useState } from "react"
 import { useStore } from "../../Context/Store"
 import { useAuth } from "../../Hooks/useAuth"
 import { useHelper } from "../../Hooks/useHelper"
-import CButton from '../MUIComponents/Button'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AlertBox from "../MUIComponents/AlertBox/AlertBox"
 import { handleExceptions } from "../../Hooks/useExceptionHandler"
+import { TextField } from '../MUIComponents/TextField'
+import { Button } from '../MUIComponents/Button'
 
 export default function ProfileCredentialForm() {
     const { updateDisplayName, updateUserEmail, updateUserPassword, loading } = useAuth()
@@ -113,7 +115,7 @@ export default function ProfileCredentialForm() {
             variant: 'body1', fontSize: 14
         },
         textField: {
-            fullWidth: true, variant: 'standard', size: 'medium'
+            fullWidth: true, variant: 'filled', InputLabelProps: { shrink: true }, size: 'medium', sx: { mt: -1 }
         }
     }
 
@@ -133,13 +135,13 @@ export default function ProfileCredentialForm() {
                                     expanded === 'panel1' ?
                                         <>
                                             <span></span>
-                                            <Button {...style.button} onClick={() => handleToggle('panel1')}>cancel</Button>
+                                            <NButton {...style.button} onClick={() => handleToggle('panel1')}>cancel</NButton>
                                         </>
                                         :
                                         <>
                                             <Typography
                                                 {...style.summery}>{user?.displayName}</Typography>
-                                            <Button {...style.button} onClick={() => handleToggle('panel1')}>Edit</Button>
+                                            <NButton {...style.button} onClick={() => handleToggle('panel1')}>Edit</NButton>
                                         </>
                                 }
                             </div>
@@ -178,7 +180,7 @@ export default function ProfileCredentialForm() {
                                                 {...style.textField} />
                                         </Grid>
                                         <Grid item {...MQ.rows_4}>
-                                            <CButton fullWidth onClick={() => handleProfileUpdation('displayname')} loading={loading}>UPDATE</CButton>
+                                            <Button sx={{ float: 'right' }} fullWidth onClick={() => handleProfileUpdation('displayname')} loading={loading}>UPDATE</Button>
                                         </Grid>
                                     </Grid>
                                 </AccordionDetails>}
@@ -216,7 +218,7 @@ export default function ProfileCredentialForm() {
                                     expanded === 'panel2' ?
                                         <>
                                             <span></span>
-                                            <Button onClick={() => handleToggle('panel2')} {...style.button}  >cancel</Button>
+                                            <NButton onClick={() => handleToggle('panel2')} {...style.button}  >cancel</NButton>
                                         </>
                                         :
                                         <>
@@ -227,7 +229,7 @@ export default function ProfileCredentialForm() {
                                                     <ContentCopyIcon sx={{ fontSize: 18 }} />
                                                 </IconButton>
                                             </Typography>
-                                            <Button onClick={() => handleToggle('panel2')} {...style.button}>Edit</Button>
+                                            <NButton onClick={() => handleToggle('panel2')} {...style.button}>Edit</NButton>
                                         </>
                                 }
                             </div>
@@ -250,7 +252,7 @@ export default function ProfileCredentialForm() {
                                     />
                                 </Grid>
                                 <Grid item {...MQ.rows_2} md={4}>
-                                    <CButton fullWidth onClick={() => handleProfileUpdation('email')} loading={loading}>UPDATE</CButton>
+                                    <Button sx={{ float: 'right' }} fullWidth onClick={() => handleProfileUpdation('email')} loading={loading}>UPDATE</Button>
                                 </Grid>
                             </Grid>
                         </AccordionDetails>
@@ -267,12 +269,12 @@ export default function ProfileCredentialForm() {
                                     expanded === 'panel3' ?
                                         <>
                                             <span></span>
-                                            <Button onClick={() => handleToggle('panel3')} {...style.button} >cancel</Button>
+                                            <NButton onClick={() => handleToggle('panel3')} {...style.button} >cancel</NButton>
                                         </>
                                         :
                                         <>
                                             <span></span>
-                                            <Button onClick={() => handleToggle('panel3')} {...style.button}>CHANGE NOW</Button>
+                                            <NButton onClick={() => handleToggle('panel3')} {...style.button}>CHANGE NOW</NButton>
                                         </>
                                 }
                             </div>
@@ -309,7 +311,7 @@ export default function ProfileCredentialForm() {
                                         {...style.textField} />
                                 </Grid>
                                 <Grid item {...MQ.rows_3}>
-                                    <CButton fullWidth loading={loading} onClick={() => handleProfileUpdation('password')}>UPDATE</CButton>
+                                    <Button sx={{ float: 'right' }} fullWidth loading={loading} onClick={() => handleProfileUpdation('password')}>UPDATE</Button>
                                 </Grid>
                             </Grid>
                         </AccordionDetails>

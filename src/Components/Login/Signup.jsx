@@ -8,13 +8,13 @@ import Facebook from '@mui/icons-material/Facebook';
 import Twitter from '@mui/icons-material/Twitter';
 import React, { useState } from 'react'
 import InputField from '../TextField/InputField'
-import { useFirebase } from '../../Context/FirebaseContext';
+import { useAuth } from '../../Hooks/useAuth';
 
 function Signup({ setModel }) {
     const [signupCredential, setSignupCredential] = useState()
     const [error, setError] = useState()
 
-    const { signupUsingEmailPassword } = useFirebase()
+    const { signupUsingEmailPassword } = useAuth()
 
     const handleSignup = async (e) => {
         e.preventDefault()

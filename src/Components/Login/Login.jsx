@@ -22,7 +22,8 @@ function Login({ model, setModel }) {
         display: 'grid',
         placeItems: 'center',
         gridTemplateColumns: '1fr 1fr',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backgroundColor:'white !important'
     };
     // grid spacing 4 removed 54 74
     const leftBoxStyle = {

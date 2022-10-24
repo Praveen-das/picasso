@@ -1,210 +1,338 @@
-import React, { useEffect, useState } from 'react'
-import './addProduct.css'
-import { Grid, Typography, Backdrop, Button, ThemeProvider, CircularProgress, Modal, Chip, Stack, Tooltip, TextField } from '@mui/material'
-import InputField from '../../TextField/InputField'
-import { useFirebase } from '../../../Context/FirebaseContext'
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import { Box } from '@mui/system'
-import { useHelper } from '../../../Context/HelperContext'
-import { IKUpload } from 'imagekitio-react'
+import React, { useEffect, useRef, useState } from "react";
+import "./addProduct.css";
+import {
+    Grid,
+    Typography,
+    Backdrop,
+    Button,
+    ThemeProvider,
+    CircularProgress,
+    Modal,
+    TextField,
+    Slide,
+    MenuItem,
+} from "@mui/material";
+import InputField from "../../TextField/InputField";
+import { useFirebase } from "../../../Context/FirebaseContext";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import { Box } from "@mui/system";
+import { useHelper } from "../../../Context/HelperContext";
+import { IKUpload } from "imagekitio-react";
+import { useDatabase } from "../../../Hooks/useDatabase";
+import { useStore } from "../../../Context/Store";
 
-function AddProduct({ setToggleAddProduct, toggleAddProduct }) {
-    const [loading, setLoading] = useState(false)
-    const [product, setProduct] = useState()
-    const [defaultImage, setDefaultImage] = useState(0)
-    const [imageURL, setImageURL] = useState([])
-    const [imageTemplate, setImageTemplate] = useState([])
-    const { theme } = useHelper()
-    const [tag, setTag] = useState()
-    const [newTag, setNewTag] = useState([])
+function AddProduct({ setModel, model, _product }) {
+    const [loading, setLoading] = useState(false);
+    const [placeholder, setPlaceholder] = useState();
+    const [defaultImage, setDefaultImage] = useState(0);
+    const [imageURL, setImageURL] = useState([]);
+    const [imageTemplate, setImageTemplate] = useState([]);
+    const { theme } = useHelper();
+    const [tag, setTag] = useState();
+    const [newTag, setNewTag] = useState([]);
+    const currentUser = useStore((state) => state?.auth?.user);
+    const { updateProduct } = useDatabase();
+    const [product, setProduct] = useState({
+        name: '',
+        description: '',
+        category_id: 1,
+        material_id: 1,
+        size: '',
+        quantity: '',
+        discount: '',
+        price: ''
+    });
 
     useEffect(() => {
-        if (toggleAddProduct.action !== 'update') return
-        setProduct(toggleAddProduct.payload)
-        setImageTemplate(toggleAddProduct.payload.image)
-        setNewTag(toggleAddProduct.payload.tags)
-    }, [toggleAddProduct])
-
-    const { addProductToDatabase, currentUser } = useFirebase()
-
-    const handleActions = async (action, e) => {
-        switch (action) {
-
-            case 'submit':
-                setToggleAddProduct({ open: false })
-                setLoading(true)
-                product.image = imageURL
-                product.defaultImage = defaultImage
-                product.tags = newTag
-                product.uid = currentUser.uid
-                addProductToDatabase(product)
-                setNewTag([])
-                setProduct('')
-                setLoading(false)
-                setImageTemplate([])
-                setImageURL([])
-                break;
-
-            case 'update':
-                product.image = [...imageURL, ...product.image]
-                product.defaultImage = defaultImage
-                product.tags = newTag
-                await toggleAddProduct.isConfirmed(product)
-                setToggleAddProduct({
-                    open: false
-                })
-                setProduct([])
-                setNewTag([])
-                break;
-
-            case 'close':
-                setToggleAddProduct({ open: false })
-                setProduct([])
-                setNewTag([])
-                setImageTemplate([])
-                setImageURL([])
-                break;
-            default:
-                break;
+        if (model !== "update") {
+            setPlaceholder({});
+            setImageTemplate([]);
+            setNewTag([]);
+            return;
         }
-    }
+        setImageTemplate(_product?.image);
+        setNewTag(_product?.tags);
+        setPlaceholder(_product);
+    }, [model]);
 
-    const box_style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '70%',
-        bgcolor: 'background.paper',
-        boxShadow: 5,
-        overflow: 'hidden'
+    const { addProductToDatabase } = useDatabase();
+
+    const handleActions = async (e) => {
+        e.preventDefault();
+
+        if (model === "update") {
+            console.log(product);
+
+            return;
+        }
+
+        // switch (action) {
+
+        //     case 'submit':
+        //         setModel({ open: false })
+        //         setLoading(true)
+        //         product.image = imageURL
+        //         product.defaultImage = defaultImage
+        //         product.tags = newTag
+        //         product.uid = currentUser.uid
+        //         addProductToDatabase(product)
+        //         setNewTag([])
+        //         setProduct('')
+        //         setLoading(false)
+        //         setImageTemplate([])
+        //         setImageURL([])
+        //         break;
+
+        //     case 'update':
+        //         product.image = [...imageURL, ...product.image]
+        //         product.defaultImage = defaultImage
+        //         product.tags = newTag
+        //         await model.isConfirmed(product)
+        //         setModel({
+        //             open: false
+        //         })
+        //         setProduct([])
+        //         setNewTag([])
+        //         break;
+
+        //     case 'close':
+        //         setModel({ open: false })
+        //         setProduct([])
+        //         setNewTag([])
+        //         setImageTemplate([])
+        //         setImageURL([])
+        //         break;
+        //     default:
+        //         break;
+        // }
     };
 
-    const handleTag = (action, input) => {
-        switch (action) {
-            case 'add':
-                tag && setNewTag(pre => [tag, ...pre])
-                setTag('')
-                break;
-            case 'remove':
-                setNewTag(newTag?.filter(o => o !== input))
-                break;
+    function setProductDetails(key, value) {
+        setProduct((pre) => ({ ...pre, [key]: value }));
+    }
 
-            default:
-                break;
-        }
+    const open = model === "add" || model === "update"
+
+    console.log(product);
+
+    const box_style = {
+        boxSizing: 'border-box',
+        position: "absolute",
+        display: 'grid',
+        alignItems: 'center',
+        inset: 0,
+        margin: { xs: '0.5rem 1rem 0 1rem ', md: '0.5rem auto' },
+        marginRight: { md: '0.5rem' },
+        padding: { xs: '0 2rem', sm: '0 4rem' },
+        maxWidth: { xs: '100%', md: '60%', lg: '45%' },
+        bgcolor: "background.paper",
+        boxShadow: 5,
+        borderRadius: { md: '20px' },
+    };
+
+    const TF_Style = {
+        variant: 'standard',
+        fullWidth: true,
+        required: true
     }
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Backdrop
+                {/* <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                     open={loading}
                 >
                     <CircularProgress color="inherit" />
-                </Backdrop>
+                </Backdrop> */}
                 <Modal
-                    open={toggleAddProduct.open}
-                    onClose={() => handleActions('close')}
+                    open={open}
+                    onClose={() => setModel(false)}
+                    closeAfterTransition
                 >
-                    <Box sx={box_style}>
-                        <form action='submit' onSubmit={(e) => {
-                            e.preventDefault()
-                            handleActions('submit')
-                        }}>
-                            <div className='boxHeader'>
-
-                                {
-                                    toggleAddProduct.action === 'update' ?
-                                        <Typography variant='h6' fontSize={18}>Update Product</Typography> :
-                                        <Typography variant='h6' fontSize={18}>Add Product</Typography>
-                                }
-
-                            </div>
-                            <Grid container minWidth={300} padding='1em 2em 2em 2em' spacing={1} columnSpacing={3}>
-                                <InputField required xs={12} value={product && product.name} label='Product Name' onChange={(e) => setProduct(pre => { return { ...pre, name: e.target.value } })} />
-                                <InputField xs={12} md={12} value={product && product.description} label='Description' rows={3} onChange={(e) => setProduct(pre => { return { ...pre, description: e.target.value } })} />
-                                <InputField required xs={3} md={2} value={product && product.category} label='Category' onChange={(e) => setProduct(pre => { return { ...pre, category: e.target.value } })} />
-                                <InputField required xs={3} md={2} value={product && product.material} label='Material' onChange={(e) => setProduct(pre => { return { ...pre, material: e.target.value } })} />
-                                <InputField required xs={6} md={2} value={product && product.dimension} label='Dimension' onChange={(e) => setProduct(pre => { return { ...pre, dimension: e.target.value } })} />
-                                <Grid item xs={2}>
-                                    <TextField variant='standard' size='small' type='number' required value={product && product.quantity} label='Quantity' onChange={(e) => setProduct(pre => { return { ...pre, quantity: e.target.value } })} />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <TextField variant='standard' size='small' type='number' required value={product && product.price} label='Price' onChange={(e) => setProduct(pre => { return { ...pre, price: e.target.value } })} />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <TextField variant='standard' size='small' type='number' required value={product && product.discount} label='Discount' onChange={(e) => setProduct(pre => { return { ...pre, discount: e.target.value } })} />
-                                </Grid>
-                                <Grid item xs={12} mt={2}>
-                                    <Tooltip placement="bottom-start" arrow title="Add Tags for better search availability">
-                                        <span>
-                                            <Typography sx={{ display: 'inline-flex' }} mb={0.5} variant='h6' fontSize={16} fontWeight={500}>Tags</Typography>
-                                        </span>
-                                    </Tooltip>
-                                    <Stack direction="row" spacing={1}>
-                                        <InputField id='tagInput' value={tag} onChange={(e) => setTag(e.target.value)} md={2} label='Add tag' />
-                                        <Button onClick={() => handleTag('add')} sx={{ height: '25px', alignSelf: 'flex-end' }}>Add</Button>
-                                        {
-                                            newTag && newTag.length > 0 && newTag.map((o, i) => (
-                                                <Chip key={i} sx={{ alignSelf: 'flex-end' }} size='small' label={o} variant="outlined" onDelete={() => handleTag('remove', o)} />
-                                            ))
-                                        }
-                                    </Stack>
-                                </Grid>
-                                {
-                                    toggleAddProduct.action === 'update' ?
-                                        <Grid item xs={12} gap='2rem' mt={2}>
-                                            <Typography variant='h6' fontSize={16} fontWeight={500}>Add more Images</Typography>
-                                        </Grid> :
-                                        <Grid item xs={12} gap='2rem' mt={2}>
-                                            <Typography variant='h6' fontSize={16} fontWeight={500}>Upload Images</Typography>
-                                        </Grid>
-                                }
-
-                                <Grid item xs={12} gap='2rem' mb={2}>
-                                    <div className='imageTray'>
-                                        {
-                                            imageTemplate && imageTemplate.map((image, index) => {
-                                                if (index === defaultImage)
-                                                    return <div key={index} className='templateImage default'><img src={image} alt='' /></div>
-                                                return <div key={index} onClick={() => setDefaultImage(index)} className='templateImage'><img src={image} alt='' /></div>
-                                            })
-                                        }
-                                        <Button component="label" sx={{ aspectRatio: '1', border: '1px dashed grey' }}>
-                                            <AddAPhotoIcon />
-                                            <IKUpload
-                                                folder={"/products-images"}
-                                                onError={(err) => console.log(err)}
-                                                onSuccess={(res) => {
-                                                    setImageURL(pre => [...pre, res.url])
-                                                    setImageTemplate(pre => [...pre, res.thumbnailUrl])
-                                                }}
-                                                hidden
-                                            />
-                                        </Button>
-                                    </div>
-                                </Grid>
-                                <span style={{ display: 'flex', marginLeft: 'auto', marginTop: -45, gap: 10 }}>
-                                    <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('close')}>CANCEL</Button>
-                                    {
-                                        toggleAddProduct.action === 'update' ?
-                                            <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large' onClick={() => handleActions('update')}>
-                                                UPDATE
-                                            </Button> :
-                                            <Button sx={{ fontSize: 12, maxHeight: 30, minWidth: 120 }} component="label" variant='contained' fullWidth size='large'>
-                                                ADD <input type="submit" hidden />
+                    <Slide direction="left" in={open} mountOnEnter unmountOnExit>
+                        <Box sx={box_style}  >
+                            <form action="submit" onSubmit={(e) => handleActions(e)}>
+                                <Grid container minWidth={'300px'} spacing={3.2}  >
+                                    {/*********** NAME ***********/}
+                                    <Grid item xs={12} >
+                                        <TextField
+                                            label="Product Name"
+                                            defaultValue={placeholder?.name}
+                                            value={product?.name}
+                                            onChange={(e) => setProductDetails("name", e.target.value)}
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** DESCRIPTION ***********/}
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            label="Description"
+                                            defaultValue={placeholder?.description}
+                                            value={product?.description}
+                                            rows={3}
+                                            multiline
+                                            onChange={(e) =>
+                                                setProductDetails("description", e.target.value)
+                                            }
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** CATEGORY ***********/}
+                                    <Grid item xs={3} md={6}>
+                                        <TextField
+                                            select
+                                            label='Category'
+                                            value={1}
+                                            onChange={e => setProductDetails('category_id', e.target.value)}
+                                            {...TF_Style}
+                                        >
+                                            <MenuItem value={1}>Ten</MenuItem>
+                                            <MenuItem value={2}>Twenty</MenuItem>
+                                            <MenuItem value={3}>Thirty</MenuItem>
+                                        </TextField>
+                                    </Grid>
+                                    {/*********** MATERIAL ***********/}
+                                    <Grid item xs={3} md={6}>
+                                        <TextField
+                                            select
+                                            label='Material'
+                                            value={1}
+                                            onChange={e => setProductDetails('material_id', e.target.value)}
+                                            {...TF_Style}
+                                        >
+                                            <MenuItem value={1}>Ten</MenuItem>
+                                            <MenuItem value={2}>Twenty</MenuItem>
+                                            <MenuItem value={3}>Thirty</MenuItem>
+                                        </TextField>
+                                    </Grid>
+                                    {/*********** SIZE ***********/}
+                                    <Grid item xs={6} md={3}>
+                                        <TextField
+                                            label="Dimension"
+                                            defaultValue={placeholder?.size}
+                                            value={product?.size}
+                                            onChange={(e) => setProductDetails("size", e.target.value)}
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** QUANTITY/AVAILABILITY ***********/}
+                                    <Grid item xs={3} md={3}>
+                                        <TextField
+                                            label="Quantity"
+                                            type="number"
+                                            defaultValue={placeholder?.quantity}
+                                            value={product?.quantity}
+                                            onChange={(e) => setProductDetails("quantity", e.target.value)}
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** PRICE ***********/}
+                                    <Grid item xs={3}>
+                                        <TextField
+                                            label="Price"
+                                            type="number"
+                                            defaultValue={placeholder?.price}
+                                            value={product?.price}
+                                            onChange={(e) => setProductDetails("price", e.target.value)}
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** DISCOUNT ***********/}
+                                    <Grid item xs={3}>
+                                        <TextField
+                                            label="Discount"
+                                            type="number"
+                                            defaultValue={placeholder?.discount}
+                                            value={product?.discount}
+                                            inputProps={{ type: 'number' }}
+                                            onChange={(e) => setProductDetails("discount", e.target.value)}
+                                            {...TF_Style}
+                                        />
+                                    </Grid>
+                                    {/*********** IMAGEKIT ***********/}
+                                    <Grid item xs={12} gap="2rem" mt={2}>
+                                        <Typography variant="h6" fontSize={16} fontWeight={500}>
+                                            {model === "update" ? 'Add more Images' : 'Upload Images'}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}  >
+                                        <div className="imageTray">
+                                            <Button
+                                                disabled={imageURL?.length === 5}
+                                                component="label"
+                                                sx={{ aspectRatio: "1", border: "1px dashed #a1a1a1dc" }}
+                                            >
+                                                <AddAPhotoIcon />
+                                                <IKUpload
+                                                    folder={"/products-images"}
+                                                    onError={(err) => console.log(err)}
+                                                    onSuccess={(res) => {
+                                                        console.log(res);
+                                                        setImageURL((pre) => [...pre, res]);
+                                                    }}
+                                                    hidden
+                                                />
                                             </Button>
-                                    }
-                                </span>
-                            </Grid>
-                        </form>
-                    </Box>
+                                            {
+                                                imageURL?.map((image, index) =>
+                                                    index === defaultImage ?
+                                                        <div key={image.fileId} className="templateImage default">
+                                                            <img src={image.thumbnailUrl} alt="" />
+                                                        </div>
+                                                        :
+                                                        <div
+                                                            key={image.fileId}
+                                                            onClick={() => setDefaultImage(index)}
+                                                            className="templateImage"
+                                                        >
+                                                            <img src={image.thumbnailUrl} alt="" />
+                                                        </div>
+                                                )
+                                            }
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={6} >
+                                        <Button
+                                            component="label"
+                                            variant="contained"
+                                            fullWidth
+                                            size="medium"
+                                            onClick={() => {
+                                                setImageURL([])
+                                                setImageTemplate([])
+                                                setModel(false)
+                                            }}
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={6}  >
+                                        <Button
+                                            component="label"
+                                            variant="contained"
+                                            fullWidth
+                                            size="medium"
+                                        >
+                                            {
+                                                model === "update" ?
+                                                    <>
+                                                        UPDATE < input type="submit" hidden />
+                                                    </> :
+                                                    <>
+                                                        ADD <input type="submit" hidden />
+                                                    </>
+                                            }
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </form>
+                        </Box>
+                    </Slide>
                 </Modal>
             </ThemeProvider>
         </>
-    )
+    );
 }
 
-export default AddProduct
+export default AddProduct;

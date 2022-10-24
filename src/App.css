@@ -2,15 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
 
 :root{
-    --brand: #356ff1;
-    /* --brand: #ff7300; */
-    /* --brand: #1a7ffd; */
-    --shadow: #bbcded;
+    --brand: hsl(221, 87%, 58%);
+    --brandMain: #33364d;
+    --shadow: #b5d0ff;
     --overlay : rgba(0, 0, 0, 0.932);
-    /* --brand: #2994ff; */
     --brandGradient: linear-gradient(30deg, #aa23ff,#2081ff);
     --Title: 'Oswald', sans-serif;
     --subTitle : 'Montserrat';
+    --neu:#dde1e7;
 }
 
 body{
@@ -22,12 +21,14 @@ body{
     /* text-shadow: 0 0 1px rgba(0, 0, 0, 0.438); */
     
 }
+
 /* #root >*{
     position: absolute;
     inset: 0;
     display: flex;
     flex-wrap: wrap;
 } */
+
 *{
     font-family: var(--subTitle);
     font-weight: 600;
@@ -37,6 +38,12 @@ body{
 ::selection{
     background: rgba(0, 0, 0, 0.103);
     color:hsl(0, 0%, 24%);
+}
+a{
+    color: #33364d;
+}
+a:hover{
+    color: var(--brand) !important;
 }
 
 .button_text {
@@ -65,7 +72,7 @@ body{
     padding: 1rem 2rem;
     font-weight: 600;
     color: rgb(255, 255, 255);
-    background: black;
+    background: var(--brand);
     border: none;
     cursor: pointer;
     transition: 0.2s;
@@ -89,9 +96,6 @@ body{
     width: auto !important;
     height: 100%;
 }
-a:hover{
-    color: var(--brand) !important;
-}
 
 /* //////scrollbar////// */
 
@@ -100,6 +104,21 @@ a:hover{
 }
 ::-webkit-scrollbar-thumb {
     background: var(--brand); 
+}
+
+
+@media only screen and (max-width: 1024px) {
+    :root {
+      font-size: 14px;
+    }
+}
+@media only screen and (max-width: 425px) {
+    :root {
+      font-size: 14px;
+    }
+    .button_primary{
+        box-shadow: 5px 5px 10px 0px var(--shadow);
+    }
 }
 
 
