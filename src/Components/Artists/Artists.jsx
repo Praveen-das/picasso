@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import './artists.css'
 import member1 from '../../Assets/Members/Member1.jpg'
 import member2 from '../../Assets/Members/Member2.jpg'

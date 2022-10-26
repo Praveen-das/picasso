@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import react, { useEffect, useRef } from 'react'
 import './style.css'
 import Cart from '@mui/icons-material/ShoppingCart';
 import Wishlist from '@mui/icons-material/Favorite';

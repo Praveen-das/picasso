@@ -1,7 +1,7 @@
 import {
     Box, Grid, Typography,  Modal
 } from '@mui/material'
-import React, { memo, useState } from 'react'
+import react, { memo, useState } from 'react'
 import RightIcon from '@mui/icons-material/ChevronRight';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import Signin from './Signin'

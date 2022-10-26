@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import react, { useEffect } from 'react'
 import './style.css'
 
 function AlertBox({ message, type }) {

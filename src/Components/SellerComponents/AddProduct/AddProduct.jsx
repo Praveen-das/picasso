@@ -1,59 +1,56 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./addProduct.css";
 import {
     Grid,
     Typography,
-    Backdrop,
     Button,
     ThemeProvider,
-    CircularProgress,
     Modal,
     TextField,
     Slide,
     MenuItem,
-    CssBaseline,
-    FormControl,
-    InputLabel,
-    Input,
-    FormHelperText,
+    CircularProgress,
 } from "@mui/material";
-import InputField from "../../TextField/InputField";
-import { useFirebase } from "../../../Context/FirebaseContext";
+
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { Box } from "@mui/system";
 import { useHelper } from "../../../Context/HelperContext";
-import { IKUpload } from "imagekitio-react";
+import { IKContext, IKUpload } from "imagekitio-react";
 import { useDatabase } from "../../../Hooks/useDatabase";
 import { useStore } from "../../../Context/Store";
-import { useFormik } from 'formik';
+import { Formik } from 'formik';
 import { productValidation } from "../../../Schema/YupSchema";
 import { box_style, TF_Style } from "./style";
+import ImageTemplate from "./imageTemplate/ImageTemplate";
+import { addProduct, deleteImage, fetchProducts } from "../../../lib/product.api";
+
+import {
+    useQueryClient,
+    useMutation
+} from '@tanstack/react-query'
 
 function AddProduct({ setModel, model, _product }) {
-    const [loading, setLoading] = useState(false);
+    const queryClient = useQueryClient()
+    const mutation = useMutation(addProduct, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['products'])
+        },
+    })
+
     const [placeholder, setPlaceholder] = useState();
     const [defaultImage, setDefaultImage] = useState(0);
-    const [imageURL, setImageURL] = useState([]);
-    const [imageTemplate, setImageTemplate] = useState([]);
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
     const { theme } = useHelper();
-    const [tag, setTag] = useState();
-    const [newTag, setNewTag] = useState([]);
-    const currentUser = useStore((state) => state?.auth?.user);
-    const { updateProduct } = useDatabase();
+    // const currentUser = useStore((state) => state?.auth?.user);
 
     useEffect(() => {
         if (model !== "update") {
             setPlaceholder({});
-            setImageTemplate([]);
-            setNewTag([]);
             return;
         }
-        setImageTemplate(_product?.image);
-        setNewTag(_product?.tags);
         setPlaceholder(_product);
-    }, [model]);
-
-    const { addProductToDatabase } = useDatabase();
+    }, [model, _product]);
 
     const handleActions = async (e) => {
         e.preventDefault();
@@ -80,20 +77,18 @@ function AddProduct({ setModel, model, _product }) {
         //     case 'submit':
         //         setModel({ open: false })
         //         setLoading(true)
-        //         product.image = imageURL
+        //         product.image = images
         //         product.defaultImage = defaultImage
         //         product.tags = newTag
         //         product.uid = currentUser.uid
         //         addProductToDatabase(product)
-        //         setNewTag([])
         //         setProduct('')
         //         setLoading(false)
-        //         setImageTemplate([])
-        //         setImageURL([])
+        //         setImages([])
         //         break;
 
         //     case 'update':
-        //         product.image = [...imageURL, ...product.image]
+        //         product.image = [...images, ...product.image]
         //         product.defaultImage = defaultImage
         //         product.tags = newTag
         //         await model.isConfirmed(product)
@@ -101,55 +96,59 @@ function AddProduct({ setModel, model, _product }) {
         //             open: false
         //         })
         //         setProduct([])
-        //         setNewTag([])
         //         break;
 
         //     case 'close':
         //         setModel({ open: false })
         //         setProduct([])
-        //         setNewTag([])
         //         setImageTemplate([])
-        //         setImageURL([])
+        //         setImages([])
         //         break;
         //     default:
         //         break;
         // }
     };
 
-    function setProductDetails(key, value) {
-        // setProduct((pre) => ({ ...pre, [key]: value }));
-    }
-
     const open = model === "add" || model === "update"
 
-    const formik = useFormik({
-        initialValues: {
-            name: '',
-            description: '',
-            category_id: 1,
-            material_id: 1,
-            width: 2,
-            height: 2,
-            quantity: 1,
-            price: 1000,
-            discount: 0,
-        },
-        validationSchema: productValidation,
-        onSubmit: (values) => {
-            console.log(values);
-        },
-    });
+    const initialValues = {
+        name: '',
+        desc: '',
+        category_id: 1,
+        material_id: 1,
+        width: 4,
+        height: 2,
+        quantity: 1,
+        price: 1000,
+        discount: 0,
+    }
+
+    function handleSubmit({ width, height, ...rest }) {
+        const obj = {
+            size: `${width}m x ${height}m`,
+            images,
+            ...rest
+        }
+        mutation.mutate(obj)
+        setModel(false)
+    }
+
+    function handleImages(image, index) {
+        const setDefault = () => setDefaultImage(index)
+        const _deleteImage = () =>
+            deleteImage(image.fileId).then(() => {
+                setImages(pre => pre.filter(o => o.fileId !== image.fileId))
+            })
+
+        return {
+            setDefault,
+            _deleteImage
+        }
+    }
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <CssBaseline />
-                {/* <Backdrop
-                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={loading}
-                >
-                    <CircularProgress color="inherit" />
-                </Backdrop> */}
                 <Modal
                     open={open}
                     onClose={() => setModel(false)}
@@ -157,244 +156,246 @@ function AddProduct({ setModel, model, _product }) {
                 >
                     <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                         <Box sx={box_style}  >
-                            <form action="submit" onSubmit={formik.handleSubmit}>
-                                <Grid container minWidth={'300px'} spacing={3.2}  >
-                                    {/*********** NAME ***********/}
-                                    <Grid item xs={12} >
-                                        <TextField
-                                            id="name"
-                                            name="name"
-                                            label="Product Name"
-                                            defaultValue={placeholder?.name}
-                                            value={formik.values.name}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.name && Boolean(formik.errors.name)}
-                                            // helperText={formik.touched.name && formik.errors.name}
-                                            {...TF_Style}
-                                        />
-                                        <FormHelperText
-                                            sx={{ position: 'absolute', right: 0, bottom: 6 }}
-                                            error={formik.touched.name && Boolean(formik.errors.name)}
-                                            id="name"
-                                            name="name"
-                                        >{formik.touched.name && formik.errors.name}
-                                        </FormHelperText>
-                                        {/* </FormControl> */}
-                                        {/* <TextField
-                                            id="name"
-                                            name="name"
-                                            label="Product Name"
-                                            defaultValue={placeholder?.name}
-                                            value={formik.values.name}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.name && Boolean(formik.errors.name)}
-                                            helperText={formik.touched.name && formik.errors.name}
-                                            {...TF_Style}
-                                        /> */}
-                                    </Grid>
-                                    {/*********** DESCRIPTION ***********/}
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            id="description"
-                                            name="description"
-                                            label="Description"
-                                            defaultValue={placeholder?.description}
-                                            rows={3}
-                                            multiline
-                                            value={formik.values.description}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.description && Boolean(formik.errors.description)}
-                                            helperText={formik.touched.description && formik.errors.description}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** CATEGORY ***********/}
-                                    <Grid item xs={3} md={3}>
-                                        <TextField
-                                            id="category_id"
-                                            name="category_id"
-                                            label='Category'
-                                            select
-                                            value={formik.values.category_id}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.category_id && Boolean(formik.errors.category_id)}
-                                            helperText={formik.touched.category_id && formik.errors.category_id}
-                                            {...TF_Style}
-                                        >
-                                            <MenuItem value={1}>Ten</MenuItem>
-                                            <MenuItem value={2}>Twenty</MenuItem>
-                                            <MenuItem value={3}>Thirty</MenuItem>
-                                        </TextField>
-                                    </Grid>
-                                    {/*********** MATERIAL ***********/}
-                                    <Grid item xs={3} md={3}>
-                                        <TextField
-                                            id="material_id"
-                                            name="material_id"
-                                            label='Material'
-                                            select
-                                            value={formik.values.material_id}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.material_id && Boolean(formik.errors.material_id)}
-                                            helperText={formik.touched.material_id && formik.errors.material_id}
-                                            {...TF_Style}
-                                        >
-                                            <MenuItem value={1}>Ten</MenuItem>
-                                            <MenuItem value={2}>Twenty</MenuItem>
-                                            <MenuItem value={3}>Thirty</MenuItem>
-                                        </TextField>
-                                    </Grid>
-                                    {/*********** WIDTH ***********/}
-                                    <Grid item xs={2} md={3}>
-                                        <TextField
-                                            id="width"
-                                            name="width"
-                                            label="Width(m)"
-                                            defaultValue={placeholder?.width}
-                                            value={formik.values.width}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.width && Boolean(formik.errors.width)}
-                                            helperText={formik.touched.width && formik.errors.width}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** HEIGHT ***********/}
-                                    <Grid item xs={2} md={3}>
-                                        <TextField
-                                            id="height"
-                                            name="height"
-                                            label="Height(m)"
-                                            defaultValue={placeholder?.height}
-                                            value={formik.values.height}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.height && Boolean(formik.errors.height)}
-                                            helperText={formik.touched.height && formik.errors.height}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** QUANTITY/AVAILABILITY ***********/}
-                                    <Grid item xs={3} md={4}>
-                                        <TextField
-                                            id="quantity"
-                                            name="quantity"
-                                            label="Quantity"
-                                            type="number"
-                                            defaultValue={placeholder?.quantity}
-                                            value={formik.values.quantity}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.quantity && Boolean(formik.errors.quantity)}
-                                            helperText={formik.touched.quantity && formik.errors.quantity}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** PRICE ***********/}
-                                    <Grid item xs={4}>
-                                        <TextField
-                                            id="price"
-                                            name="price"
-                                            label="Price"
-                                            type="number"
-                                            defaultValue={placeholder?.price}
-                                            value={formik.values.price}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.price && Boolean(formik.errors.price)}
-                                            helperText={formik.touched.price && formik.errors.price}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** DISCOUNT ***********/}
-                                    <Grid item xs={4}>
-                                        <TextField
-                                            id="discount"
-                                            name="discount"
-                                            label="Discount"
-                                            type="number"
-                                            defaultValue={placeholder?.discount}
-                                            inputProps={{ pattern: '[0-9]*' }}
-                                            value={formik.values.discount}
-                                            onChange={formik.handleChange}
-                                            error={formik.touched.discount && Boolean(formik.errors.discount)}
-                                            helperText={formik.touched.discount && formik.errors.discount}
-                                            {...TF_Style}
-                                        />
-                                    </Grid>
-                                    {/*********** IMAGEKIT ***********/}
-                                    <Grid item xs={12} gap="2rem" mt={2}>
-                                        <Typography variant="h6" fontSize={16} fontWeight={500}>
-                                            {model === "update" ? 'Add more Images' : 'Upload Images'}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}  >
-                                        <div className="imageTray">
-                                            <Button
-                                                disabled={imageURL?.length === 5}
-                                                component="label"
-                                                sx={{ aspectRatio: "1", border: "1px dashed #a1a1a1dc" }}
-                                            >
-                                                <AddAPhotoIcon />
-                                                <IKUpload
-                                                    folder={"/products-images"}
-                                                    onError={(err) => console.log(err)}
-                                                    onSuccess={(res) => {
-                                                        console.log(res);
-                                                        setImageURL((pre) => [...pre, res]);
-                                                    }}
-                                                    hidden
+                            <Formik
+                                initialValues={initialValues}
+                                validationSchema={productValidation}
+                                onSubmit={(values, { setSubmitting }) => {
+                                    handleSubmit(values);
+                                    setSubmitting(false);
+                                }}
+                            >
+                                {({
+                                    values,
+                                    errors,
+                                    touched,
+                                    handleChange,
+                                    handleSubmit,
+                                    isSubmitting,
+                                }) => (
+                                    <form action="submit" onSubmit={handleSubmit}>
+                                        {
+                                            console.log('asdasd')
+                                        }
+                                        <Grid container minWidth={'300px'} spacing={3.2}  >
+                                            {/*********** NAME ***********/}
+                                            <Grid item xs={12} >
+                                                <TextField
+                                                    id="name"
+                                                    name="name"
+                                                    label="Product Name*"
+                                                    defaultValue={placeholder?.name}
+                                                    value={values.name}
+                                                    onChange={handleChange}
+                                                    error={touched.name && Boolean(errors.name)}
+                                                    {...TF_Style}
                                                 />
-                                            </Button>
-                                            {
-                                                imageURL?.map((image, index) =>
-                                                    index === defaultImage ?
-                                                        <div key={image.fileId} className="templateImage default">
-                                                            <img src={image.thumbnailUrl} alt="" />
-                                                        </div>
-                                                        :
-                                                        <div
-                                                            key={image.fileId}
-                                                            onClick={() => setDefaultImage(index)}
-                                                            className="templateImage"
+                                            </Grid>
+                                            {/*********** DESCRIPTION ***********/}
+                                            {/* <Grid item xs={12}>
+                                                <TextField
+                                                    id="desc"
+                                                    name="desc"
+                                                    label="Description*"
+                                                    defaultValue={placeholder?.description}
+                                                    rows={3}
+                                                    multiline
+                                                    value={values.desc}
+                                                    onChange={handleChange}
+                                                    error={touched.desc && Boolean(errors.desc)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** CATEGORY ***********/}
+                                            {/* <Grid item xs={3} md={3}>
+                                                <TextField
+                                                    id="category_id"
+                                                    name="category_id"
+                                                    label='Category'
+                                                    select
+                                                    value={values.category_id}
+                                                    onChange={handleChange}
+                                                    error={
+                                                        touched.category_id &&
+                                                        Boolean(errors.category_id)
+                                                    }
+                                                    {...TF_Style}
+                                                >
+                                                    <MenuItem value={1}>Ten</MenuItem>
+                                                    <MenuItem value={2}>Twenty</MenuItem>
+                                                    <MenuItem value={3}>Thirty</MenuItem>
+                                                </TextField>
+                                            </Grid> */}
+                                            {/*********** MATERIAL ***********/}
+                                            {/* <Grid item xs={3} md={3}>
+                                                <TextField
+                                                    id="material_id"
+                                                    name="material_id"
+                                                    label='Material'
+                                                    select
+                                                    value={values.material_id}
+                                                    onChange={handleChange}
+                                                    error={touched.material_id && Boolean(errors.material_id)}
+                                                    {...TF_Style}
+                                                >
+                                                    <MenuItem value={1}>Ten</MenuItem>
+                                                    <MenuItem value={2}>Twenty</MenuItem>
+                                                    <MenuItem value={3}>Thirty</MenuItem>
+                                                </TextField>
+                                            </Grid> */}
+                                            {/*********** WIDTH ***********/}
+                                            {/* <Grid item xs={2} md={3}>
+                                                <TextField
+                                                    id="width"
+                                                    name="width"
+                                                    label="Width(m)"
+                                                    type='number'
+                                                    defaultValue={placeholder?.width}
+                                                    value={values.width}
+                                                    onChange={handleChange}
+                                                    error={touched.width && Boolean(errors.width)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** HEIGHT ***********/}
+                                            {/* <Grid item xs={2} md={3}>
+                                                <TextField
+                                                    id="height"
+                                                    name="height"
+                                                    label="Height(m)"
+                                                    type='number'
+                                                    defaultValue={placeholder?.height}
+                                                    value={values.height}
+                                                    onChange={handleChange}
+                                                    error={touched.height && Boolean(errors.height)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** QUANTITY/AVAILABILITY ***********/}
+                                            {/* <Grid item xs={3} md={4}>
+                                                <TextField
+                                                    id="quantity"
+                                                    name="quantity"
+                                                    label="Quantity"
+                                                    type="number"
+                                                    defaultValue={placeholder?.quantity}
+                                                    value={values.quantity}
+                                                    onChange={handleChange}
+                                                    error={touched.quantity && Boolean(errors.quantity)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** PRICE ***********/}
+                                            {/* <Grid item xs={4}>
+                                                <TextField
+                                                    id="price"
+                                                    name="price"
+                                                    label="Price"
+                                                    type="number"
+                                                    defaultValue={placeholder?.price}
+                                                    value={values.price}
+                                                    onChange={handleChange}
+                                                    error={touched.price && Boolean(errors.price)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** DISCOUNT ***********/}
+                                            {/* <Grid item xs={4}>
+                                                <TextField
+                                                    id="discount"
+                                                    name="discount"
+                                                    label="Discount(%)"
+                                                    type="number"
+                                                    defaultValue={placeholder?.discount}
+                                                    inputProps={{ pattern: '[0-9]*' }}
+                                                    value={values.discount}
+                                                    onChange={handleChange}
+                                                    error={touched.discount && Boolean(errors.discount)}
+                                                    {...TF_Style}
+                                                />
+                                            </Grid> */}
+                                            {/*********** IMAGEKIT ***********/}
+                                            {/* <Grid item xs={12} gap="2rem" mt={2}>
+                                                <Typography variant="h6" fontSize={16} fontWeight={500}>
+                                                    {model === "update" ? 'Add more Images' : 'Upload Images*'}
+                                                </Typography>
+                                            </Grid> */}
+                                            {/* <Grid item xs={12}  >
+                                                <div className="imageTray">
+                                                    <Button
+                                                        disabled={images?.length === 5 || loading}
+                                                        component="label"
+                                                        sx={{ aspectRatio: "1", border: "1px dashed #a1a1a1dc" }}
+                                                    >
+                                                        {
+                                                            loading ?
+                                                                <CircularProgress />
+                                                                :
+                                                                <AddAPhotoIcon />
+                                                        }
+                                                        <IKContext
+                                                            urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
+                                                            publicKey={process.env.REACT_APP_PUBLIC_KEY}
+                                                            authenticationEndpoint={process.env.REACT_APP_AUTH_ENDPOINT}
                                                         >
-                                                            <img src={image.thumbnailUrl} alt="" />
-                                                        </div>
-                                                )
-                                            }
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={6} >
-                                        <Button
-                                            component="label"
-                                            variant="contained"
-                                            fullWidth
-                                            size="medium"
-                                            onClick={() => {
-                                                setImageURL([])
-                                                setImageTemplate([])
-                                                setModel(false)
-                                            }}
-                                        >
-                                            CANCEL
-                                        </Button>
-                                    </Grid>
-                                    <Grid item xs={6}  >
-                                        <Button
-                                            component="label"
-                                            variant="contained"
-                                            fullWidth
-                                            size="medium"
-                                        >
-                                            {
-                                                model === "update" ?
-                                                    <>
-                                                        UPDATE < input type="submit" hidden />
-                                                    </> :
-                                                    <>
-                                                        ADD <input type="submit" hidden />
-                                                    </>
-                                            }
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </form>
+                                                            <IKUpload
+                                                                onUploadStart={() => setLoading(true)}
+                                                                folder={"/products-images"}
+                                                                onError={(err) => console.log(err)}
+                                                                onSuccess={(res) => {
+                                                                    setLoading(false)
+                                                                    setImages(pre => [...pre, res]);
+                                                                }}
+                                                                hidden
+                                                            />
+                                                        </IKContext>
+                                                    </Button>
+                                                    {
+                                                        images?.map((image, index) =>
+                                                            index === defaultImage ?
+                                                                <ImageTemplate key={image.fileId} image={image} defaultImage {...handleImages(image, index)} />
+                                                                :
+                                                                <ImageTemplate key={image.fileId} image={image} {...handleImages(image, index)} />
+                                                        )
+                                                    }
+                                                </div>
+                                            </Grid>
+                                            <Grid item xs={6} >
+                                                <Button
+                                                    component="label"
+                                                    variant="contained"
+                                                    fullWidth
+                                                    size="medium"
+                                                    onClick={() => {
+                                                        setImages([])
+                                                        setModel(false)
+                                                    }}
+                                                >
+                                                    CANCEL
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={6}  >
+                                                <Button
+                                                    component="label"
+                                                    variant="contained"
+                                                    fullWidth
+                                                    size="medium"
+                                                    disabled={isSubmitting}
+                                                >
+                                                    {
+                                                        model === "update" ?
+                                                            <>
+                                                                UPDATE < input type="submit" hidden />
+                                                            </> :
+                                                            <>
+                                                                ADD <input type="submit" hidden />
+                                                            </>
+                                                    }
+                                                </Button>
+                                            </Grid> */}
+                                        </Grid>
+                                    </form>
+                                )}
+                            </Formik>
                         </Box>
                     </Slide>
                 </Modal>

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import React, { memo, useEffect, useState } from 'react'
+import react, { memo, useEffect, useState } from 'react'
 import Review from './Review/Review'
 import NewReview from './NewReview/NewReview'
 import './reviews.css'

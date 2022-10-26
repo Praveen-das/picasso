@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import react, { useEffect, useRef } from 'react';
 import './status.css'
 
 function Status({ status }) {

@@ -1,6 +1,6 @@
 import Rating from '@mui/material/Rating'
 import Avatar from '@mui/material/Avatar'
-import React from 'react'
+import react from 'react'
 import './style.css'
 
 function Review({ data }) {

@@ -1,5 +1,5 @@
 import { Button, Divider, Grid, Typography } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import react, { useEffect, useRef, useState } from 'react'
 import { useDatabase } from '../../Hooks/useDatabase';
 import AlertBox from '../MUIComponents/AlertBox/AlertBox';
 import { handleExceptions } from '../../Hooks/useExceptionHandler';

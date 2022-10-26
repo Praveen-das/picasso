@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import react, { useEffect } from 'react'
 import './banner.css'
 import gsap from 'gsap'
 import { Link } from 'react-router-dom'

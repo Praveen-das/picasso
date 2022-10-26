@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import './floatingCart.css'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useStore } from '../../Context/Store';

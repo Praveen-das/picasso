@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import './dashboard.css'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { faClock, faHandHoldingUsd, faTimesCircle, faUndo } from '@fortawesome/free-solid-svg-icons'

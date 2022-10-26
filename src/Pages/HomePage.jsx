@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import react from 'react'
 import Banner from '../Components/Banner/Banner'
-import Footer from '../Components/Footer/Footer'
 import Header from '../Components/Header/Header'
 import Categories from '../Components/Categories/Categories'
 
 import './style.css'
-import { useStore } from '../Context/Store'
 
 function HomePage() {
-    async function fetchData() {
-        let data = await fetch('http://localhost:3001/products',{method:'get'}).then(res => res.json())
-        console.log(data);
-    }
-
     return (
         <>
-            <button style={{ position: 'fixed', zIndex: 22222 }} onClick={() => fetchData()}>FETCH DATA</button>
             <Header />
             <Banner />
             {/* <AboutUs /> */}

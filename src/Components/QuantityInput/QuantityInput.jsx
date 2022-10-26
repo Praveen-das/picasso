@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import react, { useState } from 'react';
 
 function QuantityInput({ quantity, setQuantity, index }) {
     const [value, setValue] = useState(parseInt(quantity))

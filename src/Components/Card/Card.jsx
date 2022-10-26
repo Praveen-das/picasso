@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import react, { useState } from 'react'
 import favourite_normal from '../../Assets/Icons/favourite-normal.svg'
 import favourite_active from '../../Assets/Icons/favourite-active.svg'
 import './card.css'

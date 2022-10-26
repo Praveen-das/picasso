@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import react, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
 import Box from '@mui/material/Box';

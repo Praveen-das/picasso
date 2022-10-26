@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import { Avatar as CustomAvatar } from '@mui/material/'
 
 function Avatar({ displayName, sx, profilePicture }) {

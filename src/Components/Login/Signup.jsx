@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Google from '@mui/icons-material/Google';
 import Facebook from '@mui/icons-material/Facebook';
 import Twitter from '@mui/icons-material/Twitter';
-import React, { useState } from 'react'
+import react, { useState } from 'react'
 import InputField from '../TextField/InputField'
 import { useAuth } from '../../Hooks/useAuth';
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import './footer.css'
 import instagram from '../../Assets/Icons/instagram.svg'
 import facebook from '../../Assets/Icons/facebook.svg'

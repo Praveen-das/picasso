@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import Header from '../Components/Header/Header'
 import UserProfile from '../Components/Profile/UserProfile'
 

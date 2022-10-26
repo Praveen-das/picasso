@@ -3,7 +3,7 @@ import {
     , Checkbox
 } from '@mui/material'
 
-import React, { useRef, useState } from 'react'
+import react, { useRef, useState } from 'react'
 import './style.css'
 import { handleExceptions } from '../../Hooks/useExceptionHandler'
 import AlertBox from '../MUIComponents/AlertBox/AlertBox'

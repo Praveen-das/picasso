@@ -1,5 +1,5 @@
 import { Button, Typography } from '@mui/material'
-import React from 'react'
+import react from 'react'
 import { useStore } from '../../Context/Store'
 import ProductList from '../ProductList/ProductList'
 import { ReactComponent as NoOrders } from '../../Assets/Images/noorders.svg'

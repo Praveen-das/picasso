@@ -1,4 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
 import './App.css'
 import HomePage from "./Pages/HomePage";
 import ShoppingPage from './Pages/ShoppingPage';
@@ -8,24 +14,28 @@ import ProductPage from './Pages/ProductPage';
 import CheckoutPage from './Pages/CheckoutPage';
 import Alert from './Components/Alert/Alert'
 
+
 function App() {
+  const queryClient = new QueryClient()
 
   return (
     <>
       <label style={{ position: 'fixed', top: 0, zIndex: 200 }} htmlFor="">{window.innerWidth}</label>
       <Alert />
-      <Router>
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/shop' element={<ShoppingPage />} />
-          <Route path='/sell' element={<SellerPage />} />
-          <Route path='/my-profile' element={<ProfilePage />} />
-          <Route path='/shop/product' element={<ProductPage />} />
-          <Route path='/checkout' element={<CheckoutPage />} />
-          <Route path='/search/:query' element={<ShoppingPage />} />
-          <Route path='/category/:category' element={<ShoppingPage />} />
-        </Routes>
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/shop' element={<ShoppingPage />} />
+            <Route path='/sell' element={<SellerPage />} />
+            <Route path='/my-profile' element={<ProfilePage />} />
+            <Route path='/shop/product' element={<ProductPage />} />
+            <Route path='/checkout' element={<CheckoutPage />} />
+            <Route path='/search/:query' element={<ShoppingPage />} />
+            <Route path='/category/:category' element={<ShoppingPage />} />
+          </Routes>
+        </Router>
+      </QueryClientProvider>
     </>
   );
 }

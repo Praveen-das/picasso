@@ -1,18 +1,13 @@
-import React, { useState } from 'react'
-import { createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, reload, sendEmailVerification, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, updateProfile } from "firebase/auth";
+import { useState } from 'react'
+import { createUserWithEmailAndPassword, reload, sendEmailVerification, signInWithEmailAndPassword, signOut, updateEmail, updatePassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import ReAuthenticate from "../Components/ReAuthenticate/ReAuthenticate";
 import { auth, db } from "../Config/Firebase/Firebase";
 import { useStore } from "../Context/Store";
-import { useDatabase } from './useDatabase'
-import { useExceptionHandler } from './useExceptionHandler';
 
 export const useAuth = () => {
     const user = useStore(state => state.auth.user)
     const set = useStore.setState
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
-    const { setActionExpiryDate } = useDatabase()
 
     const resetCurrentUser = async () => {
         await reload(user)
@@ -31,7 +26,7 @@ export const useAuth = () => {
     const email = 'q@q.com'
     const password = 'asdasdasd'
 
-    const signin = (credential) => {
+    const signin = () => {
         set(state => ({ auth: { ...state.auth, status: 'PENDING' } }))
 
         signInWithEmailAndPassword(auth, email, password)
@@ -55,7 +50,7 @@ export const useAuth = () => {
             updateProfile(auth.currentUser, {
                 displayName: credential.username
             }).catch((error) => console.log(error))
-            
+
             try {
                 const userRef = doc(db, 'userdata', userCredential.user.uid)
                 const user_data = {
@@ -153,7 +148,7 @@ export const useAuth = () => {
                     useStore.setState(state => ({
                         alert: {
                             ...state.alert,
-                            type:'success',
+                            type: 'success',
                             toggled: true,
                             message: 'Email changed successfully'
                         }

@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Modal, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import react, { useState } from 'react'
 import { useStore } from '../../Context/Store';
 import { useAuth } from '../../Hooks/useAuth';
 

@@ -1,5 +1,5 @@
 import { Grid, Paper, Tab, Tabs } from '@mui/material';
-import React, { useState } from 'react';
+import react, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { TabPanel } from './TabPannel';
 import Dashboard from '../SellerComponents/Dashboard/Dashboard';

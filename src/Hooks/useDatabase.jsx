@@ -1,9 +1,7 @@
-import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, serverTimestamp, setDoc, updateDoc, Timestamp, limit, query, where, startAfter, onSnapshot, getDocs } from "firebase/firestore";
+import { increment, addDoc, collection, arrayUnion, arrayRemove, deleteDoc, doc, serverTimestamp, setDoc, updateDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from "../Config/Firebase/Firebase";
-import { myQuery } from "../HelperFunctions__XXX/fetchData";
 import { useStore } from "../Context/Store";
 import { useHelper } from "./useHelper";
-import { useState } from "react";
 
 
 export const useDatabase = () => {
@@ -124,8 +122,8 @@ export const useDatabase = () => {
                     !data.state
                 )
                     throw new Error('textField/empty-input')
-                if (!data.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
-                    throw new Error('auth/invalid-email')
+                // if (!data.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+                //     throw new Error('auth/invalid-email')
             } catch (error) {
                 rej(error.message)
                 return

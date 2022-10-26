@@ -1,6 +1,6 @@
 import Modal from '@mui/material/Modal';
 import Box from '@mui/system/Box';
-import React from 'react'
+import react from 'react'
 import './confirmationDialog.css'
 import Slide from '@mui/material/Slide';
 import ReactDom from 'react-dom';

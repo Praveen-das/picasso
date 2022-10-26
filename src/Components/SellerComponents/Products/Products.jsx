@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useFirebase } from '../../../Context/FirebaseContext'
@@ -8,18 +8,22 @@ import Search from '../../Search/Search'
 import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
+import { useQuery } from '@tanstack/react-query'
+import { fetchProducts } from '../../../lib/product.api'
 
 function Products() {
     // const { useSearch } = useFirebase()
     const { removeProduct, updateProduct } = useDatabase()
-    const products = useStore(state => state?.database?.sellerProducts)
     const uid = useStore(state => state.auth.user?.uid)
-    const loading = false
     const [toggleEditButton, setToggleEditButton] = useState(false)
-    const [model, setModel] = useState('add')
+    const [model, setModel] = useState('')
     const [dialog, setDialog] = useState('')
     const [product, setProduct] = useState()
 
+    const { data, isFetching } = useQuery(['products'], fetchProducts, {
+        refetchOnWindowFocus: false
+    })
+    console.log('asdasd');
     // const { result, setSearchQuery } = useSearch('adminProducts')
     const handleAction = (action, product) => {
         switch (action) {
@@ -99,19 +103,20 @@ function Products() {
                                 // ((!result.searching) || (!loading)) ?
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
-                                products?.map((data, index) =>
+                                !isFetching &&
+                                data.data.map((product, index) =>
                                     < tr key={index} >
                                         <td>{index + 1}</td>
-                                        <td><img id='dashbord_product--image' src={data?.image[0] + '/tr:w-100'} alt="" /></td>
-                                        <td>{data?.name}</td>
-                                        <td>{data?.id}</td>
-                                        <td>{data?.quantity}</td>
-                                        <td>{data?.discount}</td>
-                                        <td>{data?.price}</td>
+                                        <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
+                                        <td>{product?.name}</td>
+                                        <td>{product?.id}</td>
+                                        <td>{product?.quantity}</td>
+                                        <td>{product?.discount}</td>
+                                        <td>{product?.price}</td>
                                         {toggleEditButton && <td>
                                             <div className='action'>
-                                                <Icon className='actionButtons' onClick={() => _updateProduct(data)} icon={faEdit} />
-                                                <Icon className='actionButtons' onClick={() => handleAction('delete', data)} icon={faTrash} />
+                                                <Icon className='actionButtons' onClick={() => _updateProduct(product)} icon={faEdit} />
+                                                <Icon className='actionButtons' onClick={() => handleAction('delete', product)} icon={faTrash} />
                                             </div>
                                         </td>}
                                     </tr>

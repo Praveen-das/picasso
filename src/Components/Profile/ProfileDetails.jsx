@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import Avatar from '../Avatar/Avatar';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 import ChangePassword from '../ChangePassword/ChangePassword';

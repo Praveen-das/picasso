@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import AddNewAddress from '../Profile/AddNewAddress';
 import AddIcon from '@mui/icons-material/Add';
 import QuantityInput from '../QuantityInput/QuantityInput';

@@ -1,4 +1,4 @@
-import React from 'react';
+import react from 'react';
 import './checkout.css'
 import { ReactComponent as EMPTY_CART } from '../../Assets/Images/empty_cart.svg'
 

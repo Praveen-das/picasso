@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
+import react, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import './product.css'
 import { useFirebase } from '../../Context/FirebaseContext';

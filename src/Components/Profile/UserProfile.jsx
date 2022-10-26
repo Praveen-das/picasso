@@ -1,5 +1,5 @@
 import { Box, Grid, Paper, Tab, Tabs } from '@mui/material'
-import React, { useState } from 'react'
+import react, { useState } from 'react'
 import ProfileDetails from './ProfileDetails'
 import ManageAddress from './ManageAddress'
 import MyOrders from './MyOrders'

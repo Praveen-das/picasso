@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import react, { useRef, useState } from 'react'
 import './dropdown.css'
 
 function NavItem({ children }) {

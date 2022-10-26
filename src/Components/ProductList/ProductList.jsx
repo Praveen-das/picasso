@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useState } from 'react';
+import react, { useEffect, useState } from 'react';
 import Status from '../Status/Status';
 import './productList.css'
 import { useDatabase } from '../../Hooks/useDatabase';

@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
-import React, { createContext, useContext, useEffect } from 'react'
+import react, { createContext, useContext, useEffect } from 'react'
 import { IKContext } from 'imagekitio-react'
 import gsap from 'gsap';
 import scrollTrigger from 'gsap/ScrollTrigger';
@@ -12,10 +12,6 @@ export function useHelper() {
 const ContextProvider = createContext()
 
 export default function HelperContext({ children }) {
-    const URL_ENDPOINT = 'https://ik.imagekit.io/1q7keivsfku/'
-    const PUBLIC_KEY = 'public_TgB5AGA3AeEiZhn3/24RR02eNbo='
-    const AUTH_ENDPOINT = 'http://localhost:3001/imagekit/auth'
-
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
 
     const theme = createTheme({
@@ -86,13 +82,7 @@ export default function HelperContext({ children }) {
     return (
         <ContextProvider.Provider value={value}>
             <ThemeProvider theme={theme}>
-                <IKContext
-                    urlEndpoint={URL_ENDPOINT}
-                    publicKey={PUBLIC_KEY}
-                    authenticationEndpoint={AUTH_ENDPOINT}
-                >
-                    {children}
-                </IKContext>
+                {children}
             </ThemeProvider>
         </ContextProvider.Provider >
     )

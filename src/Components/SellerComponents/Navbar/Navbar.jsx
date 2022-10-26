@@ -1,4 +1,4 @@
-import React from 'react'
+import react from 'react'
 import './navbar.css'
 import logo from '../../../Assets/Icons/logo.png'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'

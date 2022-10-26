@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import react, { useEffect } from 'react'
 import './categories.css'
 import { categories } from '../../Assets/URLs/categories'
 import gsap from 'gsap'
