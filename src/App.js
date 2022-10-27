@@ -16,7 +16,7 @@ import Alert from './Components/Alert/Alert'
 
 
 function App() {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({ staleTime: 60000 })
 
   return (
     <>

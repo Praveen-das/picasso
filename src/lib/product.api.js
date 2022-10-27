@@ -19,8 +19,8 @@ export const updateProduct = (id, updates) => {
     return axiosClient.put(`/products/${id}`, updates)
 }
 
-export const fetchProducts = () => {
-    return axiosClient.get(`/products`,)
+export const fetchProducts = ({ page=1 }) => {
+    return axiosClient.get(`/products?limit=10&page=${page}`,)
 }
 
 export const fetchProduct = (id) => {

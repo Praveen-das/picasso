@@ -131,6 +131,7 @@ function AddProduct({ setModel, model, _product }) {
         }
         mutation.mutate(obj)
         setModel(false)
+        setImages([])
     }
 
     function handleImages(image, index) {
@@ -163,19 +164,18 @@ function AddProduct({ setModel, model, _product }) {
                                     handleSubmit(values);
                                     setSubmitting(false);
                                 }}
+                                validateOnChange={false}
                             >
                                 {({
                                     values,
                                     errors,
                                     touched,
                                     handleChange,
+                                    handleBlur,
                                     handleSubmit,
                                     isSubmitting,
                                 }) => (
                                     <form action="submit" onSubmit={handleSubmit}>
-                                        {
-                                            console.log('asdasd')
-                                        }
                                         <Grid container minWidth={'300px'} spacing={3.2}  >
                                             {/*********** NAME ***********/}
                                             <Grid item xs={12} >
@@ -186,12 +186,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.name}
                                                     value={values.name}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.name && Boolean(errors.name)}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
                                             {/*********** DESCRIPTION ***********/}
-                                            {/* <Grid item xs={12}>
+                                            <Grid item xs={12}>
                                                 <TextField
                                                     id="desc"
                                                     name="desc"
@@ -201,12 +202,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     multiline
                                                     value={values.desc}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.desc && Boolean(errors.desc)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** CATEGORY ***********/}
-                                            {/* <Grid item xs={3} md={3}>
+                                            <Grid item xs={3} md={3}>
                                                 <TextField
                                                     id="category_id"
                                                     name="category_id"
@@ -214,6 +216,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     select
                                                     value={values.category_id}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={
                                                         touched.category_id &&
                                                         Boolean(errors.category_id)
@@ -224,9 +227,9 @@ function AddProduct({ setModel, model, _product }) {
                                                     <MenuItem value={2}>Twenty</MenuItem>
                                                     <MenuItem value={3}>Thirty</MenuItem>
                                                 </TextField>
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** MATERIAL ***********/}
-                                            {/* <Grid item xs={3} md={3}>
+                                            <Grid item xs={3} md={3}>
                                                 <TextField
                                                     id="material_id"
                                                     name="material_id"
@@ -234,6 +237,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     select
                                                     value={values.material_id}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.material_id && Boolean(errors.material_id)}
                                                     {...TF_Style}
                                                 >
@@ -241,9 +245,9 @@ function AddProduct({ setModel, model, _product }) {
                                                     <MenuItem value={2}>Twenty</MenuItem>
                                                     <MenuItem value={3}>Thirty</MenuItem>
                                                 </TextField>
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** WIDTH ***********/}
-                                            {/* <Grid item xs={2} md={3}>
+                                            <Grid item xs={2} md={3}>
                                                 <TextField
                                                     id="width"
                                                     name="width"
@@ -252,12 +256,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.width}
                                                     value={values.width}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.width && Boolean(errors.width)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** HEIGHT ***********/}
-                                            {/* <Grid item xs={2} md={3}>
+                                            <Grid item xs={2} md={3}>
                                                 <TextField
                                                     id="height"
                                                     name="height"
@@ -266,12 +271,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.height}
                                                     value={values.height}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.height && Boolean(errors.height)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** QUANTITY/AVAILABILITY ***********/}
-                                            {/* <Grid item xs={3} md={4}>
+                                            <Grid item xs={3} md={4}>
                                                 <TextField
                                                     id="quantity"
                                                     name="quantity"
@@ -280,12 +286,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.quantity}
                                                     value={values.quantity}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.quantity && Boolean(errors.quantity)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** PRICE ***********/}
-                                            {/* <Grid item xs={4}>
+                                            <Grid item xs={4}>
                                                 <TextField
                                                     id="price"
                                                     name="price"
@@ -294,12 +301,13 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.price}
                                                     value={values.price}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.price && Boolean(errors.price)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** DISCOUNT ***********/}
-                                            {/* <Grid item xs={4}>
+                                            <Grid item xs={4}>
                                                 <TextField
                                                     id="discount"
                                                     name="discount"
@@ -309,17 +317,18 @@ function AddProduct({ setModel, model, _product }) {
                                                     inputProps={{ pattern: '[0-9]*' }}
                                                     value={values.discount}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlur}
                                                     error={touched.discount && Boolean(errors.discount)}
                                                     {...TF_Style}
                                                 />
-                                            </Grid> */}
+                                            </Grid>
                                             {/*********** IMAGEKIT ***********/}
-                                            {/* <Grid item xs={12} gap="2rem" mt={2}>
+                                            <Grid item xs={12} gap="2rem" mt={2}>
                                                 <Typography variant="h6" fontSize={16} fontWeight={500}>
                                                     {model === "update" ? 'Add more Images' : 'Upload Images*'}
                                                 </Typography>
-                                            </Grid> */}
-                                            {/* <Grid item xs={12}  >
+                                            </Grid>
+                                            <Grid item xs={12}  >
                                                 <div className="imageTray">
                                                     <Button
                                                         disabled={images?.length === 5 || loading}
@@ -333,17 +342,16 @@ function AddProduct({ setModel, model, _product }) {
                                                                 <AddAPhotoIcon />
                                                         }
                                                         <IKContext
-                                                            urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
                                                             publicKey={process.env.REACT_APP_PUBLIC_KEY}
+                                                            urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
                                                             authenticationEndpoint={process.env.REACT_APP_AUTH_ENDPOINT}
                                                         >
                                                             <IKUpload
                                                                 onUploadStart={() => setLoading(true)}
-                                                                folder={"/products-images"}
                                                                 onError={(err) => console.log(err)}
                                                                 onSuccess={(res) => {
-                                                                    setLoading(false)
                                                                     setImages(pre => [...pre, res]);
+                                                                    setLoading(false)
                                                                 }}
                                                                 hidden
                                                             />
@@ -391,7 +399,7 @@ function AddProduct({ setModel, model, _product }) {
                                                             </>
                                                     }
                                                 </Button>
-                                            </Grid> */}
+                                            </Grid>
                                         </Grid>
                                     </form>
                                 )}

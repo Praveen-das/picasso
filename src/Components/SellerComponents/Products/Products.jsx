@@ -19,12 +19,9 @@ function Products() {
     const [model, setModel] = useState('')
     const [dialog, setDialog] = useState('')
     const [product, setProduct] = useState()
+    
+    const { data, isFetching } = useQuery(['products'], fetchProducts)
 
-    const { data, isFetching } = useQuery(['products'], fetchProducts, {
-        refetchOnWindowFocus: false
-    })
-    console.log('asdasd');
-    // const { result, setSearchQuery } = useSearch('adminProducts')
     const handleAction = (action, product) => {
         switch (action) {
             case 'update':
