@@ -10,7 +10,10 @@ export function useProductData() {
 }
 
 export function useProduct(id) {
-    return useQuery(['product', id], () => fetchProduct(id), { enabled: !!id })
+    return useQuery(['product', id], () => fetchProduct(id), {
+        enabled: !!id,
+        keepPreviousData: true
+    })
 }
 
 

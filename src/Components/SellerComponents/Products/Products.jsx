@@ -23,6 +23,8 @@ function Products() {
     const [product, setProduct] = useState()
 
     const { data, page } = useProductData()
+    const products = data ? data.data[0] : []
+    const count = data ? data.data[1].id : 1
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -102,7 +104,7 @@ function Products() {
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
                                 // !isFetching &&
-                                data?.data?.map((product, index) =>
+                                products?.map((product, index) =>
                                     < tr key={index} >
                                         <td>{product?.name}</td>
                                         <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
@@ -123,7 +125,7 @@ function Products() {
                             }
                         </tbody>
                     </table>
-                    <Pagination color="primary" sx={{ mt: 3 }} onChange={(_, value) => page(value)} count={10} />
+                    <Pagination color="primary" sx={{ mt: 3 }} onChange={(_, value) => page(value)} count={Math.ceil(count / 10)} />
                 </div>
             </div>
         </>
