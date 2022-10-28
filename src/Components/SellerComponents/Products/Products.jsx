@@ -10,6 +10,8 @@ import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
 import { useQuery } from '@tanstack/react-query'
 import { fetchProducts } from '../../../lib/product.api'
+import { useProductData } from '../../../Hooks/useProductData'
+import { Pagination } from '@mui/material'
 
 function Products() {
     // const { useSearch } = useFirebase()
@@ -19,8 +21,8 @@ function Products() {
     const [model, setModel] = useState('')
     const [dialog, setDialog] = useState('')
     const [product, setProduct] = useState()
-    
-    const { data, isFetching } = useQuery(['products'], fetchProducts)
+
+    const { data, page } = useProductData()
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -62,12 +64,12 @@ function Products() {
                     close: () => setDialog(false)
                 }}
             /> */}
+            <AddProduct setModel={setModel} model={model} _product={product} />
             <div className="dashboard-wrapper">
                 {/* <AlertMessage
                     dialog={dialog}
                     setDialog={setDialog}
                 /> */}
-                <AddProduct setModel={setModel} model={model} _product={product} />
                 <div id="dashboard">
                     <div className="actionbar">
                         <span style={{ marginLeft: 'auto' }}>
@@ -85,9 +87,8 @@ function Products() {
                     <table className='productTable' style={{ width: '100%' }}>
                         <thead>
                             <tr>
-                                <th>no</th>
+                                <th>Product</th>
                                 <th>image</th>
-                                <th>name</th>
                                 <th>id</th>
                                 <th>availible</th>
                                 <th>discount</th>
@@ -100,12 +101,11 @@ function Products() {
                                 // ((!result.searching) || (!loading)) ?
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
-                                !isFetching &&
-                                data.data.map((product, index) =>
+                                // !isFetching &&
+                                data?.data?.map((product, index) =>
                                     < tr key={index} >
-                                        <td>{index + 1}</td>
-                                        <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
                                         <td>{product?.name}</td>
+                                        <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
                                         <td>{product?.id}</td>
                                         <td>{product?.quantity}</td>
                                         <td>{product?.discount}</td>
@@ -123,6 +123,7 @@ function Products() {
                             }
                         </tbody>
                     </table>
+                    <Pagination color="primary" sx={{ mt: 3 }} onChange={(_, value) => page(value)} count={10} />
                 </div>
             </div>
         </>

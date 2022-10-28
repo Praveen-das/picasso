@@ -19,7 +19,7 @@ export const updateProduct = (id, updates) => {
     return axiosClient.put(`/products/${id}`, updates)
 }
 
-export const fetchProducts = ({ page=1 }) => {
+export const fetchProducts = (page) => {
     return axiosClient.get(`/products?limit=10&page=${page}`,)
 }
 

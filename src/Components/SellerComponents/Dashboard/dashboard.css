@@ -10,6 +10,8 @@
   width: 100%;
   padding: 1.5rem;
   padding-top: 0;
+  display: grid;
+  justify-items: center;
 }
 .dashboard-items {
   width: 100%;
@@ -77,7 +79,6 @@
     font-size: 1.2em;
 }
 .dashboard-wrapper table{
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.185);
     border-radius: 5px;
     border-spacing: 0;
 }
