@@ -5,9 +5,11 @@
     margin-bottom: 1rem;
 }
 .actions{
+    width: 100%;
     display: flex;
     gap: 10px;
     justify-content: right;
+    align-items: center;
 }
 .addProduct,
 .editProducts{
@@ -42,22 +44,24 @@
     aspect-ratio: 1;
     background-size: cover;
 }
-table{
-    border-radius: 10px;
-}
-.productTable th:first-child,
-.productTable td:first-child{
-    /* width: 10px; */
-}
-.productTable th:nth-child(2),
-.productTable td:nth-child(2){
-    width: 100px;
-}
 .actionButtons{
     cursor: pointer;
 }
 .actionButtons:hover{
     color: var(--brand);
+}
+.MuiPagination-ul{
+    justify-content: center;
+}
+.productTable td{
+    width: 100px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.productTable td:nth-child(3){
+    width: 200px;
+    max-width: 200px;
 }
 @media only screen and (max-width: 425px) {
     th:nth-child(2),

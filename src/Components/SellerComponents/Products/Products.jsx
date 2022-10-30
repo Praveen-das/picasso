@@ -8,13 +8,14 @@ import Search from '../../Search/Search'
 import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
-import { useQuery } from '@tanstack/react-query'
-import { fetchProducts } from '../../../lib/product.api'
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { deleteProduct, fetchProducts } from '../../../lib/product.api'
 import { useProductData } from '../../../Hooks/useProductData'
-import { Pagination } from '@mui/material'
+import { Pagination, Skeleton } from '@mui/material'
 
+const skeleton = new Array(20).fill()
 function Products() {
-    // const { useSearch } = useFirebase()
+    const queryClient = useQueryClient()
     const { removeProduct, updateProduct } = useDatabase()
     const uid = useStore(state => state.auth.user?.uid)
     const [toggleEditButton, setToggleEditButton] = useState(false)
@@ -22,9 +23,14 @@ function Products() {
     const [dialog, setDialog] = useState('')
     const [product, setProduct] = useState()
 
-    const { data, page } = useProductData()
+    const { data, page, query, isLoading } = useProductData()
+    const { mutate } = useMutation(deleteProduct, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['products'])
+        },
+    })
     const products = data ? data.data[0] : []
-    const count = data ? data.data[1].id : 1
+    const count = data ? data.data[1]?.id : 1
 
     const handleAction = (action, product) => {
         switch (action) {
@@ -38,11 +44,7 @@ function Products() {
                 break;
             case 'delete':
                 setDialog(!dialog)
-                confirmAction(
-                    'Remove Product',
-                    'Press Confirm to Remove your product',
-                    () => removeProduct(product.id)
-                )
+
                 break;
             default:
                 break;
@@ -54,19 +56,21 @@ function Products() {
         setProduct(product)
     }
 
+    useEffect(() => {
+        window.scrollTo({ top: 0 })
+    }, [products])
+
+    function handleDelete(productId) {
+        confirmAction(
+            'Remove Product',
+            'Press Confirm to Remove your product',
+            () => mutate(productId)
+        )
+    }
+
     return (
         <>
-            {/* <ConfirmationDialog
-                title='Remove Product'
-                message='Press Confirm to Remove your product'
-                dialog={dialog}
-                setDialog={setDialog}
-                callBackAction={{
-                    confirm: () => removeProduct(productId),
-                    close: () => setDialog(false)
-                }}
-            /> */}
-            <AddProduct setModel={setModel} model={model} _product={product} />
+            {model && <AddProduct setModel={setModel} model={model} _product={product} />}
             <div className="dashboard-wrapper">
                 {/* <AlertMessage
                     dialog={dialog}
@@ -74,10 +78,13 @@ function Products() {
                 /> */}
                 <div id="dashboard">
                     <div className="actionbar">
-                        <span style={{ marginLeft: 'auto' }}>
-                            {/* <Search onKeyUp={(e) => setSearchQuery(e.target.value)} /> */}
+                        <span >
                         </span>
                         <div className="actions">
+                            <Search
+                                onKeyUp={value => query(value)}
+                                onSearch={value => query(value)}
+                            />
                             <button color='secondary' onClick={() => setModel('add')} className='addProduct'>
                                 <Icon className='faAddIcon' icon={faPlus} /> ADD
                             </button>
@@ -103,29 +110,54 @@ function Products() {
                                 // ((!result.searching) || (!loading)) ?
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
-                                // !isFetching &&
-                                products?.map((product, index) =>
-                                    < tr key={index} >
+                                !isLoading ? products.map((product) =>
+                                    < tr key={product.id} >
                                         <td>{product?.name}</td>
                                         <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
                                         <td>{product?.id}</td>
                                         <td>{product?.quantity}</td>
                                         <td>{product?.discount}</td>
                                         <td>{product?.price}</td>
-                                        {toggleEditButton && <td>
-                                            <div className='action'>
-                                                <Icon className='actionButtons' onClick={() => _updateProduct(product)} icon={faEdit} />
-                                                <Icon className='actionButtons' onClick={() => handleAction('delete', product)} icon={faTrash} />
-                                            </div>
-                                        </td>}
+                                        {
+                                            toggleEditButton && <td>
+                                                <div className='action'>
+                                                    <Icon className='actionButtons' onClick={() => _updateProduct(product)} icon={faEdit} />
+                                                    <Icon className='actionButtons' onClick={() => handleDelete(product.id)} icon={faTrash} />
+                                                </div>
+                                            </td>
+                                        }
                                     </tr>
                                 )
+                                    :
+                                    skeleton.map((_, i) => (
+                                        <tr key={i}>
+                                            <td height={'70px'} width={'15%'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                            <td height={'70px'} width={'20%'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                            <td height={'70px'} width={'39%'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                            <td height={'70px'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                            <td height={'70px'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                            <td height={'70px'}>
+                                                <Skeleton animation="wave" />
+                                            </td>
+                                        </tr>
+                                    ))
+
                                 //     :
                                 // 'Loading...'
                             }
                         </tbody>
                     </table>
-                    <Pagination color="primary" sx={{ mt: 3 }} onChange={(_, value) => page(value)} count={Math.ceil(count / 10)} />
+                    <Pagination color="primary" sx={{ mt: 3, justifyItems: 'center' }} onChange={(_, value) => page(value)} count={Math.ceil(count / 10)} />
                 </div>
             </div>
         </>

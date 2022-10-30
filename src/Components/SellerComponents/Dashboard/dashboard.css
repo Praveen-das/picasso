@@ -11,7 +11,7 @@
   padding: 1.5rem;
   padding-top: 0;
   display: grid;
-  justify-items: center;
+  /* justify-content: center; */
 }
 .dashboard-items {
   width: 100%;
@@ -79,6 +79,7 @@
     font-size: 1.2em;
 }
 .dashboard-wrapper table{
+    width: 100%;
     border-radius: 5px;
     border-spacing: 0;
 }
@@ -95,19 +96,7 @@
 }
 #dashboard th:first-child,
 #dashboard th:last-child{
-    padding: 0 1rem;
     height: 3rem;
-}
-#dashboard td:first-child,
-#dashboard td:last-child{
-    padding: 1rem 1rem;
-    max-width: 100px;
-}
-#dashboard td,th{
-    overflow: hidden;
-}
-#dashboard tbody td:nth-child(6) span{
-    margin: auto;
 }
 #dashboard tr{
     text-align: center;

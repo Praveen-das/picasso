@@ -18,8 +18,8 @@ import { useHelper } from "../../../Context/HelperContext";
 import { IKContext, IKUpload } from "imagekitio-react";
 import { useDatabase } from "../../../Hooks/useDatabase";
 import { useStore } from "../../../Context/Store";
-import { Formik } from 'formik';
-import { productValidation } from "../../../Schema/YupSchema";
+import { FieldArray, Formik } from 'formik';
+import { productUpdateValidation, productValidation } from "../../../Schema/YupSchema";
 import { box_style, TF_Style } from "./style";
 import ImageTemplate from "./imageTemplate/ImageTemplate";
 import { addProduct, deleteImage, fetchProducts } from "../../../lib/product.api";
@@ -31,83 +31,18 @@ import {
 
 function AddProduct({ setModel, model, _product }) {
     const queryClient = useQueryClient()
-    const mutation = useMutation(addProduct, {
+    const { mutate } = useMutation(addProduct, {
         onSuccess: () => {
             queryClient.invalidateQueries(['products'])
         },
+
     })
 
-    const [placeholder, setPlaceholder] = useState();
-    const [defaultImage, setDefaultImage] = useState(0);
+    const [placeholder, setPlaceholder] = useState(_product);
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const { theme } = useHelper();
     // const currentUser = useStore((state) => state?.auth?.user);
-
-    useEffect(() => {
-        if (model !== "update") {
-            setPlaceholder({});
-            return;
-        }
-        setPlaceholder(_product);
-    }, [model, _product]);
-
-    const handleActions = async (e) => {
-        e.preventDefault();
-        console.log(
-            // {
-            //     name: name.current.value,
-            //     description: description.current.value,
-            //     category_id: category_id.current.value,
-            //     material_id: material_id.current.value,
-            //     size: size.current.value,
-            //     quantity: quantity.current.value,
-            //     discount: discount.current.value,
-            //     price: price.current.value,
-            // }
-        );
-
-        if (model === "update") {
-
-            return;
-        }
-
-        // switch (action) {
-
-        //     case 'submit':
-        //         setModel({ open: false })
-        //         setLoading(true)
-        //         product.image = images
-        //         product.defaultImage = defaultImage
-        //         product.tags = newTag
-        //         product.uid = currentUser.uid
-        //         addProductToDatabase(product)
-        //         setProduct('')
-        //         setLoading(false)
-        //         setImages([])
-        //         break;
-
-        //     case 'update':
-        //         product.image = [...images, ...product.image]
-        //         product.defaultImage = defaultImage
-        //         product.tags = newTag
-        //         await model.isConfirmed(product)
-        //         setModel({
-        //             open: false
-        //         })
-        //         setProduct([])
-        //         break;
-
-        //     case 'close':
-        //         setModel({ open: false })
-        //         setProduct([])
-        //         setImageTemplate([])
-        //         setImages([])
-        //         break;
-        //     default:
-        //         break;
-        // }
-    };
 
     const open = model === "add" || model === "update"
 
@@ -116,11 +51,13 @@ function AddProduct({ setModel, model, _product }) {
         desc: '',
         category_id: 1,
         material_id: 1,
-        width: 4,
-        height: 2,
-        quantity: 1,
-        price: 1000,
+        width: '',
+        height: '',
+        quantity: '',
+        price: '',
         discount: 0,
+        images: undefined,
+        defaultImage: '',
     }
 
     function handleSubmit({ width, height, ...rest }) {
@@ -129,21 +66,24 @@ function AddProduct({ setModel, model, _product }) {
             images,
             ...rest
         }
-        mutation.mutate(obj)
-        setModel(false)
-        setImages([])
+        console.log(obj);
+        // mutate(obj)
+        // setModel(false)
+        // setImages([])
     }
 
-    function handleImages(image, index) {
-        const setDefault = () => setDefaultImage(index)
-        const _deleteImage = () =>
-            deleteImage(image.fileId).then(() => {
-                setImages(pre => pre.filter(o => o.fileId !== image.fileId))
-            })
-
+    function handleImages(images, index, remove, setDefaultImage) {
+        const setDefault = () => setDefaultImage('defaultImage', images[index].fileId)
+        const _deleteImage = () => deleteImage(images[index].fileId).then(() => {
+            if (index === 0)
+                setDefaultImage('defaultImage', images[1].fileId)
+            remove(index)
+        })
         return {
             setDefault,
-            _deleteImage
+            _deleteImage,
+            key: images[index].fileId,
+            image: images[index]
         }
     }
 
@@ -152,16 +92,21 @@ function AddProduct({ setModel, model, _product }) {
             <ThemeProvider theme={theme}>
                 <Modal
                     open={open}
-                    onClose={() => setModel(false)}
+                    onClose={() => setModel('null')}
                     closeAfterTransition
                 >
                     <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                         <Box sx={box_style}  >
                             <Formik
-                                initialValues={initialValues}
-                                validationSchema={productValidation}
+                                initialValues={model === 'add' ? initialValues : {}}
+                                validationSchema={
+                                    model === 'add' ?
+                                        productValidation :
+                                        productUpdateValidation
+                                }
                                 onSubmit={(values, { setSubmitting }) => {
-                                    handleSubmit(values);
+                                    // handleSubmit(values);
+                                    console.log(values)
                                     setSubmitting(false);
                                 }}
                                 validateOnChange={false}
@@ -173,6 +118,8 @@ function AddProduct({ setModel, model, _product }) {
                                     handleChange,
                                     handleBlur,
                                     handleSubmit,
+                                    setFieldError,
+                                    setFieldValue,
                                     isSubmitting,
                                 }) => (
                                     <form action="submit" onSubmit={handleSubmit}>
@@ -183,11 +130,12 @@ function AddProduct({ setModel, model, _product }) {
                                                     id="name"
                                                     name="name"
                                                     label="Product Name*"
+                                                    value={values?.name}
                                                     defaultValue={placeholder?.name}
-                                                    value={values.name}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.name && Boolean(errors.name)}
+                                                    helperText={touched.name && errors.name}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -200,10 +148,10 @@ function AddProduct({ setModel, model, _product }) {
                                                     defaultValue={placeholder?.description}
                                                     rows={3}
                                                     multiline
-                                                    value={values.desc}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.desc && Boolean(errors.desc)}
+                                                    helperText={touched.desc && errors.desc}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -221,6 +169,7 @@ function AddProduct({ setModel, model, _product }) {
                                                         touched.category_id &&
                                                         Boolean(errors.category_id)
                                                     }
+                                                    helperText={touched.category_id && errors.category_id}
                                                     {...TF_Style}
                                                 >
                                                     <MenuItem value={1}>Ten</MenuItem>
@@ -239,6 +188,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.material_id && Boolean(errors.material_id)}
+                                                    helperText={touched.material_id && errors.material_id}
                                                     {...TF_Style}
                                                 >
                                                     <MenuItem value={1}>Ten</MenuItem>
@@ -254,10 +204,10 @@ function AddProduct({ setModel, model, _product }) {
                                                     label="Width(m)"
                                                     type='number'
                                                     defaultValue={placeholder?.width}
-                                                    value={values.width}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.width && Boolean(errors.width)}
+                                                    helperText={touched.width && errors.width}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -269,10 +219,10 @@ function AddProduct({ setModel, model, _product }) {
                                                     label="Height(m)"
                                                     type='number'
                                                     defaultValue={placeholder?.height}
-                                                    value={values.height}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.height && Boolean(errors.height)}
+                                                    helperText={touched.height && errors.height}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -283,11 +233,12 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="quantity"
                                                     label="Quantity"
                                                     type="number"
-                                                    defaultValue={placeholder?.quantity}
                                                     value={values.quantity}
+                                                    defaultValue={placeholder?.quantity}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.quantity && Boolean(errors.quantity)}
+                                                    helperText={touched.quantity && errors.quantity}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -299,10 +250,10 @@ function AddProduct({ setModel, model, _product }) {
                                                     label="Price"
                                                     type="number"
                                                     defaultValue={placeholder?.price}
-                                                    value={values.price}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.price && Boolean(errors.price)}
+                                                    helperText={touched.price && errors.price}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -315,10 +266,10 @@ function AddProduct({ setModel, model, _product }) {
                                                     type="number"
                                                     defaultValue={placeholder?.discount}
                                                     inputProps={{ pattern: '[0-9]*' }}
-                                                    value={values.discount}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.discount && Boolean(errors.discount)}
+                                                    helperText={touched.discount && errors.discount}
                                                     {...TF_Style}
                                                 />
                                             </Grid>
@@ -329,43 +280,52 @@ function AddProduct({ setModel, model, _product }) {
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12}  >
-                                                <div className="imageTray">
-                                                    <Button
-                                                        disabled={images?.length === 5 || loading}
-                                                        component="label"
-                                                        sx={{ aspectRatio: "1", border: "1px dashed #a1a1a1dc" }}
-                                                    >
-                                                        {
-                                                            loading ?
-                                                                <CircularProgress />
-                                                                :
-                                                                <AddAPhotoIcon />
-                                                        }
-                                                        <IKContext
-                                                            publicKey={process.env.REACT_APP_PUBLIC_KEY}
-                                                            urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
-                                                            authenticationEndpoint={process.env.REACT_APP_AUTH_ENDPOINT}
-                                                        >
-                                                            <IKUpload
-                                                                onUploadStart={() => setLoading(true)}
-                                                                onError={(err) => console.log(err)}
-                                                                onSuccess={(res) => {
-                                                                    setImages(pre => [...pre, res]);
-                                                                    setLoading(false)
+                                                <FieldArray id="images" name='images'>
+                                                    {({ push, remove, insert }) => (
+                                                        <div className="imageTray">
+                                                            <Button
+                                                                // disabled={images?.length === 5 || loading}
+                                                                component="label"
+                                                                sx={{
+                                                                    aspectRatio: "1",
+                                                                    border: `1px dashed ${touched.images && Boolean(errors.images) ? 'red' : '#a1a1a1dc'}`
                                                                 }}
-                                                                hidden
-                                                            />
-                                                        </IKContext>
-                                                    </Button>
-                                                    {
-                                                        images?.map((image, index) =>
-                                                            index === defaultImage ?
-                                                                <ImageTemplate key={image.fileId} image={image} defaultImage {...handleImages(image, index)} />
-                                                                :
-                                                                <ImageTemplate key={image.fileId} image={image} {...handleImages(image, index)} />
-                                                        )
-                                                    }
-                                                </div>
+                                                            >
+                                                                {
+                                                                    loading ?
+                                                                        <CircularProgress />
+                                                                        :
+                                                                        <AddAPhotoIcon />
+                                                                }
+                                                                <IKContext
+                                                                    publicKey={process.env.REACT_APP_PUBLIC_KEY}
+                                                                    urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
+                                                                    authenticationEndpoint={process.env.REACT_APP_AUTH_ENDPOINT}
+                                                                >
+                                                                    <IKUpload
+                                                                        onUploadStart={() => setLoading(true)}
+                                                                        onError={(err) => console.log(err)}
+                                                                        onSuccess={(res) => {
+                                                                            setFieldValue('defaultImage', res.fileId)
+                                                                            setLoading(false)
+                                                                            insert(0, res)
+                                                                            setFieldError('images', '');
+                                                                        }}
+                                                                        hidden
+                                                                    />
+                                                                </IKContext>
+                                                            </Button>
+                                                            {
+                                                                values.images?.map((image, index) =>
+                                                                    image.fileId === values.defaultImage ?
+                                                                        <ImageTemplate {...handleImages(values.images, index, remove, setFieldValue)} defaultImage />
+                                                                        :
+                                                                        <ImageTemplate {...handleImages(values.images, index, remove, setFieldValue)} />
+                                                                )
+                                                            }
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
                                             </Grid>
                                             <Grid item xs={6} >
                                                 <Button
@@ -375,7 +335,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     size="medium"
                                                     onClick={() => {
                                                         setImages([])
-                                                        setModel(false)
+                                                        setModel('null')
                                                     }}
                                                 >
                                                     CANCEL

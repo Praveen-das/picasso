@@ -14,9 +14,12 @@ import ProductPage from './Pages/ProductPage';
 import CheckoutPage from './Pages/CheckoutPage';
 import Alert from './Components/Alert/Alert'
 
-
 function App() {
-  const queryClient = new QueryClient({ staleTime: 60000 })
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { staleTime: 60000 }
+    }
+  })
 
   return (
     <>

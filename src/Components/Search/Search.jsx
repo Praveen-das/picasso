@@ -4,72 +4,62 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import './search.css'
 
-function Search({ onKeyUp, onClick }) {
-    const previousValue = useRef()
-    const searchbox_wrapper = useRef()
-    const searchbox = useRef()
-    const [searchQuery, setSearchQuery] = useState()
-    const [active, setActive] = useState(false)
-    let timer;
+function Search({ onKeyUp = () => null, onSearch = () => null }) {
+    const [active, setActive] = useState(null)
+    const [query, setQuery] = useState('')
+    const input = useRef()
 
-    document.onclick = (e) => {
-        if (!active) return
-        if (searchbox_wrapper.current && !searchbox_wrapper.current.contains(e.target)) {
-            setActive(false)
-            setSearchQuery()
-            searchbox.current.value = ''
-        }
-    }
+    const timer = useRef;
 
     const handleSearch = (e) => {
-        if (e.code === 'Enter' || e.code === 'NumpadEnter')
-            return onKeyUp(e)
-
-        clearTimeout(timer)
-        
-        timer = setTimeout(() => {
-            onKeyUp(e);
+        if (e.code === 'Enter' || e.code === 'NumpadEnter') return handleQuery()
+        clearTimeout(timer.current)
+        setQuery(e.target.value)
+        timer.current = setTimeout(() => {
+            onKeyUp(e.target.value);
         }, 300)
     }
 
-    const handleClearSearch = () => {
-        setActive(false)
-        searchbox.current.value = ''
-        setSearchQuery()
-        onKeyUp('')
+    const handleQuery = () => {
+        if (query !== '') {
+            onSearch(query)
+            setActive(false)
+            handleClose()
+            return
+        }
+        setActive(!active)
     }
 
-    useEffect(() => {
-        if (active) {
-            if (previousValue.current === undefined) {
-                searchbox.current.classList.add('searchbox--expand')
-                previousValue.current = active
-                return
-            }
-            searchbox.current.classList.replace('searchbox--shrink', 'searchbox--expand')
-            return
-        }
-        if (previousValue.current === !active) {
-            searchbox.current.classList.replace('searchbox--expand', 'searchbox--shrink')
-            return
-        }
-    }, [active, previousValue])
+    const handleClose = () => {
+        setActive(!active)
+        // setQuery('')
+        clearTimeout(timer.current)
+        // input.current.value = ''
+    }
 
     return (
         <>
-            <span className='searchbox_wrapper' ref={searchbox_wrapper}>
-                <input onKeyUp={(e) => handleSearch(e)}
-                    ref={searchbox} autoComplete='off' id='searchbox' type="text" />
-                {
-                    searchQuery ?
-                        <IconButton onClick={() => handleClearSearch()}>
-                            <ClearIcon id='search' sx={{ fontSize: 20 }} />
-                        </IconButton> :
-                        <IconButton onClick={() => searchQuery ? onClick(searchQuery) : setActive(!active)}>
-                            <SearchIcon id='search' sx={{ fontSize: 20 }} />
-                        </IconButton>
-                }
-            </span>
+            <div
+                className="searchbox_hitarea"
+                style={{ display: active ? 'unset' : 'none' }}
+                onClick={handleClose}
+            />
+            <div className='searchbox_wrapper'>
+                <input
+                    id='searchbox'
+                    type="text"
+                    autoComplete='off'
+                    onKeyUp={(e) => handleSearch(e)}
+                    ref={input}
+                    className={
+                        active === null ? '' :
+                            active ? 'searchbox--expand' :
+                                'searchbox--shrink'}
+                />
+                <IconButton onClick={() => handleQuery()}>
+                    <SearchIcon id='search' sx={{ fontSize: 20 }} />
+                </IconButton>
+            </div>
         </>
     )
 }

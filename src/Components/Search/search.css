@@ -1,19 +1,18 @@
-.search_clear{
-    width: 10px;
-    aspect-ratio: 1;
-    background: #000;
-    border-radius: 50%;
-    cursor: pointer;
-}
 #search{
     cursor: pointer;
+}
+.searchbox_hitarea{
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
 }
 .searchbox_wrapper{
     display: flex;
     align-items: center;
+    z-index: 101;
 }
 #searchbox{
-    /* margin: auto; */
     width: 6px;
     transform: scale(0);
     outline: none;

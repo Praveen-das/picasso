@@ -4,16 +4,20 @@ import { fetchProduct, fetchProducts } from "../lib/product.api";
 
 export function useProductData() {
     const [page, setPage] = useState(1)
-    const query = useQuery(['products', page], () => fetchProducts(page))
-    query.page = setPage
-    return query
+    const [filter, setFilter] = useState({ item: null, value: null })
+    const [query, setQuery] = useState('')
+    const products = useQuery(['products', page, filter, query], () => fetchProducts(page, filter, query))
+    products.page = setPage
+    products.filter = setFilter
+    products.query = setQuery
+    return products
 }
 
 export function useProduct(id) {
-    return useQuery(['product', id], () => fetchProduct(id), {
+    const data = useQuery(['product', id], () => fetchProduct(id), {
         enabled: !!id,
-        keepPreviousData: true
     })
+    return data
 }
 
 
