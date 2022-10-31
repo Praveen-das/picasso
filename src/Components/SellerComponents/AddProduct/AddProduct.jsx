@@ -22,7 +22,7 @@ import { FieldArray, Formik } from 'formik';
 import { productUpdateValidation, productValidation } from "../../../Schema/YupSchema";
 import { box_style, TF_Style } from "./style";
 import ImageTemplate from "./imageTemplate/ImageTemplate";
-import { addProduct, deleteImage, fetchProducts } from "../../../lib/product.api";
+import { addProduct, deleteImage, fetchProducts, updateProduct } from "../../../lib/product.api";
 
 import {
     useQueryClient,
@@ -31,14 +31,19 @@ import {
 
 function AddProduct({ setModel, model, _product }) {
     const queryClient = useQueryClient()
-    const { mutate } = useMutation(addProduct, {
+    const { mutateAsync: _addProduct } = useMutation(addProduct, {
         onSuccess: () => {
             queryClient.invalidateQueries(['products'])
         },
 
     })
 
-    const [placeholder, setPlaceholder] = useState(_product);
+    const { mutateAsync: _updateProduct } = useMutation(updateProduct, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['products'])
+        },
+    })
+
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const { theme } = useHelper();
@@ -60,16 +65,10 @@ function AddProduct({ setModel, model, _product }) {
         defaultImage: '',
     }
 
-    function handleSubmit({ width, height, ...rest }) {
-        const obj = {
-            size: `${width}m x ${height}m`,
-            images,
-            ...rest
-        }
-        console.log(obj);
-        // mutate(obj)
-        // setModel(false)
-        // setImages([])
+    function handleSubmit(obj) {
+        if (model === 'add')
+            return _addProduct(obj).then(() => setModel(false))
+        _updateProduct({ id: _product.id, updates: obj }).then(() => setModel(false))
     }
 
     function handleImages(images, index, remove, setDefaultImage) {
@@ -105,8 +104,7 @@ function AddProduct({ setModel, model, _product }) {
                                         productUpdateValidation
                                 }
                                 onSubmit={(values, { setSubmitting }) => {
-                                    // handleSubmit(values);
-                                    console.log(values)
+                                    handleSubmit(values);
                                     setSubmitting(false);
                                 }}
                                 validateOnChange={false}
@@ -131,7 +129,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="name"
                                                     label="Product Name*"
                                                     value={values?.name}
-                                                    defaultValue={placeholder?.name}
+                                                    defaultValue={_product?.name}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.name && Boolean(errors.name)}
@@ -145,7 +143,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     id="desc"
                                                     name="desc"
                                                     label="Description*"
-                                                    defaultValue={placeholder?.description}
+                                                    defaultValue={_product?.desc}
                                                     rows={3}
                                                     multiline
                                                     onChange={handleChange}
@@ -162,6 +160,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="category_id"
                                                     label='Category'
                                                     select
+                                                    defaultValue={_product?.category.id || 1}
                                                     value={values.category_id}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -184,6 +183,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="material_id"
                                                     label='Material'
                                                     select
+                                                    defaultValue={_product?.material.id || 1}
                                                     value={values.material_id}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -203,7 +203,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="width"
                                                     label="Width(m)"
                                                     type='number'
-                                                    defaultValue={placeholder?.width}
+                                                    defaultValue={_product?.width}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.width && Boolean(errors.width)}
@@ -218,7 +218,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="height"
                                                     label="Height(m)"
                                                     type='number'
-                                                    defaultValue={placeholder?.height}
+                                                    defaultValue={_product?.height}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.height && Boolean(errors.height)}
@@ -234,7 +234,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     label="Quantity"
                                                     type="number"
                                                     value={values.quantity}
-                                                    defaultValue={placeholder?.quantity}
+                                                    defaultValue={_product?.quantity}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.quantity && Boolean(errors.quantity)}
@@ -249,7 +249,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="price"
                                                     label="Price"
                                                     type="number"
-                                                    defaultValue={placeholder?.price}
+                                                    defaultValue={_product?.price}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.price && Boolean(errors.price)}
@@ -264,7 +264,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="discount"
                                                     label="Discount(%)"
                                                     type="number"
-                                                    defaultValue={placeholder?.discount}
+                                                    defaultValue={_product?.discount}
                                                     inputProps={{ pattern: '[0-9]*' }}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -333,10 +333,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     variant="contained"
                                                     fullWidth
                                                     size="medium"
-                                                    onClick={() => {
-                                                        setImages([])
-                                                        setModel('null')
-                                                    }}
+                                                    onClick={() => setModel('null')}
                                                 >
                                                     CANCEL
                                                 </Button>

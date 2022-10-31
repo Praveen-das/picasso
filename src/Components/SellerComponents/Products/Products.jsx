@@ -16,11 +16,9 @@ import { Pagination, Skeleton } from '@mui/material'
 const skeleton = new Array(20).fill()
 function Products() {
     const queryClient = useQueryClient()
-    const { removeProduct, updateProduct } = useDatabase()
     const uid = useStore(state => state.auth.user?.uid)
     const [toggleEditButton, setToggleEditButton] = useState(false)
     const [model, setModel] = useState('')
-    const [dialog, setDialog] = useState('')
     const [product, setProduct] = useState()
 
     const { data, page, query, isLoading } = useProductData()
@@ -31,25 +29,6 @@ function Products() {
     })
     const products = data ? data.data[0] : []
     const count = data ? data.data[1]?.id : 1
-
-    const handleAction = (action, product) => {
-        switch (action) {
-            case 'update':
-                setModel({
-                    open: true,
-                    action: 'update',
-                    payload: product,
-                    isConfirmed: (updates) => updateProduct(product.id, updates),
-                })
-                break;
-            case 'delete':
-                setDialog(!dialog)
-
-                break;
-            default:
-                break;
-        }
-    }
 
     function _updateProduct(product) {
         setModel('update')
@@ -70,7 +49,7 @@ function Products() {
 
     return (
         <>
-            {model && <AddProduct setModel={setModel} model={model} _product={product} />}
+            {model && <AddProduct setModel={setModel} model={model} _product={model === 'update' ? product : null} />}
             <div className="dashboard-wrapper">
                 {/* <AlertMessage
                     dialog={dialog}

@@ -19,7 +19,7 @@ export const productValidation = yup.object({
     price: yup.mixed().required('required'),
     discount: yup.mixed(),
     images: yup.mixed().required('required'),
-    defaultImage: yup.number(),
+    defaultImage: yup.mixed(),
 });
 
 export const productUpdateValidation = yup.object({
