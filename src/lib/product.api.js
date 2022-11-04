@@ -26,9 +26,7 @@ export const fetchProducts = (page, filter, query) => {
             filter.value !== null ?
             `&facets[${filter.item}]=` + filter.value : ''
 
-    const q = query !== '' ? `&q[name][search]=${query}` : ''
-
-    return axiosClient.get(`/products?limit=10${qPage, q}`,)
+    return axiosClient.get(`/products?limit=10${qPage, query}&query=${query}`,)
 }
 
 export const fetchProduct = (id) => {

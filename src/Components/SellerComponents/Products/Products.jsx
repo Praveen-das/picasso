@@ -27,6 +27,7 @@ function Products() {
             queryClient.invalidateQueries(['products'])
         },
     })
+    
     const products = data ? data.data[0] : []
     const count = data ? data.data[1]?.id : 1
 
@@ -92,7 +93,10 @@ function Products() {
                                 !isLoading ? products.map((product) =>
                                     < tr key={product.id} >
                                         <td>{product?.name}</td>
-                                        <td><img id='dashbord_product--image' src={product.images[0]?.thumbnailUrl} alt="" /></td>
+                                        <td><img
+                                            id='dashbord_product--image'
+                                            src={product.images.find(o => o.fileId === product.defaultImage)?.thumbnailUrl}
+                                            alt="" /></td>
                                         <td>{product?.id}</td>
                                         <td>{product?.quantity}</td>
                                         <td>{product?.discount}</td>

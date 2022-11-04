@@ -16,6 +16,7 @@ const box_style = {
 const TF_Style = {
     variant: 'standard',
     fullWidth: true,
+    size:'small'
 }
 
 export {

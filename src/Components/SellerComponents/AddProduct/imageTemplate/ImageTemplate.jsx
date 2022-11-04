@@ -62,7 +62,7 @@ export default function ImageTemplate(
                     </MenuList>
                 </Menu>
                 {/* <IconButton size='small' sx={{ position: 'absolute', right: 0,background:'white' }}><DeleteIcon /></IconButton> */}
-                <img src={image.thumbnailUrl} alt="" />
+                <img src={image?.thumbnailUrl} alt="" />
             </div>
         </>
     )

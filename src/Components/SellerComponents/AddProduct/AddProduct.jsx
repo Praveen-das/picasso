@@ -16,13 +16,11 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { Box } from "@mui/system";
 import { useHelper } from "../../../Context/HelperContext";
 import { IKContext, IKUpload } from "imagekitio-react";
-import { useDatabase } from "../../../Hooks/useDatabase";
-import { useStore } from "../../../Context/Store";
-import { FieldArray, Formik } from 'formik';
+import { FieldArray, Form, Formik } from 'formik';
 import { productUpdateValidation, productValidation } from "../../../Schema/YupSchema";
 import { box_style, TF_Style } from "./style";
 import ImageTemplate from "./imageTemplate/ImageTemplate";
-import { addProduct, deleteImage, fetchProducts, updateProduct } from "../../../lib/product.api";
+import { addProduct, deleteImage, updateProduct } from "../../../lib/product.api";
 
 import {
     useQueryClient,
@@ -64,6 +62,19 @@ function AddProduct({ setModel, model, _product }) {
         images: undefined,
         defaultImage: '',
     }
+    const initialValues2 = {
+        name: _product?.name,
+        desc: _product?.desc,
+        category_id: _product?.category.id,
+        material_id: _product?.material.id,
+        width: _product?.width,
+        height: _product?.height,
+        quantity: _product?.quantity,
+        price: _product?.price,
+        discount: _product?.discount,
+        images: _product?.images,
+        defaultImage: _product?.defaultImage
+    }
 
     function handleSubmit(obj) {
         if (model === 'add')
@@ -78,6 +89,7 @@ function AddProduct({ setModel, model, _product }) {
                 setDefaultImage('defaultImage', images[1].fileId)
             remove(index)
         })
+
         return {
             setDefault,
             _deleteImage,
@@ -97,7 +109,11 @@ function AddProduct({ setModel, model, _product }) {
                     <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                         <Box sx={box_style}  >
                             <Formik
-                                initialValues={model === 'add' ? initialValues : {}}
+                                initialValues={
+                                    model === 'add' ?
+                                        initialValues :
+                                        initialValues2
+                                }
                                 validationSchema={
                                     model === 'add' ?
                                         productValidation :
@@ -115,12 +131,11 @@ function AddProduct({ setModel, model, _product }) {
                                     touched,
                                     handleChange,
                                     handleBlur,
-                                    handleSubmit,
                                     setFieldError,
                                     setFieldValue,
                                     isSubmitting,
-                                }) => (
-                                    <form action="submit" onSubmit={handleSubmit}>
+                                }) =>
+                                    <Form>
                                         <Grid container minWidth={'300px'} spacing={3.2}  >
                                             {/*********** NAME ***********/}
                                             <Grid item xs={12} >
@@ -129,7 +144,6 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="name"
                                                     label="Product Name*"
                                                     value={values?.name}
-                                                    defaultValue={_product?.name}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.name && Boolean(errors.name)}
@@ -143,7 +157,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     id="desc"
                                                     name="desc"
                                                     label="Description*"
-                                                    defaultValue={_product?.desc}
+                                                    value={values?.desc}
                                                     rows={3}
                                                     multiline
                                                     onChange={handleChange}
@@ -160,8 +174,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="category_id"
                                                     label='Category'
                                                     select
-                                                    defaultValue={_product?.category.id || 1}
-                                                    value={values.category_id}
+                                                    value={values?.category_id || 1}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={
@@ -183,8 +196,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="material_id"
                                                     label='Material'
                                                     select
-                                                    defaultValue={_product?.material.id || 1}
-                                                    value={values.material_id}
+                                                    value={values?.material_id || 1}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.material_id && Boolean(errors.material_id)}
@@ -203,7 +215,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="width"
                                                     label="Width(m)"
                                                     type='number'
-                                                    defaultValue={_product?.width}
+                                                    value={values?.width}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.width && Boolean(errors.width)}
@@ -218,7 +230,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="height"
                                                     label="Height(m)"
                                                     type='number'
-                                                    defaultValue={_product?.height}
+                                                    value={values?.height}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.height && Boolean(errors.height)}
@@ -233,8 +245,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="quantity"
                                                     label="Quantity"
                                                     type="number"
-                                                    value={values.quantity}
-                                                    defaultValue={_product?.quantity}
+                                                    value={values?.quantity}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.quantity && Boolean(errors.quantity)}
@@ -249,7 +260,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="price"
                                                     label="Price"
                                                     type="number"
-                                                    defaultValue={_product?.price}
+                                                    value={values?.price}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     error={touched.price && Boolean(errors.price)}
@@ -264,7 +275,7 @@ function AddProduct({ setModel, model, _product }) {
                                                     name="discount"
                                                     label="Discount(%)"
                                                     type="number"
-                                                    defaultValue={_product?.discount}
+                                                    value={values?.discount}
                                                     inputProps={{ pattern: '[0-9]*' }}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -281,14 +292,14 @@ function AddProduct({ setModel, model, _product }) {
                                             </Grid>
                                             <Grid item xs={12}  >
                                                 <FieldArray id="images" name='images'>
-                                                    {({ push, remove, insert }) => (
+                                                    {({ remove, insert }) => (
                                                         <div className="imageTray">
                                                             <Button
                                                                 // disabled={images?.length === 5 || loading}
                                                                 component="label"
                                                                 sx={{
                                                                     aspectRatio: "1",
-                                                                    border: `1px dashed ${touched.images && Boolean(errors.images) ? 'red' : '#a1a1a1dc'}`
+                                                                    border: `1px dashed ${touched?.images && Boolean(errors?.images) ? 'red' : '#a1a1a1dc'}`
                                                                 }}
                                                             >
                                                                 {
@@ -317,7 +328,7 @@ function AddProduct({ setModel, model, _product }) {
                                                             </Button>
                                                             {
                                                                 values.images?.map((image, index) =>
-                                                                    image.fileId === values.defaultImage ?
+                                                                    image.fileId === values?.defaultImage ?
                                                                         <ImageTemplate {...handleImages(values.images, index, remove, setFieldValue)} defaultImage />
                                                                         :
                                                                         <ImageTemplate {...handleImages(values.images, index, remove, setFieldValue)} />
@@ -358,8 +369,8 @@ function AddProduct({ setModel, model, _product }) {
                                                 </Button>
                                             </Grid>
                                         </Grid>
-                                    </form>
-                                )}
+                                    </Form>
+                                }
                             </Formik>
                         </Box>
                     </Slide>

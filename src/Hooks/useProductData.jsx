@@ -7,7 +7,7 @@ export function useProductData() {
     const [filter, setFilter] = useState({ item: null, value: null })
     const [query, setQuery] = useState('')
 
-    const products = useQuery(['products', page, filter, query], () => fetchProducts(page, filter, query))
+    const products = useQuery(['products', page], () => fetchProducts(page, filter, query))
     products.page = setPage
     products.filter = setFilter
     products.query = setQuery
