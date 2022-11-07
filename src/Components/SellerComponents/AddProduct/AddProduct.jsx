@@ -33,7 +33,6 @@ function AddProduct({ setModel, model, _product }) {
         onSuccess: () => {
             queryClient.invalidateQueries(['products'])
         },
-
     })
 
     const { mutateAsync: _updateProduct } = useMutation(updateProduct, {

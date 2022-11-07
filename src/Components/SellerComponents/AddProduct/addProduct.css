@@ -4,9 +4,5 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.MuiFormHelperText-root{
-  position:absolute;
-  bottom: -25px;
-  pointer-events: none;
-}
+
 

@@ -1,46 +1,63 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
 import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  createBrowserRouter,
+  createRoutesFromElements,
+  Outlet,
+  RouterProvider,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 
-import './App.css'
+import "./App.css";
 import HomePage from "./Pages/HomePage";
-import ShoppingPage from './Pages/ShoppingPage';
-import ProfilePage from './Pages/ProfilePage';
-import SellerPage from './Pages/SellerPage';
-import ProductPage from './Pages/ProductPage';
-import CheckoutPage from './Pages/CheckoutPage';
-import Alert from './Components/Alert/Alert'
+import ShoppingPage from "./Pages/ShoppingPage";
+import ProfilePage from "./Pages/ProfilePage";
+import SellerPage from "./Pages/SellerPage";
+import ProductPage from "./Pages/ProductPage";
+import CheckoutPage from "./Pages/CheckoutPage";
+import Alert from "./Components/Alert/Alert";
+import Login from "./Components/Login/Login";
+import React, { useState } from "react";
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
 
 function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { staleTime: 60000 }
-    }
-  })
+  const [model, setModel] = useState(true);
+
+  const routes = createRoutesFromElements(
+    <Route path="/" element={<Outlet />}>
+      <Route index element={<HomePage />} />
+      <Route path="/shop" element={<Outlet />}>
+        <Route index element={<ShoppingPage />} />
+        <Route path="/shop/product" element={<ProductPage />} />
+      </Route>
+      <Route path="/search/:query" element={<ShoppingPage />} />
+      <Route path="/category/:category" element={<ShoppingPage />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      {/* <Route path="/shop" element={<ShoppingPage />} />
+      <Route path="/shop/product" element={<ProductPage />} /> */}
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/search/:query" element={<ShoppingPage />} />
+      <Route path="/category/:category" element={<ShoppingPage />} />
+      <PrivateRoute path="/sell" element={<SellerPage />} />
+      <PrivateRoute path="/my-profile" element={<ProfilePage />} />
+      {/* protected routes */}
+      
+      {/* protected routes */}
+    </Route>
+  );
+  const router = createBrowserRouter(routes);
 
   return (
     <>
-      <label style={{ position: 'fixed', top: 0, zIndex: 200 }} htmlFor="">{window.innerWidth}</label>
       <Alert />
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/shop' element={<ShoppingPage />} />
-            <Route path='/sell' element={<SellerPage />} />
-            <Route path='/my-profile' element={<ProfilePage />} />
-            <Route path='/shop/product' element={<ProductPage />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
-            <Route path='/search/:query' element={<ShoppingPage />} />
-            <Route path='/category/:category' element={<ShoppingPage />} />
-          </Routes>
-        </Router>
-      </QueryClientProvider>
+      <RouterProvider router={router} />
     </>
   );
 }
-
 export default App;
+
+const Void = () => {
+  return <>asdasdasdad</>;
+};

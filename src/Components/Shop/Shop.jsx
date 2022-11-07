@@ -82,7 +82,7 @@ function Shop() {
             </ul> */}
             <div className="images_tray">
                 {
-                    docs ? docs.map((o, index) => (
+                    docs ? docs.map((o) => (
                         <Card key={docs.id} product={o} height={280} />
                     )) :
                         skeleton.map((o, i) => (

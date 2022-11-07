@@ -82,6 +82,11 @@ a:hover{
 .MuiRating-root *{
     color: unset;
 }
+.MuiFormHelperText-root{
+    position:absolute;
+    bottom: -20px;
+    pointer-events: none;
+  }
 .productsTray-wrapper .swiper,
 .Banner .swiper{
     padding-bottom: 5px !important;

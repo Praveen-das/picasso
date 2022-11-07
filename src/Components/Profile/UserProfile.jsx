@@ -1,6 +1,6 @@
 import { Box, Grid, Paper, Tab, Tabs } from '@mui/material'
-import react, { useState } from 'react'
-import ProfileDetails from './ProfileDetails'
+import { useState } from 'react'
+import ProfileDetails from './Components/ProfileDetails'
 import ManageAddress from './ManageAddress'
 import MyOrders from './MyOrders'
 
@@ -59,7 +59,7 @@ function CTabs({ children, value, onChange }) {
 }
 
 function UserProfile() {
-    const [value, setValue] = useState(2);
+    const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -73,7 +73,7 @@ function UserProfile() {
         borderRadius: '10px'
     }));
 
-    const tabStyling = {
+    const itemStyling = {
         sx: {
             padding: { md: '2rem 3rem' },
             boxShadow: { xs: 'none', md: '-5px 5px 20px 2px var(--shadow)' }
@@ -82,28 +82,32 @@ function UserProfile() {
         elevation: 0
     }
 
+    const tabStyling = {
+        sx: { minHeight: 50, justifyContent: 'left' }, iconPosition: 'start'
+    }
+
     return (
         <Grid container sx={{ flexGrow: 1, bgcolor: 'background.paper' }}>
             <Grid item sx={{ paddingTop: { xs: 0, md: 3 }, paddingLeft: { xs: 0, sm: 1, md: 0 } }} xs={12} md={2} >
                 <CTabs value={value} onChange={handleChange}>
-                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
-                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<PersonIcon fontSize='small' />} label="Personal Details" />
-                    <Tab sx={{ minHeight: 50, justifyContent: 'left' }} iconPosition='start' icon={<HomeIcon fontSize='small' />} label="Manage Address" />
+                    <Tab {...tabStyling} icon={<PersonIcon fontSize='small' />} label="Personal Details" />
+                    <Tab {...tabStyling} icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
+                    <Tab {...tabStyling} icon={<HomeIcon fontSize='small' />} label="Manage Address" />
                 </CTabs>
             </Grid>
             <Grid item xs={12} md>
                 <TabPanel value={value} index={0}>
-                    <Item {...tabStyling} >
-                        <MyOrders />
-                    </Item>
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    <Item {...tabStyling}>
+                    <Item {...itemStyling} >
                         <ProfileDetails />
                     </Item>
                 </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <Item {...itemStyling}>
+                        <MyOrders />
+                    </Item>
+                </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Item {...tabStyling}>
+                    <Item {...itemStyling}>
                         <ManageAddress />
                     </Item>
                 </TabPanel>

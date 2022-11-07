@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './header.css'
 import { Link } from 'react-router-dom'
 import Login from '../Login/Login'
@@ -16,13 +16,16 @@ import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from './Device/Menu'
+import { useQuery } from '@tanstack/react-query'
+import { getCurrentUser } from '../../lib/user.api'
+import useUserData from '../../Hooks/useAuthentication'
+import useAuthentication from '../../Hooks/useAuthentication'
+import { joinStrings } from '../../Utils/joinStrings'
 
 function Header() {
-    const { signout } = useAuth()
-    const user = useStore(state => state?.auth?.user)
     const [model, setModel] = useState(false)
-    const [open, setOpen] = useState(false)
     const navigate = useNavigate()
+    const { currentUser, logout } = useAuthentication()
 
     const handleSearch = (e) => {
         if (e.code === 'Enter' || e.code === 'NumpadEnter') {
@@ -86,9 +89,12 @@ function Header() {
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge> */}
                     {
-                        user != null ?
+                        currentUser != null ?
                             <DropDown>
-                                <Avatar displayName={user?.displayName} profilePicture={user?.photoURL} />
+                                <Avatar
+                                    displayName={currentUser.displayName}
+                                    profilePicture={currentUser?.photoURL}
+                                />
                                 <Link to='/my-profile'>
                                     <AccountsIcon {...style} />
                                     Account</Link>
@@ -98,7 +104,7 @@ function Header() {
                                 <Link to='/checkout'>
                                     <FavoriteIcon {...style} />
                                     Wishlist</Link>
-                                <div onClick={() => signout()}>
+                                <div onClick={() => logout()}>
                                     <LogoutIcon {...style} />
                                     Logout</div>
                             </DropDown>

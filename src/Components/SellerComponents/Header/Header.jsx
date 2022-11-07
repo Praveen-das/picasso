@@ -9,7 +9,6 @@ function header({page}) {
                 <input id='search' type="text" />
                 <div id='profilePicture'></div>
             </div>
-        
     )
 }
 
