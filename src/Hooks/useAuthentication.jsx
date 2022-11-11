@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCurrentUser,
   logoutUser,
+  sendEmailVerification,
   signinUser,
   updateUser,
 } from "../lib/user.api";
@@ -23,18 +24,30 @@ function useAuthentication() {
     },
   });
 
-  const { mutate: update, isLoading: isUpdating } = useMutation(updateUser, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["currentUser"]);
-    },
-  });
+  const { mutateAsync: update, isLoading: isUpdating } = useMutation(
+    updateUser,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["currentUser"]);
+      },
+    }
+  );
+
+  const { mutateAsync: sendEmailVerificationAndUpdate } = useMutation(
+    sendEmailVerification,
+    {
+      onMutate: () => {
+        queryClient.invalidateQueries(["currentUser"]);
+      },
+    }
+  );
 
   return {
     currentUser,
     signin,
     logout,
     update,
-    isUpdating
+    isUpdating,
   };
 }
 

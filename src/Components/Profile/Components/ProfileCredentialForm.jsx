@@ -7,75 +7,28 @@ import {
   Typography,
 } from "@mui/material";
 import NButton from "@mui/material/Button/Button";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useStore } from "../../../Context/Store";
-import { useAuth } from "../../../Hooks/useAuth";
 import { useHelper } from "../../../Hooks/useHelper";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AlertBox from "../../MUIComponents/AlertBox/AlertBox";
-import { handleExceptions } from "../../../Hooks/useExceptionHandler";
 import { TextField } from "../../MUIComponents/TextField";
 import { Button } from "../../MUIComponents/Button";
 import useAuthentication from "../../../Hooks/useAuthentication";
+import { joinStrings } from "../../../Utils/joinStrings";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
-export default function ProfileCredentialForm() {
+export default function ProfileCredentialForm({ user }) {
   const { update, isUpdating } = useAuthentication();
   const { copyToClipboard } = useHelper();
   const { currentUser } = useAuthentication();
-  const actionExpiryDate = useStore(
-    (state) => state.userData?.actionExpiryDate
-  );
+  const set = useStore((state) => state.set);
 
-  const [dateLockExpired, setDateLockExpired] = useState(true);
   const [error, setError] = useState(false);
-
-  const fName = useRef();
-  const mName = useRef();
-  const sName = useRef();
-  const email = useRef();
-  const password = useRef();
-  const confirmPass = useRef();
   const [expanded, setExpanded] = useState(false);
-  const [remainingTime, setRemainingTime] = useState();
-
-  useEffect(() => {
-    if (!actionExpiryDate) return;
-
-    let currentTime = new Date().getTime();
-    const diffTime = Math.abs(actionExpiryDate - currentTime);
-    const diffInSec = diffTime / 1000;
-    setRemainingTime(Math.ceil(diffInSec / (60 * 60 * 24)) + "days");
-
-    if (diffInSec <= 86400) {
-      setRemainingTime(Math.ceil(diffInSec / (60 * 60)) + "hours");
-    }
-    if (diffInSec <= 3600) {
-      setRemainingTime(Math.ceil(diffInSec / 60) + "minutes");
-    }
-    if (diffInSec <= 60) {
-      setRemainingTime(diffInSec + "seconds");
-    }
-    if (currentTime > actionExpiryDate) return setDateLockExpired(true);
-    return setDateLockExpired(false);
-  }, [actionExpiryDate]);
-
-  const resetValues = () => {
-    setExpanded(false);
-    fName.current.value = "";
-    mName.current.value = "";
-    sName.current.value = "";
-    email.current.value = "";
-    password.current.value = "";
-    confirmPass.current.value = "";
-  };
-
-  const handleProfileUpdation = (type) => {
-    setError(false);
-    update();
-  };
 
   const handleToggle = (panel) => {
-    resetValues();
     setError(false);
     setExpanded(expanded !== panel ? panel : false);
   };
@@ -114,6 +67,45 @@ export default function ProfileCredentialForm() {
     },
   };
 
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    isSubmitting,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      c_password: "",
+    },
+    validationSchema: yup.object({
+      displayName: yup.string(),
+      email: yup.string("Enter your email").email("Enter a valid email"),
+      password: yup
+        .string("Enter your password")
+        .min(8, "Password should be of minimum 8 characters length"),
+      c_password: yup
+        .string("Enter your password")
+        .oneOf([yup.ref("password"), null], "Passwords doesn't match"),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      update(values).then(() => {
+        set(({ alert }) => {
+          alert.toggled = true;
+          alert.message = `${Object.keys(values)[0]} changed successfully`;
+        });
+        resetForm();
+        setSubmitting(false);
+        setExpanded(false);
+      });
+    },
+    validateOnChange: false,
+  });
+
   return (
     <>
       <Grid item mb={-2} xs={12}>
@@ -151,43 +143,23 @@ export default function ProfileCredentialForm() {
                 )}
               </div>
             </AccordionSummary>
-            {false ? (
-              <AccordionDetails sx={{ mb: -4 }}>
-                <div className="accordion_warning warning">
-                  <Typography
-                    {...style.details}
-                  >{`You can not change your name for ${
-                    remainingTime && remainingTime
-                  }`}</Typography>
-                </div>
-              </AccordionDetails>
-            ) : (
-              <AccordionDetails>
-                {/* WARNIG: If you change your name, you won't be able to change it again for 60 days.  */}
-                {(error?.fName || error?.textField) && (
-                  <AlertBox message={error?.fName || error?.textField} />
-                )}
+            <AccordionDetails>
+              {touched.displayName && Boolean(errors.displayName) && (
+                <AlertBox
+                  message={touched.displayName && Boolean(errors.displayName)}
+                />
+              )}
+              <form onSubmit={handleSubmit}>
                 <Grid container spacing={4} sx={{ mt: -5 }}>
                   <Grid item {...MQ.rows_4}>
                     <TextField
-                      inputRef={fName}
+                      id="displayName"
+                      name="displayName"
+                      label="Full name"
+                      placeholder={user?.displayName}
                       error={(error?.fName || error?.textField) !== undefined}
-                      label="First name"
-                      {...style.textField}
-                    />
-                  </Grid>
-                  <Grid item {...MQ.rows_4}>
-                    <TextField
-                      inputRef={mName}
-                      label="Middle name"
-                      placeholder="optional"
-                      {...style.textField}
-                    />
-                  </Grid>
-                  <Grid item {...MQ.rows_4}>
-                    <TextField
-                      inputRef={sName}
-                      label="Surname"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
                       {...style.textField}
                     />
                   </Grid>
@@ -195,15 +167,15 @@ export default function ProfileCredentialForm() {
                     <Button
                       sx={{ float: "right" }}
                       fullWidth
-                      onClick={() => handleProfileUpdation("displayname")}
                       loading={isUpdating}
+                      type="submit"
                     >
                       UPDATE
                     </Button>
                   </Grid>
                 </Grid>
-              </AccordionDetails>
-            )}
+              </form>
+            </AccordionDetails>
           </Accordion>
           {/* /////uid/// */}
           <Accordion expanded={false}>
@@ -269,33 +241,41 @@ export default function ProfileCredentialForm() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {/* <div className='accordion_warning normal'>
+              {/* <div claslName='accordion_warning normal'>
                                     <Typography {...style.details}>Your email must be a valid one. </Typography>
                                 </div> */}
-              {(error?.email || error?.textField) && (
-                <AlertBox message={error?.email || error?.textField} />
-              )}
-              <Grid container spacing={4} sx={{ mt: -5 }}>
-                <Grid item {...MQ.rows_2} md={8}>
-                  <TextField
-                    error={(error?.email || error?.textField) !== undefined}
-                    type="email"
-                    inputRef={email}
-                    label="New Email"
-                    {...style.textField}
-                  />
+              <form onSubmit={handleSubmit}>
+                {touched.email && Boolean(errors.email) && (
+                  <AlertBox message={touched.email && errors.email} />
+                )}
+                <Grid container spacing={4} sx={{ mt: -5 }}>
+                  <Grid item {...MQ.rows_2} md={8}>
+                    <TextField
+                      id="email"
+                      name="email"
+                      label="New Email"
+                      type="email"
+                      placeholder={user?.email}
+                      value={values.email}
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      {...style.textField}
+                    />
+                  </Grid>
+                  <Grid item {...MQ.rows_2} md={4}>
+                    <Button
+                      sx={{ float: "right" }}
+                      fullWidth
+                      loading={isUpdating}
+                      type="submit"
+                    >
+                      UPDATE
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item {...MQ.rows_2} md={4}>
-                  <Button
-                    sx={{ float: "right" }}
-                    fullWidth
-                    onClick={() => handleProfileUpdation("email")}
-                    loading={isUpdating}
-                  >
-                    UPDATE
-                  </Button>
-                </Grid>
-              </Grid>
+              </form>
             </AccordionDetails>
           </Accordion>
           {/* /////password/// */}
@@ -330,53 +310,37 @@ export default function ProfileCredentialForm() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {/* {
-                                !error ?
-                                    <div className='accordion_warning normal'>
-                                        <Typography {...style.details}>It's a good idea to use a strong password that you don't use elsewhere. </Typography>
-                                    </div>
-                                    :
-                                    <div className='accordion_warning warning'>
-                                        <Typography {...style.details}>{error?.messaage}</Typography>
-                                    </div>
-                            } */}
-              {(error?.password ||
-                error?.newPass ||
-                error?.confirmPass ||
-                error?.textField) && (
-                <AlertBox
-                  message={
-                    error?.password ||
-                    error?.newPass ||
-                    error?.confirmPass ||
-                    error?.textField
-                  }
-                />
-              )}
+              {(touched.password && Boolean(errors.password)) ||
+                (touched.c_password && Boolean(errors.c_password) && (
+                  <AlertBox
+                    message={
+                      (touched.password && Boolean(errors.password)) ||
+                      (touched.c_password && Boolean(errors.c_password))
+                    }
+                  />
+                ))}
               <Grid container spacing={4}>
                 <Grid item {...MQ.rows_3}>
                   <TextField
+                    id="password"
+                    name="password"
                     type="password"
-                    error={
-                      (error?.newPass ||
-                        error?.password ||
-                        error?.textField) !== undefined
-                    }
-                    inputRef={password}
                     label="New Password"
+                    error={touched.password && Boolean(errors.password)}
                     {...style.textField}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                   />
                 </Grid>
                 <Grid item {...MQ.rows_3}>
                   <TextField
+                    id="c_password"
+                    name="c_password"
                     type="password"
-                    error={
-                      (error?.confirmPass ||
-                        error?.password ||
-                        error?.textField) !== undefined
-                    }
-                    inputRef={confirmPass}
                     label="Confirm Password"
+                    error={touched.c_password && Boolean(errors.c_password)}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                     {...style.textField}
                   />
                 </Grid>
@@ -385,7 +349,7 @@ export default function ProfileCredentialForm() {
                     sx={{ float: "right" }}
                     fullWidth
                     loading={isUpdating}
-                    onClick={() => handleProfileUpdation("password")}
+                    type="submit"
                   >
                     UPDATE
                   </Button>

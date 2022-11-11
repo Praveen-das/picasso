@@ -22,8 +22,8 @@ function Signin({ onClose }) {
     setFieldError
   } = useFormik({
     initialValues: {
-      username: "",
-      password: "",
+      username: "prveends",
+      password: "asdasdasd",
     },
     validationSchema: loginValidation,
     onSubmit: (values, { setSubmitting }) => {

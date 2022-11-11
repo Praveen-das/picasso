@@ -16,6 +16,12 @@ const updateUser = async (updates) => {
   return await axiosClient.put("/user", updates);
 };
 
+const sendEmailVerification = async (data) => {
+  return await axiosClient.post("/user/emailverification", {
+    data: data,
+  });
+};
+
 const getCurrentUser = async () => {
   return (
     (await axiosClient
@@ -25,4 +31,11 @@ const getCurrentUser = async () => {
   );
 };
 
-export { signup, signinUser, getCurrentUser, logoutUser, updateUser };
+export {
+  signup,
+  signinUser,
+  getCurrentUser,
+  logoutUser,
+  updateUser,
+  sendEmailVerification,
+};

@@ -65,7 +65,7 @@ function Header() {
 
     return (
         <>
-            <Login model={model} setModel={setModel} />
+            <Login model={model} callback={setModel} />
             <div
                 className="navbar"
             >
