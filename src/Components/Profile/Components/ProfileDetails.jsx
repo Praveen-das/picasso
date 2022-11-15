@@ -12,6 +12,7 @@ import { useAuth } from "../../../Hooks/useAuth";
 import ProfileCredentialForm from "../Components/ProfileCredentialForm";
 import { handleExceptions } from "../../../Hooks/useExceptionHandler";
 import useAuthentication from "../../../Hooks/useAuthentication";
+import { sendEmailVerification } from "../../../lib/user.api";
 
 function ProfileDetails() {
   const { updateProfilePicture, verifyEmail, loading } = useAuth();
@@ -27,9 +28,10 @@ function ProfileDetails() {
   };
 
   const handleEmailVerification = () => {
-    verifyEmail().catch((error) => {
-      handleExceptions(error);
-    });
+    sendEmailVerification()
+    // verifyEmail().catch((error) => {
+    //   handleExceptions(error);
+    // });
   };
 
   return (

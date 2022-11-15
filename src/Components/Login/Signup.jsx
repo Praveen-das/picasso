@@ -28,21 +28,20 @@ function Signup({ confirmSuccess }) {
     setFieldError,
   } = useFormik({
     initialValues: {
-      username: "",
+      displayName: "",
       email: "",
       password: "",
     },
     validationSchema: signupValidation,
     onSubmit: (values, { setSubmitting }) => {
-      values['displayName'] = values.username
       signup(values)
         .then(() => {
           setSubmitting(false);
-          confirmSuccess()
+          confirmSuccess();
         })
         .catch((err) => {
-          const { field, message } = err.response?.data
-          setFieldError(field, message)
+          const { field, message } = err.response?.data;
+          setFieldError(field, message);
         });
     },
     validateOnChange: false,
@@ -78,13 +77,13 @@ function Signup({ confirmSuccess }) {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="username"
-            name="username"
-            label="Username"
+            id="displayName"
+            name="displayName"
+            label="You name"
             onBlur={handleBlur}
             onChange={handleChange}
-            error={touched.username && Boolean(errors.username)}
-            helperText={touched.username && errors.username}
+            error={touched.displayName && Boolean(errors.displayName)}
+            helperText={touched.displayName && errors.displayName}
             {...TF_Style}
           />
         </Grid>

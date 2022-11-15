@@ -22,7 +22,7 @@ function Signin({ onClose }) {
     setFieldError
   } = useFormik({
     initialValues: {
-      username: "prveends",
+      email: "prveends",
       password: "asdasdasd",
     },
     validationSchema: loginValidation,
@@ -61,13 +61,13 @@ function Signin({ onClose }) {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              name="username"
-              label="Username"
-              value={values.username}
+              name="email"
+              label="Email"
+              value={values.email}
               onBlur={handleBlur}
               onChange={handleChange}
-              error={touched.username && Boolean(errors.username)}
-              helperText={touched.username && errors.username}
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
               {...TF_Style}
             />
           </Grid>

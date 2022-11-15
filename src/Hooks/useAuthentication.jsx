@@ -4,7 +4,7 @@ import {
   logoutUser,
   sendEmailVerification,
   signinUser,
-  updateUser,
+  _updateUser,
 } from "../lib/user.api";
 
 function useAuthentication() {
@@ -24,14 +24,11 @@ function useAuthentication() {
     },
   });
 
-  const { mutateAsync: update, isLoading: isUpdating } = useMutation(
-    updateUser,
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["currentUser"]);
-      },
-    }
-  );
+  const { mutateAsync: updateUser } = useMutation(_updateUser, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
 
   const { mutateAsync: sendEmailVerificationAndUpdate } = useMutation(
     sendEmailVerification,
@@ -46,8 +43,7 @@ function useAuthentication() {
     currentUser,
     signin,
     logout,
-    update,
-    isUpdating,
+    updateUser,
   };
 }
 

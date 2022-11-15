@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import NButton from "@mui/material/Button/Button";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useStore } from "../../../Context/Store";
 import { useHelper } from "../../../Hooks/useHelper";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -15,21 +15,19 @@ import AlertBox from "../../MUIComponents/AlertBox/AlertBox";
 import { TextField } from "../../MUIComponents/TextField";
 import { Button } from "../../MUIComponents/Button";
 import useAuthentication from "../../../Hooks/useAuthentication";
-import { joinStrings } from "../../../Utils/joinStrings";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import { profileCredentialFormSchema } from "../../../Schema/YupSchema";
 
 export default function ProfileCredentialForm({ user }) {
-  const { update, isUpdating } = useAuthentication();
+  const { updateUser } = useAuthentication();
   const { copyToClipboard } = useHelper();
   const { currentUser } = useAuthentication();
   const set = useStore((state) => state.set);
 
-  const [error, setError] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
   const handleToggle = (panel) => {
-    setError(false);
+    resetForm();
     setExpanded(expanded !== panel ? panel : false);
   };
 
@@ -76,32 +74,28 @@ export default function ProfileCredentialForm({ user }) {
     handleSubmit,
     isSubmitting,
     resetForm,
+    setFieldError,
   } = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-      c_password: "",
-    },
-    validationSchema: yup.object({
-      displayName: yup.string(),
-      email: yup.string("Enter your email").email("Enter a valid email"),
-      password: yup
-        .string("Enter your password")
-        .min(8, "Password should be of minimum 8 characters length"),
-      c_password: yup
-        .string("Enter your password")
-        .oneOf([yup.ref("password"), null], "Passwords doesn't match"),
-    }),
+    initialValues: {},
+    validationSchema: profileCredentialFormSchema,
     onSubmit: (values, { setSubmitting }) => {
-      update(values).then(() => {
-        set(({ alert }) => {
-          alert.toggled = true;
-          alert.message = `${Object.keys(values)[0]} changed successfully`;
+      delete values.c_password;
+
+      updateUser(values)
+        .then(() => {
+          set(({ alert }) => {
+            alert.toggled = true;
+            alert.message = `${Object.keys(values)[0]} changed successfully`;
+          });
+          resetForm();
+          setSubmitting(false);
+          setExpanded(false);
+        })
+        .catch((err) => {
+          const { field, message } = err.response?.data;
+          setFieldError(field.toLowerCase(), message);
+          setSubmitting(false);
         });
-        resetForm();
-        setSubmitting(false);
-        setExpanded(false);
-      });
     },
     validateOnChange: false,
   });
@@ -157,7 +151,6 @@ export default function ProfileCredentialForm({ user }) {
                       name="displayName"
                       label="Full name"
                       placeholder={user?.displayName}
-                      error={(error?.fName || error?.textField) !== undefined}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       {...style.textField}
@@ -165,9 +158,13 @@ export default function ProfileCredentialForm({ user }) {
                   </Grid>
                   <Grid item {...MQ.rows_4}>
                     <Button
+                      disabled={
+                        values.displayName === "" ||
+                        values.displayName === undefined
+                      }
                       sx={{ float: "right" }}
                       fullWidth
-                      loading={isUpdating}
+                      loading={isSubmitting}
                       type="submit"
                     >
                       UPDATE
@@ -241,12 +238,9 @@ export default function ProfileCredentialForm({ user }) {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {/* <div claslName='accordion_warning normal'>
-                                    <Typography {...style.details}>Your email must be a valid one. </Typography>
-                                </div> */}
               <form onSubmit={handleSubmit}>
                 {touched.email && Boolean(errors.email) && (
-                  <AlertBox message={touched.email && errors.email} />
+                  <AlertBox message={errors.email} />
                 )}
                 <Grid container spacing={4} sx={{ mt: -5 }}>
                   <Grid item {...MQ.rows_2} md={8}>
@@ -256,9 +250,7 @@ export default function ProfileCredentialForm({ user }) {
                       label="New Email"
                       type="email"
                       placeholder={user?.email}
-                      value={values.email}
                       error={touched.email && Boolean(errors.email)}
-                      helperText={touched.email && errors.email}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       {...style.textField}
@@ -266,9 +258,12 @@ export default function ProfileCredentialForm({ user }) {
                   </Grid>
                   <Grid item {...MQ.rows_2} md={4}>
                     <Button
+                      disabled={
+                        values.email === "" || values.email === undefined
+                      }
                       sx={{ float: "right" }}
                       fullWidth
-                      loading={isUpdating}
+                      loading={isSubmitting}
                       type="submit"
                     >
                       UPDATE
@@ -310,51 +305,65 @@ export default function ProfileCredentialForm({ user }) {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {(touched.password && Boolean(errors.password)) ||
-                (touched.c_password && Boolean(errors.c_password) && (
-                  <AlertBox
-                    message={
-                      (touched.password && Boolean(errors.password)) ||
-                      (touched.c_password && Boolean(errors.c_password))
-                    }
-                  />
-                ))}
-              <Grid container spacing={4}>
-                <Grid item {...MQ.rows_3}>
-                  <TextField
-                    id="password"
-                    name="password"
-                    type="password"
-                    label="New Password"
-                    error={touched.password && Boolean(errors.password)}
-                    {...style.textField}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+              {((touched.password && Boolean(errors.password)) ||
+                (touched.c_password && Boolean(errors.c_password))) && (
+                <AlertBox message={errors.password || errors.c_password} />
+              )}
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={4}>
+                  <Grid item {...MQ.rows_3}>
+                    <TextField
+                      id="old_password"
+                      name="old_password"
+                      type="password"
+                      label="Old Password"
+                      error={
+                        touched.old_password && Boolean(errors.old_password)
+                      }
+                      {...style.textField}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                  <Grid item {...MQ.rows_3}>
+                    <TextField
+                      id="password"
+                      name="password"
+                      type="password"
+                      label="New Password"
+                      error={touched.password && Boolean(errors.password)}
+                      {...style.textField}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                  <Grid item {...MQ.rows_3}>
+                    <TextField
+                      id="c_password"
+                      name="c_password"
+                      type="password"
+                      label="Confirm Password"
+                      error={touched.c_password && Boolean(errors.c_password)}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      {...style.textField}
+                    />
+                  </Grid>
+                  <Grid item {...MQ.rows_3}>
+                    <Button
+                      disabled={
+                        values.password === "" || values.password === undefined
+                      }
+                      sx={{ float: "right" }}
+                      fullWidth
+                      loading={isSubmitting}
+                      type="submit"
+                    >
+                      UPDATE
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item {...MQ.rows_3}>
-                  <TextField
-                    id="c_password"
-                    name="c_password"
-                    type="password"
-                    label="Confirm Password"
-                    error={touched.c_password && Boolean(errors.c_password)}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    {...style.textField}
-                  />
-                </Grid>
-                <Grid item {...MQ.rows_3}>
-                  <Button
-                    sx={{ float: "right" }}
-                    fullWidth
-                    loading={isUpdating}
-                    type="submit"
-                  >
-                    UPDATE
-                  </Button>
-                </Grid>
-              </Grid>
+              </form>
             </AccordionDetails>
           </Accordion>
         </div>
