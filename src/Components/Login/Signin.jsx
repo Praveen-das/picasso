@@ -22,7 +22,7 @@ function Signin({ onClose }) {
     setFieldError
   } = useFormik({
     initialValues: {
-      email: "prveends",
+      email: "praveendask97@gmail.com",
       password: "asdasdasd",
     },
     validationSchema: loginValidation,

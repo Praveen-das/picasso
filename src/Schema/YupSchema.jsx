@@ -26,14 +26,13 @@ export const productUpdateValidation = yup.object({
   discount: yup.mixed(),
   images: yup.mixed(),
 });
+
 export const loginValidation = yup.object({
   email: yup
     .string("Enter your email")
     .email("Enter a valid email")
     .required("Email is required"),
-  password: yup
-    .string("Enter your password")
-    .required("Password is required"),
+  password: yup.string("Enter your password").required("Password is required"),
 });
 
 export const signupValidation = yup.object({
@@ -57,4 +56,15 @@ export const profileCredentialFormSchema = yup.object({
   c_password: yup
     .string("Enter your password")
     .oneOf([yup.ref("password"), null], "Passwords doesn't match"),
+});
+
+export const userAddressSchema = yup.object({
+  name: yup.string().required("Enter your name"),
+  address: yup.string().required("Enter your address"),
+  city: yup.string().required("Select your city"),
+  state: yup.string().required("Select your state"),
+  pincode: yup.mixed().required("Enter your pincode"),
+  mobile: yup.mixed().required("Enter your phone number"),
+  alternate_phone: yup.mixed(),
+  email: yup.string().email("Enter a valid email"),
 });

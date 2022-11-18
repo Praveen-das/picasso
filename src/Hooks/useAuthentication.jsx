@@ -24,7 +24,7 @@ function useAuthentication() {
     },
   });
 
-  const { mutateAsync: updateUser } = useMutation(_updateUser, {
+  const { mutateAsync: updateUser, isLoading } = useMutation(_updateUser, {
     onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
@@ -44,6 +44,7 @@ function useAuthentication() {
     signin,
     logout,
     updateUser,
+    isLoading
   };
 }
 

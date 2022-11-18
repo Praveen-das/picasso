@@ -1,7 +1,7 @@
 import Avatar from "../../Avatar/Avatar";
 import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
 import ChangePassword from "../../ChangePassword/ChangePassword";
-import { IKUpload } from "imagekitio-react";
+import { IKUpload, IKContext } from "imagekitio-react";
 import "../styles.css";
 
 import { Grid, Divider } from "@mui/material";
@@ -15,8 +15,7 @@ import useAuthentication from "../../../Hooks/useAuthentication";
 import { sendEmailVerification } from "../../../lib/user.api";
 
 function ProfileDetails() {
-  const { updateProfilePicture, verifyEmail, loading } = useAuth();
-  const { currentUser } = useAuthentication();
+  const { currentUser, updateUser, isLoading } = useAuthentication();
 
   const handleInput = () => {
     document.getElementById("IKUploader").click();
@@ -28,7 +27,7 @@ function ProfileDetails() {
   };
 
   const handleEmailVerification = () => {
-    sendEmailVerification()
+    sendEmailVerification();
     // verifyEmail().catch((error) => {
     //   handleExceptions(error);
     // });
@@ -41,20 +40,26 @@ function ProfileDetails() {
         <div id="avatar">
           <Avatar
             sx={{ width: 80, height: 80 }}
-            displayName={currentUser?.first_name}
-            profilePicture={currentUser?.photoURL}
+            displayName={currentUser?.displayName}
+            profilePicture={currentUser?.photo + "?tr=w-100"}
           />
           <button className="imageUpdateBtn" onClick={() => handleInput()}>
             <CameraAltRoundedIcon fontSize="30px" color="secondary" />
-            <IKUpload
-              id="IKUploader"
-              folder={"/products-images"}
-              onError={(err) => console.log(err)}
-              onSuccess={(res) => {
-                updateProfilePicture(res.thumbnailUrl);
-              }}
-              hidden
-            />
+            <IKContext
+              publicKey={process.env.REACT_APP_PUBLIC_KEY}
+              urlEndpoint={process.env.REACT_APP_URL_ENDPOINT}
+              authenticationEndpoint={process.env.REACT_APP_AUTH_ENDPOINT}
+            >
+              <IKUpload
+                id="IKUploader"
+                folder={"/products-images"}
+                onError={(err) => console.log(err)}
+                onSuccess={(res) => {
+                  updateUser({ photo: res.thumbnailUrl });
+                }}
+                hidden
+              />
+            </IKContext>
           </button>
         </div>
         <div>
@@ -91,7 +96,7 @@ function ProfileDetails() {
                 </Typography>
               </div>
               <LoadingButton
-                loading={loading}
+                loading={isLoading}
                 variant="text"
                 onClick={handleEmailVerification}
               >

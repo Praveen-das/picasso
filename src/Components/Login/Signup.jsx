@@ -13,7 +13,7 @@ import Twitter from "@mui/icons-material/Twitter";
 import { useFormik } from "formik";
 import { signupValidation } from "../../Schema/YupSchema";
 import { TF_Style } from "../SellerComponents/AddProduct/style";
-import { signup } from "../../lib/user.api";
+import { authenticateUsingGmail, signup } from "../../lib/user.api";
 import { joinStrings } from "../../Utils/joinStrings";
 
 function Signup({ confirmSuccess }) {
@@ -65,10 +65,20 @@ function Signup({ confirmSuccess }) {
           </Typography>
         </Grid>
         <Grid item xs={12} display="flex" justifyContent="space-evenly">
-          <IconButton aria-label="delete">
+          <IconButton
+            aria-label="google"
+            onClick={() => {
+              window.open("http://localhost:3001/auth/google", "_self");
+            }}
+          >
             <Google sx={{ fontSize: 30, color: "#DB4437" }} />
           </IconButton>
-          <IconButton aria-label="delete">
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              window.open("http://localhost:3001/auth/facebook", "_self");
+            }}
+          >
             <Facebook sx={{ fontSize: 30, color: "#4267B2" }} />
           </IconButton>
           <IconButton aria-label="delete">
@@ -79,7 +89,7 @@ function Signup({ confirmSuccess }) {
           <TextField
             id="displayName"
             name="displayName"
-            label="You name"
+            label="Your name"
             onBlur={handleBlur}
             onChange={handleChange}
             error={touched.displayName && Boolean(errors.displayName)}

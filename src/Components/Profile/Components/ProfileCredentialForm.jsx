@@ -21,7 +21,6 @@ import { profileCredentialFormSchema } from "../../../Schema/YupSchema";
 export default function ProfileCredentialForm({ user }) {
   const { updateUser } = useAuthentication();
   const { copyToClipboard } = useHelper();
-  const { currentUser } = useAuthentication();
   const set = useStore((state) => state.set);
 
   const [expanded, setExpanded] = useState(false);
@@ -80,7 +79,7 @@ export default function ProfileCredentialForm({ user }) {
     validationSchema: profileCredentialFormSchema,
     onSubmit: (values, { setSubmitting }) => {
       delete values.c_password;
-
+      // console.log(values);
       updateUser(values)
         .then(() => {
           set(({ alert }) => {
@@ -125,7 +124,7 @@ export default function ProfileCredentialForm({ user }) {
                 ) : (
                   <>
                     <Typography {...style.summery}>
-                      {currentUser?.displayName}
+                      {user?.displayName}
                     </Typography>
                     <NButton
                       {...style.button}
@@ -184,11 +183,9 @@ export default function ProfileCredentialForm({ user }) {
                 <Typography {...style.title}>User ID</Typography>
                 <>
                   <Typography whiteSpace="nowrap" {...style.summery}>
-                    {currentUser?.id}
+                    {user?.id}
                     <IconButton
-                      onClick={() =>
-                        copyToClipboard("User Id", currentUser?.uid)
-                      }
+                      onClick={() => copyToClipboard("User Id", user?.uid)}
                     >
                       <ContentCopyIcon sx={{ fontSize: 18 }} />
                     </IconButton>
@@ -218,20 +215,24 @@ export default function ProfileCredentialForm({ user }) {
                 ) : (
                   <>
                     <Typography {...style.summery}>
-                      {currentUser?.email}
-                      <IconButton
-                        onClick={() =>
-                          copyToClipboard("Email", currentUser?.email)
-                        }
-                      >
-                        <ContentCopyIcon sx={{ fontSize: 18 }} />
-                      </IconButton>
+                      {user?.email && (
+                        <>
+                          {user?.email}
+                          <IconButton
+                            onClick={() =>
+                              copyToClipboard("Email", user?.email)
+                            }
+                          >
+                            <ContentCopyIcon sx={{ fontSize: 18 }} />
+                          </IconButton>
+                        </>
+                      )}
                     </Typography>
                     <NButton
                       onClick={() => handleToggle("panel2")}
                       {...style.button}
                     >
-                      Edit
+                      {user?.email ? "Edit" : "Update"}
                     </NButton>
                   </>
                 )}
@@ -247,7 +248,7 @@ export default function ProfileCredentialForm({ user }) {
                     <TextField
                       id="email"
                       name="email"
-                      label="New Email"
+                      label={user?.email ? "New Email" : "Your Email"}
                       type="email"
                       placeholder={user?.email}
                       error={touched.email && Boolean(errors.email)}
@@ -349,7 +350,7 @@ export default function ProfileCredentialForm({ user }) {
                       {...style.textField}
                     />
                   </Grid>
-                  <Grid item {...MQ.rows_3}>
+                  <Grid item ml='auto'>
                     <Button
                       disabled={
                         values.password === "" || values.password === undefined

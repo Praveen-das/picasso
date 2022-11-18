@@ -9,7 +9,7 @@ const signinUser = async (credentials) => {
 };
 
 const logoutUser = async () => {
-  return await axiosClient.post("/user/logout");
+  return await axiosClient.get("/user/logout");
 };
 
 const _updateUser = async (updates) => {
@@ -29,6 +29,13 @@ const getCurrentUser = async () => {
   );
 };
 
+const authenticateUsingGmail = async () => {
+  return await axiosClient
+    .get("/auth/google")
+    .then((res) => console.log(res.data))
+    .catch((err) => console.log(err));
+};
+
 export {
   signup,
   signinUser,
@@ -36,4 +43,5 @@ export {
   logoutUser,
   _updateUser,
   sendEmailVerification,
+  authenticateUsingGmail,
 };
