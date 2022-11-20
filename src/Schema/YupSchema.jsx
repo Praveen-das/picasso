@@ -64,7 +64,8 @@ export const userAddressSchema = yup.object({
   city: yup.string().required("Select your city"),
   state: yup.string().required("Select your state"),
   pincode: yup.mixed().required("Enter your pincode"),
-  mobile: yup.mixed().required("Enter your phone number"),
+  mobile: yup.string().required("Enter your phone number"),
   alternate_phone: yup.mixed(),
   email: yup.string().email("Enter a valid email"),
+  isDefault:yup.boolean()
 });

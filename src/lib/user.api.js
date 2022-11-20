@@ -30,10 +30,11 @@ const getCurrentUser = async () => {
 };
 
 const authenticateUsingGmail = async () => {
-  return await axiosClient
-    .get("/auth/google")
-    .then((res) => console.log(res.data))
-    .catch((err) => console.log(err));
+  return await axiosClient.get("/auth/google");
+};
+
+const _addUserAddress = async (payload) => {
+  return await axiosClient.post("/user/address", payload);
 };
 
 export {
@@ -44,4 +45,5 @@ export {
   _updateUser,
   sendEmailVerification,
   authenticateUsingGmail,
+  _addUserAddress,
 };

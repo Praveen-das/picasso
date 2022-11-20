@@ -5,10 +5,12 @@ import AlertBox from "../MUIComponents/AlertBox/AlertBox";
 import { TextField } from "../MUIComponents/TextField";
 import "./styles.css";
 import { userAddressSchema } from "../../Schema/YupSchema";
-import { useFormik, Form } from "formik";
+import { useFormik } from "formik";
+import useAuthentication from "../../Hooks/useAuthentication";
 
 function AddNewAddress({ open, close }) {
   const isMounted = useRef(false);
+  const { addUserAddress } = useAuthentication();
 
   const style = {
     fullWidth: true,
@@ -46,6 +48,8 @@ function AddNewAddress({ open, close }) {
     handleSubmit,
     handleBlur,
     isSubmitting,
+    resetForm,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       name: "",
@@ -54,13 +58,17 @@ function AddNewAddress({ open, close }) {
       state: "",
       pincode: "",
       mobile: "",
-      alternate_phone: "",
+      alternate_phone: null,
       email: "",
+      isDefault: true,
     },
     validationSchema: userAddressSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
-      setSubmitting(false);
+      addUserAddress(values).then(() => {
+        setSubmitting(false);
+        resetForm();
+        close();
+      });
     },
     validateOnChange: false,
   });
@@ -179,19 +187,20 @@ function AddNewAddress({ open, close }) {
                 {...style}
               />
             </Grid>
-            <Grid item xs={12} >
+            <Grid item xs={12}>
               <input
-                // onChange={(e) => (isDefault.current = e.target.checked)}
+                id="isDefault"
+                name="isDefault"
+                onChange={(e) => setFieldValue("isDefault", e.target.checked)}
                 defaultChecked
                 style={{ transform: "translateY(1.5px)", marginRight: 15 }}
                 type="checkbox"
-                id="default_address"
               />
-              <label style={{ fontSize: "0.9rem" }} htmlFor="default_address">
+              <label style={{ fontSize: "0.9rem" }} htmlFor="isDefault">
                 Set as default shipping address.
               </label>
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <Button type="submit" size="large" fullWidth variant="contained">
                 ADD
               </Button>

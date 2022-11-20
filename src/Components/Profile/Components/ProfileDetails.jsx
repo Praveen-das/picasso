@@ -33,6 +33,8 @@ function ProfileDetails() {
     // });
   };
 
+  console.log(currentUser);
+
   return (
     <>
       <Grid item xs={6} gap={2} mb="2rem" display="flex" alignItems="center">
@@ -41,7 +43,7 @@ function ProfileDetails() {
           <Avatar
             sx={{ width: 80, height: 80 }}
             displayName={currentUser?.displayName}
-            profilePicture={currentUser?.photo + "?tr=w-100"}
+            profilePicture={currentUser?.photo}
           />
           <button className="imageUpdateBtn" onClick={() => handleInput()}>
             <CameraAltRoundedIcon fontSize="30px" color="secondary" />
