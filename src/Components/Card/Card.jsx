@@ -8,14 +8,16 @@ import { useDatabase } from '../../Hooks/useDatabase'
 
 function Card({ product, height }) {
     const userData = useStore(state => state.userData)
-
+    
     const { addToWishlist, removeFromWishlist } = useDatabase()
+    const images = product?.images
+    const defaultImage = images.find((o) => o.fileId === product.defaultImage)
 
     return (
         <Link className='product_card' style={{ height }} to='/shop/product' state={product}>
             <label className='product_name' htmlFor="">Monroe in color</label>
             <label className='product_artist' htmlFor="">John doe</label>
-            <img className='painting' src={product.image[product.defaultImage] + '/tr:w-200'} alt="" />
+            <img className='painting' src={defaultImage?.url + '/tr:w-200'} alt="" />
             <div className="product_card--actions">
                 <div className="favourite-wrapper">
                     {

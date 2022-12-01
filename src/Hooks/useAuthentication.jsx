@@ -1,10 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getCurrentUser,
   logoutUser,
-  sendEmailVerification,
   signinUser,
-  _addUserAddress,
+  signupUser,
   _updateUser,
 } from "../lib/user.api";
 
@@ -17,7 +15,11 @@ function useAuthentication() {
     },
   });
 
-  const { data: currentUser } = useQuery(["currentUser"], getCurrentUser);
+  const { mutateAsync: signup } = useMutation(signupUser, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
 
   const { mutate: logout } = useMutation(logoutUser, {
     onSuccess: () => {
@@ -25,25 +27,10 @@ function useAuthentication() {
     },
   });
 
-  const { mutateAsync: updateUser, isLoading } = useMutation(_updateUser, {
-    onSettled: () => {
-      queryClient.invalidateQueries(["currentUser"]);
-    },
-  });
-
-  const { mutateAsync: addUserAddress } = useMutation(_addUserAddress, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["currentUser"]);
-    },
-  });
-
   return {
-    currentUser,
     signin,
+    signup,
     logout,
-    updateUser,
-    isLoading,
-    addUserAddress,
   };
 }
 

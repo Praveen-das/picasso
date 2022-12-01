@@ -1,4 +1,4 @@
-.floatingCart{
+.floatingCart {
     display: grid;
     place-items: center;
     width: 60px;
@@ -7,38 +7,42 @@
     position: sticky;
     top: calc(100% - 5rem);
     left: calc(100% - 5rem);
-    background: white;
-    box-shadow: 0 0 5px 2px var(--shadow);
+    background: var(--brand);
     border-radius: 50%;
     z-index: 2;
     scale: 0;
     margin-bottom: -4rem;
-    transition: 0.5s ;
-    animation: anim 0.5s 0.2s cubic-bezier(.74,1.9,.72,1.01) forwards;
+    transition: 0.5s;
+    animation: anim 0.5s 0.2s cubic-bezier(.74, 1.9, .72, 1.01) forwards;
 }
-.floatingCart::after{
+
+.floatingCart::after {
     content: attr(data-cart);
-    position:absolute;
+    position: absolute;
     display: grid;
     place-items: center;
-    color: white;
+    color: var(--brand);
     font-size: 10px;
-    width:25px;
+    font-weight: 800;
+    width: 25px;
     aspect-ratio: 1;
     border-radius: 50%;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.356);
     top: -3px;
     right: -3px;
-    background: var(--brand);
+    background: white;
     scale: 0;
-    animation: number 0.5s 0.5s cubic-bezier(.74,1.9,.72,1.01) forwards;
+    animation: number 0.5s 0.5s cubic-bezier(.74, 1.9, .72, 1.01) forwards;
 }
-@keyframes anim{
-    to{
+
+@keyframes anim {
+    to {
         scale: 1;
     }
 }
-@keyframes number{
-    100%{
+
+@keyframes number {
+    100% {
         scale: 1;
     }
 }

@@ -13,10 +13,11 @@ import Twitter from "@mui/icons-material/Twitter";
 import { useFormik } from "formik";
 import { signupValidation } from "../../Schema/YupSchema";
 import { TF_Style } from "../SellerComponents/AddProduct/style";
-import { authenticateUsingGmail, signup } from "../../lib/user.api";
-import { joinStrings } from "../../Utils/joinStrings";
+import useAuthentication from "../../Hooks/useAuthentication";
 
 function Signup({ confirmSuccess }) {
+  const { signup } = useAuthentication()
+  
   const {
     values,
     errors,
@@ -34,15 +35,16 @@ function Signup({ confirmSuccess }) {
     },
     validationSchema: signupValidation,
     onSubmit: (values, { setSubmitting }) => {
-      signup(values)
-        .then(() => {
-          setSubmitting(false);
-          confirmSuccess();
-        })
-        .catch((err) => {
-          const { field, message } = err.response?.data;
-          setFieldError(field, message);
-        });
+      console.log(values);
+      // signup(values)
+      //   .then(() => {
+      //     setSubmitting(false);
+      //     confirmSuccess();
+      //   })
+      //   .catch((err) => {
+      //     const { field, message } = err.response?.data;
+      //     setFieldError(field, message);
+      //   });
     },
     validateOnChange: false,
   });

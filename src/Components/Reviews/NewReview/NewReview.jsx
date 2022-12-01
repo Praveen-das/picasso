@@ -6,17 +6,14 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating'
 import './newReview.css'
-import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog';
-import { useStore } from '../../../Context/Store';
-import { useDatabase } from '../../../Hooks/useDatabase';
+import useReviews from '../../../Hooks/useReviews';
+import useUserData from '../../../Hooks/useUserData';
 
-function NewReview({ data, open, setOpen }) {
-    const [review, setReview] = useState({ title: '', review: '' })
-    const [rating, setRating] = useState(0)
-    const { AddProductReview } = useDatabase()
-    const currentUser = useStore(state => state.auth?.user)
-    const reviews = useStore(s => s.database.reviews)
-
+function NewReview({ product, open, setOpen, userReview }) {
+    const [review, setReview] = useState({ title: '', message: '' })
+    const [vote, setVote] = useState(0)
+    const { addReview, updateReview } = useReviews()
+    const { currentUser } = useUserData()
 
     const box_style = {
         position: 'absolute',
@@ -30,29 +27,42 @@ function NewReview({ data, open, setOpen }) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if (reviews.find((doc) =>
-            Object.values(doc).includes(currentUser.uid) &&
-            Object.values(doc).includes(data.id))) {
-            confirmAction(
-                'Already reviewed',
-                'Press CONFIRM if you want to modify existing review.',
-                () => {
-                    AddProductReview(review, rating, data.id)
+        // if (reviews.find((doc) =>
+        //     Object.values(doc).includes(currentUser.uid) &&
+        //     Object.values(doc).includes(data.id))) {
+        //     confirmAction(
+        //         'Already reviewed',
+        //         'Press CONFIRM if you want to modify existing review.',
+        //         () => {
+        //             addReview(review, vote, data.id)
+        //             setReview({ title: '', review: '' })
+        //             setOpen(!open)
+        //         }
+        //     )
+        //     return
+        // }
+        if (userReview) {
+            updateReview(userReview.id, { review, vote, product_id: product.id })
+                .then(() => {
                     setReview({ title: '', review: '' })
                     setOpen(!open)
-                }
-            )
+                })
+                .catch(err => console.log(err))
             return
         }
-        AddProductReview(review, rating, data.id)
-        setReview({ title: '', review: '' })
-        setOpen(!open)
+        
+        addReview.mutateAsync({ review, vote, product_id: product.id })
+            .then(() => {
+                setReview({ title: '', review: '' })
+                setOpen(!open)
+            })
+            .catch(err => console.log(err))
     }
 
     const handleClose = () => {
         setOpen(!open)
         setReview({ title: '', review: '' })
-        setRating('')
+        setVote('')
     }
 
     return (
@@ -68,20 +78,21 @@ function NewReview({ data, open, setOpen }) {
                             sx={{ position: 'absolute', top: 5, right: 5 }}>
                             <CloseIcon />
                         </IconButton>
-                        <label className='newReview_customer--name' htmlFor="">Hey {data.name}</label>
+                        <label className='newReview_customer--name' htmlFor="">Hey {currentUser.data?.name}</label>
                         <p>Tell us about your experience</p>
-                        <img className='button_primary' src={data.image[data.defaultImage]} alt="" />
+                        <img className='button_primary' src={product.images?.find(o => o.fileId === product.defaultImage).url} alt="" />
                         <label className='rate_this_product' htmlFor="">Rate this product</label>
                         <Rating
                             aria-required
                             name="simple-controlled"
-                            onChange={(event, newValue) => setRating(newValue)}
+                            onChange={(event, newValue) => setVote(newValue)}
                         />
                         <TextField
                             autoComplete='off'
                             sx={{ mt: 1 }}
                             required
-                            value={review && review.title}
+                            placeholder={userReview?.review.title}
+                            value={review?.title}
                             onChange={(e) => setReview(pre => ({ ...pre, title: e.target.value }))}
                             fullWidth
                             type='text'
@@ -92,8 +103,9 @@ function NewReview({ data, open, setOpen }) {
                         <TextField
                             sx={{ mt: 1 }}
                             required
-                            value={review && review.review}
-                            onChange={(e) => setReview(pre => ({ ...pre, review: e.target.value }))}
+                            placeholder={userReview?.review.me}
+                            value={review?.review}
+                            onChange={(e) => setReview(pre => ({ ...pre, message: e.target.value }))}
                             fullWidth
                             size='small'
                             id="outlined-basic"

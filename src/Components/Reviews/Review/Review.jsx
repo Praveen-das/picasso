@@ -3,29 +3,30 @@ import Avatar from '@mui/material/Avatar'
 import react from 'react'
 import './style.css'
 
-function Review({ data }) {
+function Review({ review }) {
+    
     const handleAvatar = () => {
-        if (data.user_image)
-            return { src: data.user_image }
-        return { children: data.username[0].toUpperCase() }
+        if (review.user?.photo)
+            return { src: review.user?.photo }
+        return { children: review.user?.displayName[0].toUpperCase() }
     }
-
+    
     return (
         <>
             <div className="customerReview">
                 <div className='customer-profile'>
                     <Avatar {...handleAvatar()} className='customer-profile--picture' alt="Remy Sharp" />
                     <div className='nameAndRating'>
-                        <label htmlFor="">{data.username}</label>
-                        <Rating 
-                        className='customer_rating'
-                        name="read-only" 
-                        size='small'
-                        value={data.rating} readOnly />
+                        <label htmlFor="">{review.user?.displayName}</label>
+                        <Rating
+                            className='customer_rating'
+                            name="read-only"
+                            size='small'
+                            value={review.vote} readOnly />
                     </div>
                 </div>
-                <label className='review_title' htmlFor="">{data.review.title}</label>
-                <p className='review'>{data.review.review}</p>
+                <label className='review_title' htmlFor="">{review.review.title}</label>
+                <p className='review'>{review.review.message}</p>
             </div>
         </>
     )

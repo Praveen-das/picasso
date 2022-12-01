@@ -52,7 +52,7 @@ function Login({ model, callback: setModel }) {
         onClose={() => {
           setSuccess(false);
           setWindow(false);
-          setModel(false);
+          setModel();
         }}
       >
         <Box sx={box_style}>
@@ -61,6 +61,7 @@ function Login({ model, callback: setModel }) {
               callback={() => {
                 setSuccess(false);
                 setWindow(false);
+                setModel()
               }}
             />
           ) : (

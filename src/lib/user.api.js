@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const signup = async (credentials) => {
+const signupUser = async (credentials) => {
   return await axiosClient.post("/user/signup", credentials);
 };
 
@@ -13,11 +13,7 @@ const logoutUser = async () => {
 };
 
 const _updateUser = async (updates) => {
-  return await axiosClient.put("/user", updates);
-};
-
-const sendEmailVerification = async (data) => {
-  return await axiosClient.post("/user/emailverification");
+  return await axiosClient.put("/user/update", updates);
 };
 
 const getCurrentUser = async () => {
@@ -25,7 +21,7 @@ const getCurrentUser = async () => {
     (await axiosClient
       .get("/user")
       .then((res) => res.data)
-      .catch((err) => console.log(err.response))) || null
+      .catch((err) => '')) || null
   );
 };
 
@@ -37,13 +33,24 @@ const _addUserAddress = async (payload) => {
   return await axiosClient.post("/user/address", payload);
 };
 
+const _updateUserAddress = async (updates) => {
+  return await axiosClient.put("/user/address", updates);
+};
+
+const _deleteUserAddress = async (id) => {
+  return await axiosClient.delete(`/user/address/${id}`).then(res => res.data);
+};
+
 export {
-  signup,
+  signupUser,
   signinUser,
-  getCurrentUser,
   logoutUser,
-  _updateUser,
-  sendEmailVerification,
   authenticateUsingGmail,
+
+  getCurrentUser,
+  _updateUser,
+
   _addUserAddress,
+  _updateUserAddress,
+  _deleteUserAddress,
 };

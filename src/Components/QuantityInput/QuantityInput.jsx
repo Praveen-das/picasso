@@ -1,33 +1,27 @@
-import react, { useState } from 'react';
+import react, { useEffect, useState } from 'react';
 
-function QuantityInput({ quantity, setQuantity, index }) {
-    const [value, setValue] = useState(parseInt(quantity))
+function QuantityInput({ onChange, defaultValue }) {
+    const [value, setValue] = useState(defaultValue || 1)
 
-    const handleValue = (action) => {
-        switch (action) {
-            case 'increase':
-                if (value + 1 > 5) return
-                setValue(pre => pre + 1)
-                setQuantity(pre => pre.map((o, i) => i === index ? (o = value + 1) : o))
-                break;
-
-            case 'decrease':
-                if (value - 1 === 0) return
-                setValue(pre => pre - 1)
-                setQuantity(pre => pre.map((o, i) => i === index ? (o = value - 1) : o))
-                break;
-
-            default:
-                break;
-        }
-
+    const increase = () => {
+        if (value + 1 > 5) return
+        setValue(pre => pre + 1)
     }
+
+    const decrease = () => {
+        if (value - 1 === 0) return
+        setValue(pre => pre - 1)
+    }
+
+    useEffect(() => {
+        onChange(value);
+    }, [value])
 
     return (
         <div id="quantity">
-            <button onClick={() => handleValue('decrease')}>-</button>
-            {value ? value : quantity}
-            <button onClick={() => handleValue('increase')}>+</button>
+            <button onClick={decrease}>-</button>
+            {value}
+            <button onClick={increase}>+</button>
         </div>
     )
 }

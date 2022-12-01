@@ -8,14 +8,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
-import { useStore } from '../../Context/Store';
-import { useDatabase } from '../../Hooks/useDatabase';
+import useUserData from '../../Hooks/useUserData';
 
 function AddressCarousel() {
     const [open, setOpen] = useState(false)
-    const defaultAddress = useStore(state => state.userData?.defaultAddress)
-    const userAddressList = useStore(state => state.userData?.address)
-    const { setDefaultAddress } = useDatabase()
+    const { currentUser, updateUser } = useUserData()
+
+    const { address, defaultAddress } = currentUser.data
 
     const style = {
         typography: {
@@ -28,7 +27,7 @@ function AddressCarousel() {
 
     return (
         <>
-            <div style={{marginLeft:'-2em'}}>
+            <div style={{ marginLeft: '-2em' }}>
                 <AddNewAddress open={open} close={() => setOpen(!open)} />
             </div>
             <div id="addressList">
@@ -39,34 +38,34 @@ function AddressCarousel() {
                     <Typography {...style.typography}>Delivery address</Typography>
                 </Grid>
                 <Grid item gap={2} xs={
-                    userAddressList ? userAddressList.length > 1 ? 12 : 6.85 : 1
+                    address ? address.length > 1 ? 12 : 6.85 : 1
                 } display='flex'>
                     {
-                        userAddressList &&
+                        address &&
                         <Swiper
                             slidesPerView={
-                                userAddressList.length > 1 ? 2 : 1
+                                address.length > 1 ? 2 : 1
                             }
                             spaceBetween={15}
                             mousewheel={true}
                             modules={[Mousewheel]}
                             className="checkout_swiper"
-                            initialSlide={(userAddressList?.reverse()).map((data, index) => data.id === defaultAddress.id && index).find(o => o !== false)}
+                            initialSlide={(address?.reverse()).map((data) => data.id === defaultAddress).find(o => o !== false)}
                         >
                             {
-                                userAddressList?.map((address, index) =>
+                                address?.map((address, index) =>
                                     <SwiperSlide key={index}>
                                         <div
                                             className="checkout__address"
-                                            onClick={() => setDefaultAddress(address)}
+                                            onClick={() => updateUser({ default_address: address.id })}
                                             style={
                                                 {
-                                                    transform: address.id === defaultAddress.id && 'translate(-4px,-4px)',
-                                                    boxShadow: address.id === defaultAddress.id && '8px 8px 10px 2px var(--shadow)'
+                                                    transform: address.id === defaultAddress && 'translate(-4px,-4px)',
+                                                    boxShadow: address.id === defaultAddress && '8px 8px 10px 2px var(--shadow)'
                                                 }
                                             }>
                                             {
-                                                address.id === defaultAddress.id &&
+                                                address.id === defaultAddress &&
                                                 <div className="checkout__address--checked">
                                                     <CheckCircleIcon sx={{ color: 'var(--brand)', fontSize: '25px' }} />
                                                 </div>

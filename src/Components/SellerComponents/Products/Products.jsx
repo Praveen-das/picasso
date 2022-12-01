@@ -9,27 +9,28 @@ import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
 import { useDatabase } from '../../../Hooks/useDatabase'
 import { useStore } from '../../../Context/Store'
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { deleteProduct, fetchProducts } from '../../../lib/product.api'
-import { useProductData } from '../../../Hooks/useProductData'
+import { _deleteProduct, fetchProducts } from '../../../lib/product.api'
+import { useAdmin, useProducts } from '../../../Hooks/useProducts'
 import { Pagination, Skeleton } from '@mui/material'
 
 const skeleton = new Array(20).fill()
 function Products() {
     const queryClient = useQueryClient()
-    const uid = useStore(state => state.auth.user?.uid)
+
     const [toggleEditButton, setToggleEditButton] = useState(false)
     const [model, setModel] = useState('')
     const [product, setProduct] = useState()
 
-    const { data, page, query, isLoading } = useProductData()
-    const { mutate } = useMutation(deleteProduct, {
+    const { products, setPage, setQuery, isLoading } = useAdmin()
+    
+    const { mutate } = useMutation(_deleteProduct, {
         onSuccess: () => {
             queryClient.invalidateQueries(['products'])
         },
     })
-    
-    const products = data ? data.data[0] : []
-    const count = data ? data.data[1]?.id : 1
+
+    const productList = products.data ? products.data[0] : []
+    const count = products.data ? products.data[1].id : 1
 
     function _updateProduct(product) {
         setModel('update')
@@ -38,7 +39,7 @@ function Products() {
 
     useEffect(() => {
         window.scrollTo({ top: 0 })
-    }, [products])
+    }, [productList])
 
     function handleDelete(productId) {
         confirmAction(
@@ -62,8 +63,8 @@ function Products() {
                         </span>
                         <div className="actions">
                             <Search
-                                onKeyUp={value => query(value)}
-                                onSearch={value => query(value)}
+                                onKeyUp={value => setQuery(value)}
+                                onSearch={value => setQuery(value)}
                             />
                             <button color='secondary' onClick={() => setModel('add')} className='addProduct'>
                                 <Icon className='faAddIcon' icon={faPlus} /> ADD
@@ -90,7 +91,7 @@ function Products() {
                                 // ((!result.searching) || (!loading)) ?
                                 //     (result.data.length > 0 ? result.data : data
                                 //     )
-                                !isLoading ? products.map((product) =>
+                                !isLoading ? productList?.map((product) =>
                                     < tr key={product.id} >
                                         <td>{product?.name}</td>
                                         <td><img
@@ -140,7 +141,7 @@ function Products() {
                             }
                         </tbody>
                     </table>
-                    <Pagination color="primary" sx={{ mt: 3, justifyItems: 'center' }} onChange={(_, value) => page(value)} count={Math.ceil(count / 10)} />
+                    <Pagination color="primary" sx={{ mt: 3, justifyItems: 'center' }} onChange={(_, value) => setPage(value)} count={Math.ceil(count / 10)} />
                 </div>
             </div>
         </>

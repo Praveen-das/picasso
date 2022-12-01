@@ -11,11 +11,10 @@ import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 import { useAuth } from "../../../Hooks/useAuth";
 import ProfileCredentialForm from "../Components/ProfileCredentialForm";
 import { handleExceptions } from "../../../Hooks/useExceptionHandler";
-import useAuthentication from "../../../Hooks/useAuthentication";
-import { sendEmailVerification } from "../../../lib/user.api";
+import useUserData from "../../../Hooks/useUserData";
 
 function ProfileDetails() {
-  const { currentUser, updateUser, isLoading } = useAuthentication();
+  const { currentUser, updateUser, isLoading } = useUserData();
 
   const handleInput = () => {
     document.getElementById("IKUploader").click();
@@ -27,13 +26,7 @@ function ProfileDetails() {
   };
 
   const handleEmailVerification = () => {
-    sendEmailVerification();
-    // verifyEmail().catch((error) => {
-    //   handleExceptions(error);
-    // });
   };
-
-  console.log(currentUser);
 
   return (
     <>
@@ -42,8 +35,8 @@ function ProfileDetails() {
         <div id="avatar">
           <Avatar
             sx={{ width: 80, height: 80 }}
-            displayName={currentUser?.displayName}
-            profilePicture={currentUser?.photo}
+            displayName={currentUser.data?.displayName}
+            profilePicture={currentUser.data?.photo}
           />
           <button className="imageUpdateBtn" onClick={() => handleInput()}>
             <CameraAltRoundedIcon fontSize="30px" color="secondary" />
@@ -72,10 +65,10 @@ function ProfileDetails() {
             fontWeight={700}
             mb={0.5}
           >
-            {currentUser?.displayName}
+            {currentUser.data?.displayName}
           </Typography>
           <Typography variant="body2" color="var(--brand)">
-            {currentUser?.emailVerified
+            {currentUser.data?.emailVerified
               ? "Varified"
               : "Account is not varified"}
           </Typography>
@@ -83,8 +76,8 @@ function ProfileDetails() {
       </Grid>
       <Divider sx={{ width: "100%" }} />
       <Grid container columnSpacing={8} rowSpacing={4} p={2}>
-        <ProfileCredentialForm user={currentUser} />
-        {!currentUser?.emailVerified && (
+        <ProfileCredentialForm user={currentUser.data} />
+        {!currentUser.data?.emailVerified && (
           <>
             <Grid item xs={12}>
               <Divider sx={{ width: "100%" }} />

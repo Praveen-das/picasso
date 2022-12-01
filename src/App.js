@@ -1,13 +1,10 @@
 import {
-  BrowserRouter as Router,
   Route,
-  Routes,
   createBrowserRouter,
   createRoutesFromElements,
   Outlet,
   RouterProvider,
-  Navigate,
-  useNavigate,
+  redirect,
 } from "react-router-dom";
 
 import "./App.css";
@@ -21,10 +18,20 @@ import Alert from "./Components/Alert/Alert";
 import Login from "./Components/Login/Login";
 import React, { useState } from "react";
 import Private from "./PrivateRoute/PrivateRoute";
+import LoginPrompt from "./PrivateRoute/LoginPrompt";
+import useUserData from "./Hooks/useUserData";
 
 function App() {
-  const [model, setModel] = useState(true);
+  const { currentUser } = useUserData()
 
+  const auth = async () => {
+    if (currentUser.data) return redirect("/")
+  };
+
+  const privateRoute = async () => {
+    if (currentUser.data === null) return redirect("/login")
+  };
+  
   const routes = createRoutesFromElements(
     <Route path="/" element={<Outlet />}>
       <Route index element={<HomePage />} />
@@ -34,33 +41,29 @@ function App() {
       </Route>
       <Route path="/search/:query" element={<ShoppingPage />} />
       <Route path="/category/:category" element={<ShoppingPage />} />
-      <Route
-        path="/checkout"
-        element={<Private children={<CheckoutPage />} />}
-      />
-      {/* <Route path="/shop" element={<ShoppingPage />} />
-      <Route path="/shop/product" element={<ProductPage />} /> */}
-      <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/search/:query" element={<ShoppingPage />} />
       <Route path="/category/:category" element={<ShoppingPage />} />
-      <Route path="/sell" element={<SellerPage />} />
-      <Route path="/my-profile" element={<ProfilePage />} />
-      {/* protected routes */}
 
-      {/* protected routes */}
+      {/* //--------------------- private routes ---------------------*/}
+      <Route path="/login" element={<LoginPrompt />} loader={auth} />
+
+      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
+      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
+      <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
+      <Route path="/my-profile" element={<ProfilePage />} loader={privateRoute} />
     </Route>
   );
+
   const router = createBrowserRouter(routes);
 
   return (
     <>
       <Alert />
-      <RouterProvider router={router} />
+      {
+        !currentUser.isLoading &&
+        <RouterProvider router={router} />
+      }
     </>
   );
 }
 export default App;
-
-const Void = () => {
-  return <>asdasdasdad</>;
-};

@@ -6,9 +6,9 @@ import { TF_Style } from "../SellerComponents/AddProduct/style";
 import { getCurrentUser, signin } from "../../lib/user.api";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useAuthentication from "../../Hooks/useAuthentication";
+import { useNavigate } from "react-router-dom";
 
 function Signin({ onClose }) {
-  const queryClient = useQueryClient()
   const { signin } = useAuthentication()
 
   const {
@@ -33,12 +33,15 @@ function Signin({ onClose }) {
     validateOnChange: false
   })
 
+  const navigate = useNavigate()
+
   function handleLogin(values) {
-    signin(values).then(() => onClose())
-    // .catch((err) => {
-    //   const { field, message } = err.response.data
-    //   setFieldError(field, message)
-    // });
+    signin(values)
+      .then(() => navigate(-1))
+      .catch((err) => {
+        const { field, message } = err.response.data
+        setFieldError(field, message)
+      });
   };
 
   return (

@@ -14,31 +14,21 @@ import EmptyCart from './EmptyCart';
 import { useStore } from '../../Context/Store';
 import AddressCarousel from './AddressCarousel';
 import QuantityInput from '../QuantityInput/QuantityInput';
+import { useCart } from '../../Hooks/useCart';
 
 function Checkout() {
-    const cartList = useStore(state => state.userData?.cart)
+    const { cart, removeFromCart, updateCart } = useCart()
     const uid = useStore(state => state.userData?.uid)
     const defaultAddress = useStore(state => state.userData?.defaultAddress)
-    const { getProductsById } = useDatabase()
-    const { makeOrder, handleAvailableQuantity, removeFromCart } = useDatabase()
+    const { makeOrder, handleAvailableQuantity } = useDatabase()
 
-    const [quantity, setQuantity] = useState([])
-    const [cart, setCart] = useState([])
-    const [totalAmount, setTotalAmount] = useState()
+    const [totalAmount, setTotalAmount] = useState(0)
     const [paymentMethod, setPaymentMethod] = useState('card')
 
     useEffect(() => {
-        if (cart && cart.length > 0)
-            setTotalAmount(cart?.map((o, i) => o.price * (quantity[i] ? quantity[i] : 1)).reduce((a, b) => a + b))
-    }, [quantity, cart])
-
-    useEffect(() => {
-        getProductsById(cartList)
-            .then(data => {
-                data?.forEach((o) => setQuantity(pre => [...pre, 1]))
-                setCart(data)
-            })
-    }, [cartList])
+        if (!!cart.data?.length)
+            setTotalAmount(cart.data?.reduce((x, y) => x + (y.product?.price * y.quantity), 0))
+    }, [cart])
 
     const createInvoice = (data) => {
         const invoice = {
@@ -49,15 +39,16 @@ function Checkout() {
             status: 'processing',
             address: defaultAddress,
             totalAmount: totalAmount,
-            product_quantity: quantity[0]
+            // product_quantity: quantity[0]
         }
         return invoice
     }
 
     const handleCheckout = () => {
-        cart?.forEach((item, index) => {
+        cart.data?.forEach((item, index) => {
             makeOrder(createInvoice(item)).then(() =>
-                handleAvailableQuantity(item.id, quantity[index])
+                handleAvailableQuantity(item.id)
+                // handleAvailableQuantity(item.id, quantity[index])
             )
         })
     }
@@ -82,19 +73,19 @@ function Checkout() {
                         </Grid>
                         <div className="checkout__product--wrapper">
                             {
-                                cart && cart.map((product, index) =>
-                                    <div key={index} className="checkout__product">
+                                cart && cart.data?.map(({ id, product, quantity }) =>
+                                    <div key={id} className="checkout__product">
                                         <div className='product_imgNQty'>
-                                            <img src={product.image[product.defaultImage] + '/tr:w-100'} alt="" />
+                                            <img src={product.images[0].url + '/tr:w-100'} alt="" />
                                             <div className='product_qty'>
-                                                <QuantityInput quantity={quantity} setQuantity={setQuantity} index={index} />
+                                                <QuantityInput onChange={(quantity) => updateCart.mutateAsync({ id, quantity })} defaultValue={quantity} />
                                             </div>
                                         </div>
                                         <div className='checkout__product--details'>
                                             <label className='checkout__product--name' htmlFor="">{product.name}</label>
-                                            <Typography width='90%' variant='caption' fontSize={14}>{product.description}</Typography>
-                                            <label className='checkout__product--price' htmlFor="">Rs. {product.price * quantity[index]}</label>
-                                            <Button onClick={() => removeFromCart(product.id)} className='checkout__product--deleteBtn'>
+                                            <Typography width='90%' variant='caption' fontSize={14}>{product.desc}</Typography>
+                                            <label className='checkout__product--price' htmlFor="">Rs. {product.price * quantity}</label>
+                                            <Button onClick={() => removeFromCart(id)} className='checkout__product--deleteBtn'>
                                                 remove
                                             </Button>
                                         </div>

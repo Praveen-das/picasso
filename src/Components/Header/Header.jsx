@@ -18,14 +18,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "./Device/Menu";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../../lib/user.api";
-import useUserData from "../../Hooks/useAuthentication";
+import useUserData from "../../Hooks/useUserData";
 import useAuthentication from "../../Hooks/useAuthentication";
 import { joinStrings } from "../../Utils/joinStrings";
 
 function Header() {
   const [model, setModel] = useState(false);
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuthentication();
+  const { logout } = useAuthentication();
+  const { currentUser } = useUserData();
 
   const handleSearch = (e) => {
     if (e.code === "Enter" || e.code === "NumpadEnter") {
@@ -92,11 +93,11 @@ function Header() {
           {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
                         <Link to='/checkout' className='create' htmlFor="">CART</Link>
                     </Badge> */}
-          {currentUser != null ? (
+          {currentUser.data != null ? (
             <DropDown>
               <Avatar
-                displayName={currentUser.displayName}
-                profilePicture={currentUser?.photo}
+                displayName={currentUser.data?.displayName}
+                profilePicture={currentUser.data?.photo}
               />
               <Link to="/my-profile">
                 <AccountsIcon {...style} />
@@ -116,7 +117,7 @@ function Header() {
               </div>
             </DropDown>
           ) : (
-            <button onClick={() => setModel(!model)} className="login">
+            <button onClick={() => navigate('/login')} className="login">
               LOG IN
             </button>
           )}

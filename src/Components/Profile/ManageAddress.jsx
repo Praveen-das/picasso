@@ -9,19 +9,24 @@ import { Typography } from "@mui/material";
 import { useDatabase } from "../../Hooks/useDatabase";
 import AddNewAddress from "./AddNewAddress";
 import useAuthentication from "../../Hooks/useAuthentication";
+import useUserData from "../../Hooks/useUserData";
 
 function ManageAddress() {
-  const { setDefaultAddress } = useDatabase();
-  var userAddress = useStore((state) => state.userData?.address);
-  var defaultAddress = useStore((state) => state.userData?.defaultAddress);
-  const { currentUser, updateUser, isLoading } = useAuthentication();
+  const {
+    currentUser,
+    updateUser,
+    isLoading,
+    updateUserAddress
+  } = useUserData();
+
+  const { address, default_address } = currentUser.data
 
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <Grid container>
-        {open && <AddNewAddress open={open} close={() => setOpen(!open)} />}
+        {open && <AddNewAddress open={open} close={() => setOpen(false)} />}
         <Grid item xs={12} mb={2}>
           <Typography variant="h5" fontWeight={800} color="#333">
             Shipping Address
@@ -40,11 +45,11 @@ function ManageAddress() {
             </Button>
           </Grid>
         )}
-        {userAddress ? (
-          userAddress.map((data, index) => (
+        {address ? (
+          address.map((data, index) => (
             <Address
-              isDefault={data.id === defaultAddress.id}
-              onClick={() => setDefaultAddress(data)}
+              defaultAddress={data.id === default_address}
+              // onClick={() => updateUser({ default_address: data.id })}
               key={index}
               data={data}
             />
