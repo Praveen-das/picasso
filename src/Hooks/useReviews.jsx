@@ -2,7 +2,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import controller from '../lib/userReview.api'
 
 const useReviews = (productId) => {
-    const { addUserReview, deleteUserReview, _getProductReview } = controller
+    const {
+        addUserReview,
+        deleteUserReview,
+        _getProductReview,
+        updateUserReview } = controller
 
     const queryClient = useQueryClient()
 
@@ -17,9 +21,9 @@ const useReviews = (productId) => {
     })
 
 
-    const updateReview = (review_id, data) => {
-
-    }
+    const updateReview = useMutation(updateUserReview, {
+        onSuccess: () => queryClient.invalidateQueries(['review'])
+    })
 
     return {
         reviews,

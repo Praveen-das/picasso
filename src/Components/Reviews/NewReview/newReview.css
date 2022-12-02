@@ -1,16 +1,19 @@
-.newReview .ratingAndReview{
+.newReview .ratingAndReview {
     margin: -8px 0 10px 0;
 }
-.newReview_customer--name{
+
+.newReview_customer--name {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: -1rem;
 }
-.newReview p{
+
+.newReview p {
     font-size: 1rem;
     margin-top: 2em;
 }
-.newReview{
+
+.newReview {
     box-sizing: border-box;
     width: 500px;
     background: white;
@@ -22,7 +25,8 @@
     gap: 0.8em;
     padding: 3em 2em;
 }
-.newReview img{
+
+.newReview img {
     width: 80px;
     aspect-ratio: 1;
     object-fit: fill;
@@ -31,17 +35,25 @@
     border-radius: 15%;
     display: flex;
 }
-.newReview #input_review{
+
+.newReview #input_review {
     font-size: 1rem;
     outline: none;
 }
-.newReview_button{
+
+.newReview_button,
+.deleteReview_button {
     font-size: 0.8rem;
     font-weight: 500;
     text-transform: uppercase;
     margin-top: 20px;
 }
-.rate_this_product{
+
+.deleteReview_button {
+    background: crimson !important; 
+}
+
+.rate_this_product {
     font-size: 1rem;
     font-weight: 500;
 }
