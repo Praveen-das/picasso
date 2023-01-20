@@ -7,48 +7,108 @@ import {
   redirect,
 } from "react-router-dom";
 
-import "./App.css";
+import React, { useEffect } from "react";
 import HomePage from "./Pages/HomePage";
 import ShoppingPage from "./Pages/ShoppingPage";
 import ProfilePage from "./Pages/ProfilePage";
 import SellerPage from "./Pages/SellerPage";
 import ProductPage from "./Pages/ProductPage";
-import CheckoutPage from "./Pages/CheckoutPage";
+import ShoppingCartPage from "./Pages/ShoppingCartPage";
+import CheckoutPage from './Pages/checkoutPage'
+
 import Alert from "./Components/Alert/Alert";
-import Login from "./Components/Login/Login";
-import React, { useState } from "react";
-import Private from "./PrivateRoute/PrivateRoute";
-import LoginPrompt from "./PrivateRoute/LoginPrompt";
 import useUserData from "./Hooks/useUserData";
+import Login from "./Components/Login/Login";
+
+import "./App.css";
+import Footer from "./Components/Footer/Footer";
+import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
+import StorePage from "./Pages/StorePage";
+import ChatPage from "./Pages/ChatPage";
+import socket from './lib/ws'
+import { useStore } from "./Context/Store";
 
 function App() {
   const { currentUser } = useUserData()
 
-  const auth = async () => {
-    if (currentUser.data) return redirect("/")
-  };
+  // useEffect(() => {
+  //   if (currentUser.isLoading) return
+  //   if (currentUser.isFetching) return
 
-  const privateRoute = async () => {
-    if (currentUser.data === null) return redirect("/login")
-  };
-  
+  //   socket.emit('connect_room', currentUser.data?.id || 'praveen')
+  //   socket.on('receivers', receivers => {
+  //     client.setQueriesData(['receivers'], receivers)
+  //   })
+  //   console.log('app');
+  // }, [currentUser, client])
+  // let [users, setUsers] = useState([])
+
+  const setOnlineUsers = useStore(state => state.setOnlineUsers)
+  const addUser = useStore(state => state.addOnlineUser)
+  const removeUser = useStore(state => state.removeDisconnectedUser)
+  const setMessage = useStore(state => state.setMessage)
+
+  useEffect(() => {
+    if (currentUser.isLoading) return
+    if (currentUser.isFetching) return
+
+    //-----------------extablish connection-----------------//
+    let user_id = currentUser.data?.id || localStorage.getItem('user_id')
+    let username = currentUser.data?.displayName || 'unknown user'
+    let photo = currentUser.data?.photo || ''
+
+    if (!user_id) {
+      user_id = Math.floor(Math.random() * 9999999).toString()
+      localStorage.setItem('user_id', user_id)
+    }
+
+    socket.auth = { user: { username, photo, user_id } }
+    socket.connect()
+
+    //-----------------listen for connected users-----------------//
+    socket.on('users', connectedUsers => setOnlineUsers(connectedUsers))
+    socket.on("user connected", (user) => addUser(user));
+
+    //-----------------listen for disconnected users-----------------//
+    socket.on("user disconnected", (user) => removeUser(user));
+
+    //-----------------listen for messages-----------------//
+    socket.on('receive', chat => setMessage(chat))
+
+    return () => {
+      socket.off('connect')
+      socket.off('users')
+      socket.off('user connected')
+      socket.off('receive')
+      socket.off('disconnect')
+      socket.disconnect()
+      // localStorage.clear()
+    }
+  }, [currentUser])
+
+  if (currentUser.isLoading) return <LoadingScreen />
+
+  const auth = () => currentUser.data !== null && redirect("/")
+  const privateRoute = () => currentUser.data === null && redirect("/login")
+
   const routes = createRoutesFromElements(
     <Route path="/" element={<Outlet />}>
+      {/* //--------------------- public routes ---------------------*/}
       <Route index element={<HomePage />} />
       <Route path="/shop" element={<Outlet />}>
         <Route index element={<ShoppingPage />} />
-        <Route path="/shop/product" element={<ProductPage />} />
+        <Route path="/shop/product/:product_id" element={<ProductPage />} />
       </Route>
-      <Route path="/search/:query" element={<ShoppingPage />} />
+      <Route path="/search" element={<ShoppingPage />} />
       <Route path="/category/:category" element={<ShoppingPage />} />
-      <Route path="/search/:query" element={<ShoppingPage />} />
-      <Route path="/category/:category" element={<ShoppingPage />} />
+      <Route path="/store/:id" element={<StorePage />} />
+      <Route path="/chat" element={<ChatPage />} />
 
       {/* //--------------------- private routes ---------------------*/}
-      <Route path="/login" element={<LoginPrompt />} loader={auth} />
+      <Route path="/login" element={<Login />} loader={auth} />
 
-      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
-      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/cart" element={<ShoppingCartPage />} />
       <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
       <Route path="/my-profile" element={<ProfilePage />} loader={privateRoute} />
     </Route>
@@ -59,10 +119,10 @@ function App() {
   return (
     <>
       <Alert />
-      {
-        !currentUser.isLoading &&
+      <div id='App'>
         <RouterProvider router={router} />
-      }
+      </div>
+      <Footer />
     </>
   );
 }

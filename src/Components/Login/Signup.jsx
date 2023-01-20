@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   Checkbox,
-  Divider,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Google from "@mui/icons-material/Google";
@@ -13,13 +12,15 @@ import Twitter from "@mui/icons-material/Twitter";
 import { useFormik } from "formik";
 import { signupValidation } from "../../Schema/YupSchema";
 import { TF_Style } from "../SellerComponents/AddProduct/style";
-import useAuthentication from "../../Hooks/useAuthentication";
+import useAuth from "../../Hooks/useAuth";
+import { useState } from "react";
+import Success from "./Success";
 
-function Signup({ confirmSuccess }) {
-  const { signup } = useAuthentication()
-  
+function Signup({ setWindow }) {
+  const { signup } = useAuth()
+  const [open, setOpen] = useState(false)
+
   const {
-    values,
     errors,
     touched,
     handleChange,
@@ -35,22 +36,24 @@ function Signup({ confirmSuccess }) {
     },
     validationSchema: signupValidation,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
-      // signup(values)
-      //   .then(() => {
-      //     setSubmitting(false);
-      //     confirmSuccess();
-      //   })
-      //   .catch((err) => {
-      //     const { field, message } = err.response?.data;
-      //     setFieldError(field, message);
-      //   });
+      signup(values)
+        .then(() => {
+          setSubmitting(false);
+          setOpen(true);
+          setWindow(false)
+        })
+        .catch((err) => {
+          const { field, message } = err.response?.data || { field: '', message: '' }
+          setFieldError(field?.toLowerCase(), message);
+          setSubmitting(false);
+        });
     },
     validateOnChange: false,
   });
 
   return (
     <form onSubmit={handleSubmit}>
+      <Success open={open} setOpen={setOpen} />
       <Grid
         container
         width={{ xs: "300px", md: "500px" }}

@@ -1,16 +1,14 @@
 import Rating from '@mui/material/Rating'
 import Avatar from '@mui/material/Avatar'
-import react from 'react'
 import './style.css'
 
 function Review({ review }) {
-    
     const handleAvatar = () => {
         if (review.user?.photo)
             return { src: review.user?.photo }
         return { children: review.user?.displayName[0].toUpperCase() }
     }
-    
+
     return (
         <>
             <div className="customerReview">
@@ -25,8 +23,8 @@ function Review({ review }) {
                             value={review.vote} readOnly />
                     </div>
                 </div>
-                <label className='review_title' htmlFor="">{review.review.title}</label>
-                <p className='review'>{review.review.message}</p>
+                <label className='review_title' htmlFor="">{review.review?.title}</label>
+                <p className='review'>{review.review?.message}</p>
             </div>
         </>
     )

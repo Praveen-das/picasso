@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient";
 
 const signupUser = async (credentials) => {
-  return await axiosClient.post("/user/signup", credentials);
+  return await axiosClient.post("/user/signup", credentials).then(res => res.data);
 };
 
 const signinUser = async (credentials) => {
@@ -41,6 +41,10 @@ const _deleteUserAddress = async (id) => {
   return await axiosClient.delete(`/user/address/${id}`).then(res => res.data);
 };
 
+const _addToRecentlyViewed = async (id) => {
+  return await axiosClient.post(`/user/rv/add/${id}`).then(res => res.data);
+};
+
 export {
   signupUser,
   signinUser,
@@ -53,4 +57,5 @@ export {
   _addUserAddress,
   _updateUserAddress,
   _deleteUserAddress,
+  _addToRecentlyViewed
 };

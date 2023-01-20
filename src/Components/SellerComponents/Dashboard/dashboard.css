@@ -1,104 +1,149 @@
-.dashboard-wrapper >*{
+.dashboard-wrapper>* {
     box-sizing: border-box;
 }
-.dashboard-wrapper{
+
+.dashboard-wrapper {
     width: 100%;
     position: relative;
     display: block;
 }
+
 #dashboard {
-  width: 100%;
-  padding: 1.5rem;
-  padding-top: 0;
-  display: grid;
-  /* justify-content: center; */
+    width: 100%;
+    padding: 1.5rem;
+    padding-top: 0;
+    display: grid;
+    /* justify-content: center; */
 }
+
 .dashboard-items {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 10px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 10px;
+    margin-bottom: 1rem;
 }
+
 .rows {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
 }
+
 .rows div {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1.8;
-  max-height: 100px;
-  border-radius: 10px;
-  box-shadow: 2px 2px 10px 0.5px var(--shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 2rem;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.8;
+    max-height: 100px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px 1px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 2rem;
+    cursor: pointer;
 }
+
+.rows div > *{
+    pointer-events: none;
+}
+
 .rows label {
-  position: relative;
-  color: var(--brand);
-  font-size: 1.5em;
+    position: relative;
+    color: var(--brand);
+    font-size: 1.5em;
 }
+
 .rows h6 {
-  margin: 0;
+    margin: 0;
 }
-.icon *{
-  color: var(--brand);
+
+.icon * {
+    color: var(--brand);
 }
-.icon {
-    font-size: 2em;
-}
+
+.total_orders::before,
 .order-pending::before,
-.order-cancel::before,
-.order-return::before,
-.todays_income::before {
+.order-shipped::before,
+.order-completed::before,
+.order-declined::before,
+.order-cancelled::before,
+.order-refunded::before,
+.todays_income::before,
+.total_income::before {
     font-size: 0.75em;
     line-height: 20px;
 }
+
 .order-pending::before {
-    content: 'ORDER PENDING';
+    content: 'ORDERS PENDING';
 }
-.order-cancel::before {
-    content: 'ORDER CANCELLED';
+
+.order-shipped::before {
+    content: 'ORDERS SHIPPED';
 }
-.order-return::before {
-    content: 'ORDER RETURN';
+
+.order-completed::before {
+    content: 'ORDERS COMPLETED';
 }
+
+.order-declined::before {
+    content: 'ORDERS DECLINED';
+}
+
+.order-cancelled::before {
+    content: 'ORDERS CANCELLED';
+}
+
+.order-refunded::before {
+    content: 'ORDERS REFUNDED';
+}
+
 .todays_income::before {
     content: 'TODAYS INCOME';
 }
-.icon{
+
+.total_orders::before {
+    content: 'TOTAL ORDERS';
+}
+
+.icon {
     position: absolute;
+    font-size: 2em;
     right: 30px;
 }
-.recentOrders{
+
+.recentOrders {
     display: flex;
     margin: 2rem 0 1rem 1rem;
     color: rgb(59, 59, 59);
     font-size: 1.2em;
 }
-.dashboard-wrapper table{
+
+.dashboard-wrapper table {
     width: 100%;
     border-radius: 5px;
     border-spacing: 0;
 }
-#dashboard thead{
+
+#dashboard thead {
     height: 30px;
     font-size: 0.8em;
 }
-#dashboard th{
+
+#dashboard th {
     color: rgb(0, 0, 0);
     border-bottom: 1px solid rgb(233, 233, 233);
     line-height: 20px;
     text-transform: uppercase;
     font-size: 0.9em;
 }
+
 #dashboard th:first-child,
-#dashboard th:last-child{
+#dashboard th:last-child {
     height: 3rem;
 }
-#dashboard tr{
+
+#dashboard tr {
     text-align: center;
     font-size: 0.85em;
     font-weight: 600;
@@ -106,36 +151,42 @@
     color: rgb(70, 70, 70);
     position: relative;
 }
-.dashboard-wrapper tr:nth-child(even){
+
+.dashboard-wrapper tr:nth-child(even) {
     background: rgba(233, 233, 233, 0.726);
 }
+
 #dashboard td:first-child,
-#dashboard th:first-child{
+#dashboard th:first-child {
     text-align: left;
 }
-.action{
+
+.action {
     display: flex;
     justify-content: center;
     gap: 20px;
 }
-.action *{
+
+.action * {
     font-size: 1.2em;
 }
 
 @media only screen and (max-width: 425px) {
     #dashboard {
         padding: 10px;
-      }
+    }
 }
 
-#dashboard tbody tr td{
+#dashboard tbody tr td {
     position: relative;
     z-index: 2;
 }
-#dashboard tbody tr td span{
+
+#dashboard tbody tr td span {
     margin: 0 auto;
 }
-#dashbord_edit{
+
+#dashbord_edit {
     display: flex;
     gap: 10px;
     /* position: absolute;
@@ -143,19 +194,19 @@
     right: 10px; */
     transition: 0.1s;
 }
-#dashbord_select{
+
+#dashbord_select {
+    text-align: center;
     height: 30px;
     border: 1px solid rgb(207, 207, 207);
     border-radius: 5px;
-    padding-left: 5px;
     background: transparent;
     color: var(--brand);
     outline: none;
     cursor: pointer;
+    
 }
-#dashbord_select:nth-child(2){
+
+#dashbord_select:nth-child(2) {
     background: #000;
-}
-.status_options{
-    padding: 5px;
 }

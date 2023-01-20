@@ -1,20 +1,26 @@
-import react from 'react'
 import Header from '../Components/Header/Header'
-import Footer from '../Components/Footer/Footer'
 import Shop from '../Components/Shop/Shop'
 import { ScrollRestoration } from 'react-router-dom'
+import Sidebar from '../Components/Sidebar/Sidebar'
+import { Grid } from '@mui/material'
+import BreadCrumb from '../Components/Breadcrumbs/BreadCrumbs'
 
-
-function Products() {
-    
+function ShoppingPage() {
     return (
         <div id='wrapper'>
-            <ScrollRestoration/>
-            <Header/>
-            <Shop/>
-            <Footer/>
+            <ScrollRestoration />
+            <Header />
+            <BreadCrumb />
+            <Grid container px={2} spacing={2} >
+                <Grid item xs={2.5}>
+                    <Sidebar />
+                </Grid>
+                <Grid item xs={9.5} display='flex' flexDirection='column' >
+                    <Shop />
+                </Grid>
+            </Grid>
         </div>
     )
 }
 
-export default Products
+export default ShoppingPage

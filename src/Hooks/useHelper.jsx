@@ -3,15 +3,24 @@ import { useStore } from "../Context/Store";
 export const useHelper = () => {
   const skeleton = () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const set = useStore((state) => state.set);
+
   const getAverageRating = (array) => {
     if (array === null) return;
     let rating =
-      (array[5] * 5 +
+      (
+        array[5] * 5 +
         array[4] * 4 +
         array[3] * 3 +
         array[2] * 2 +
-        array[1] * 1) /
-      (array[5] + array[4] + array[3] + array[2] + array[1]);
+        array[1] * 1
+      ) /
+      (
+        array[5] +
+        array[4] +
+        array[3] +
+        array[2] +
+        array[1]
+      );
     if (Number.isNaN(rating)) return 0;
     return rating;
   };

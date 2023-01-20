@@ -30,7 +30,7 @@ function Footer() {
                     <div className="contact">
                         <ul>
                             Contact Us
-                            <li htmlFor="">picassoarts@gmail.com</li>
+                            <li htmlFor="">artworld@gmail.com</li>
                             <li htmlFor="">+1-202-555-0125</li>
                             <li>
                                 <div className="follow">

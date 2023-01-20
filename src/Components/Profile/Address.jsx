@@ -1,18 +1,14 @@
-import react, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Grid, IconButton, Menu, MenuItem, MenuList, Typography } from '@mui/material'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import useUserData from '../../Hooks/useUserData';
-
 
 function Address({ data, onClick, defaultAddress }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [popover, setPopover] = useState(false)
 
-    const { updateUser, deleteUserAddress, currentUser } = useUserData();
-    const { address } = currentUser.data
-
+    const { updateUser, deleteUserAddress } = useUserData();
 
     const addressStyling = () => {
         if (defaultAddress)

@@ -7,8 +7,7 @@ import {
     _removeFromCart,
 } from "../lib/cart.api";
 
-export const useCart = (userId) => {
-
+export const useCart = () => {
     const queryClient = useQueryClient()
 
     const addToCart = useMutation(_addToCart, {
@@ -35,7 +34,7 @@ export const useCart = (userId) => {
         }
     })
 
-    const cart = useQuery(['cart'], _fetchUserCart, { enabled: !!userId })
+    const cart = useQuery(['cart'], _fetchUserCart)
 
     return {
         addToCart,

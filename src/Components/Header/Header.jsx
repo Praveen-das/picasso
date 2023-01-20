@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
-import Login from "../Login/Login";
+import { Link, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
 import Avatar from "../Avatar/Avatar";
 import { useNavigate } from "react-router-dom";
 import Search from "../Search/Search";
-import { useAuth } from "../../Hooks/useAuth";
 import AccountsIcon from "@mui/icons-material/ManageAccounts";
 import CartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -16,24 +14,23 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "./Device/Menu";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "../../lib/user.api";
 import useUserData from "../../Hooks/useUserData";
-import useAuthentication from "../../Hooks/useAuthentication";
+import useAuth from "../../Hooks/useAuth";
 import { joinStrings } from "../../Utils/joinStrings";
+import LoginIcon from '@mui/icons-material/Login';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
+import { Badge } from "@mui/material";
+
 
 function Header() {
-  const [model, setModel] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuthentication();
+  const { state } = useLocation()
+  const { logout } = useAuth();
   const { currentUser } = useUserData();
-
-  const handleSearch = (e) => {
-    if (e.code === "Enter" || e.code === "NumpadEnter") {
-      if (!e.target.value) return;
-      navigate(`/search/${e.target.value}`);
-    }
-  };
+  const { data: receivers } = useQuery(['receivers'], () => '')
 
   const style = {
     sx: {
@@ -66,32 +63,40 @@ function Header() {
 
   return (
     <>
-      <Login model={model} callback={setModel} />
       <div className="navbar">
         {/* <IconButton onClick={() => setOpen(!open)} sx={{ position: 'absolute', left: '8px' }}>
-                    <MenuIcon />
+                <MenuIcon />
                 </IconButton>
-                <Menu open={open} close={() => setOpen(!open)} /> */}
+            <Menu open={open} close={() => setOpen(!open)} /> */}
         <div className="left">
           <Link to="/">
-            <span className="logo">
-              {/* <img src={logo} alt="" /> */}
-              <label className="header_brandName" htmlFor="logo">
-                ARTWORLD.
-              </label>
-            </span>
+            <label className="header_brandName" htmlFor="logo">
+              ARTWORLD.
+            </label>
           </Link>
-        </div>
-        <div className="right">
-          <Search onKeyUp={(e) => handleSearch(e)} />
           <Link to="/shop" className="shop" htmlFor="">
-            SHOP
+            New Arrivels
+          </Link>
+          <Link to="/shop" className="shop" htmlFor="">
+            All Categories
+          </Link>
+          <Search onSearch={(query) => navigate(`/search`, { state: { ...state, query } })} />
+        </div>
+        {/* <div className="navbar_middle">
+          
+        </div> */}
+        <div className="right">
+          <Link to="/shop" className="shop" htmlFor="">
+            Shop
           </Link>
           <Link to="/sell" className="marketplace" htmlFor="">
-            SELL
+            Sell
           </Link>
+          <Badge badgeContent={receivers?.length || 0} color="primary">
+            <Link to='/chat' className='create' htmlFor="">Messages</Link>
+          </Badge>
           {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
-                        <Link to='/checkout' className='create' htmlFor="">CART</Link>
+                        <Link to='/cart' className='create' htmlFor="">CART</Link>
                     </Badge> */}
           {currentUser.data != null ? (
             <DropDown>
@@ -103,23 +108,23 @@ function Header() {
                 <AccountsIcon {...style} />
                 Account
               </Link>
-              <Link to="/checkout">
+              <Link to="/cart">
                 <CartIcon {...style} />
                 My Cart
               </Link>
-              <Link to="/checkout">
+              <Link to="/cart">
                 <FavoriteIcon {...style} />
                 Wishlist
               </Link>
-              <div onClick={() => logout()}>
+              <div onClick={() => logout.mutateAsync().then(() => navigate('/'))}>
                 <LogoutIcon {...style} />
                 Logout
               </div>
             </DropDown>
           ) : (
-            <button onClick={() => navigate('/login')} className="login">
+            <Link to="/login" style={{ display: 'flex', placeItems: 'center', gap: 10 }}>
               LOG IN
-            </button>
+            </Link>
           )}
         </div>
         {/* <IconButton sx={{ position: 'absolute', right: '8px' }}>

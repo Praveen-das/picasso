@@ -1,15 +1,48 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct } from "../lib/product.api";
+import { useLocation } from "react-router-dom";
+import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../lib/product.api";
+
+Array.prototype.groupItems = function () {
+    return this.reduce((prev, cur) => {
+        const key = cur.item
+        for (let k in prev)
+            if (k === key) return prev[key].push(cur.value) && prev
+        prev[key] = [cur.value]
+        return prev
+    }, {})
+}
 
 export function useProducts() {
-    const [page, setPage] = useState(1)
-    const [filter, setFilter] = useState({ item: null, value: null })
-    const [query, setQuery] = useState('')
+    const { state } = useLocation()
+    const facets = state?.filter?.groupItems()
+    return useQuery(
+        [
+            'products',
+            state?.page,
+            facets,
+            state?.orderBy,
+            state?.query,
+            state?.limit
+        ],
+        () => fetchProducts(
+            state?.page,
+            facets,
+            state?.orderBy,
+            state?.query,
+            state?.limit
+        ),
+        {
+            keepPreviousData: true,
+        }
+    )
+}
 
-    const products = useQuery(['products', page], () => fetchProducts(page, filter, query))
-
-    return { products, setPage, setFilter, setQuery }
+export function useProductQuery(queryKey, url, state) {
+    // const facets = state?.filter?.groupItems()
+    return useQuery([queryKey], () => productQuery(url), {
+        keepPreviousData: true,
+    })
 }
 
 export function useAdmin() {
@@ -20,7 +53,7 @@ export function useAdmin() {
     const [query, setQuery] = useState('')
 
     const products = useQuery(['admin_products', page], () => fetchAdminProducts(page, filter, query))
-    
+
     const addProduct = useMutation(_addProduct, {
         onSuccess: () => {
             queryClient.invalidateQueries(["admin_products"]);
@@ -39,7 +72,16 @@ export function useAdmin() {
         },
     })
 
-    return { products, setPage, setFilter, setQuery, addProduct, deleteProduct, updateProduct }
+    return {
+        products,
+        setPage,
+        setFilter,
+        setQuery,
+        addProduct,
+        deleteProduct,
+        updateProduct,
+
+    }
 }
 
 export function useProduct(id) {

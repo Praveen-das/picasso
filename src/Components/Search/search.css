@@ -16,10 +16,11 @@
     width: 6px;
     transform: scale(0);
     outline: none;
-    border: 1px solid rgba(0, 0, 0, 0.534);
+    border: none;
     padding: 5px 10px;
     margin-right: 5px;
     border-radius: 25px;
+    background: #00000014;
 }
 .searchbox--expand{
     animation: expand 0.3s forwards;

@@ -1,12 +1,7 @@
-import react from 'react'
 import Seller from '../Components/Seller/Seller'
 
 function SellerPage() {
-    return (
-        <>
-            <Seller />
-        </>
-    )
+    return <Seller />
 }
 
 export default SellerPage

@@ -27,19 +27,23 @@
 
 export const categories = [
     {
-        type: 'Fabric painting',
-        url:'http://saree.guide/wp-content/uploads/2017/08/Saree-Painting-Design.jpg'
+        type: 'Digital painting',
+        url: 'http://saree.guide/wp-content/uploads/2017/08/Saree-Painting-Design.jpg',
+        id: 0
+    },
+    {
+        type: 'Mural painting',
+        url: 'http://www.chrischalkart.com/painting_blog/wp-content/uploads/2018/09/how-to-repair-a-damaged-canvas-3-1.jpg',
+        id: 1
     },
     {
         type: 'Oil painting',
-        url:'http://www.chrischalkart.com/painting_blog/wp-content/uploads/2018/09/how-to-repair-a-damaged-canvas-3-1.jpg'
+        url: 'https://rukminim1.flixcart.com/image/416/416/ko382a80/poster/p/e/z/medium-modern-wall-art-framed-painting-for-home-decor-abstract-original-imag2mp8tzhujych.jpeg?q=70',
+        id: 2
     },
     {
-        type: 'Framed painting',
-        url:'https://rukminim1.flixcart.com/image/416/416/ko382a80/poster/p/e/z/medium-modern-wall-art-framed-painting-for-home-decor-abstract-original-imag2mp8tzhujych.jpeg?q=70'
-    },
-    {
-        type: 'Glass painting',
-        url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScIRWnBX7tvUXqJZcuoVVK58qJygddSEIefw&usqp=CAU'
+        type: 'Watercolor',
+        url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScIRWnBX7tvUXqJZcuoVVK58qJygddSEIefw&usqp=CAU',
+        id: 3
     }
 ]

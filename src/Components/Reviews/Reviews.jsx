@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import react, { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import Review from './Review/Review'
 import NewReview from './NewReview/NewReview'
 import './reviews.css'
@@ -12,15 +12,17 @@ function Reviews({ product }) {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [userReview, setUserReview] = useState()
-  const { reviews } = useReviews(product.id)
+  const { reviews: reviewData } = useReviews(product?.id)
+
+  const [reviews] = reviewData.data || [[]]
 
   useEffect(() => {
-    setUserReview(reviews.data?.find(o => o.user_id === currentUser.data?.id))
+    setUserReview(reviews?.find(o => o.user_id === currentUser.data?.id))
   }, [reviews, currentUser])
 
   return (
     <>
-      <NewReview open={open} setOpen={setOpen} product={product} userReview={userReview} />
+      <NewReview open={open} setOpen={setOpen} product={product && product} userReview={userReview} />
       <section aria-describedby='customer reviews' className='customer_reviews'>
         <div className="customer_reviews--label">
           <label className='customer_reviews--customers' htmlFor="customer">Customers</label>
@@ -39,8 +41,8 @@ function Reviews({ product }) {
         </div>
         <div className="review_wrapper">
           {
-            !!reviews.data?.length &&
-            reviews.data.map(review => (
+            !!reviews?.length &&
+            reviews.map(review => (
               <Review key={review.id} review={review} />
             ))
           }

@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import './imageTemplate.css'
-import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Menu, MenuItem, MenuList } from '@mui/material'
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import StarIcon from '@mui/icons-material/Star';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import StarsIcon from '@mui/icons-material/Stars';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 

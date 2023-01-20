@@ -17,14 +17,14 @@ function Tray({ height, data, title, parent, from, to, more }) {
         if (!parent) return
         gsap.registerPlugin(ScrollTrigger)
 
-        gsap.fromTo(`.${parent} .categoryTitle`, { x: `${from}` }, {
-            scrollTrigger: {
-                trigger: `.${parent} .categoryTitle`,
-                start: 'top bottom',
-                scrub: 1
-            },
-            x: `${to}`
-        });
+        // gsap.fromTo(`.${parent} .categoryTitle`, { x: `${from}` }, {
+        //     scrollTrigger: {
+        //         trigger: `.${parent} .categoryTitle`,
+        //         start: 'top bottom',
+        //         scrub: 1
+        //     },
+        //     x: `${to}`
+        // });
 
         const tl = gsap.timeline({
             scrollTrigger: {
@@ -41,9 +41,9 @@ function Tray({ height, data, title, parent, from, to, more }) {
         <>
             <div className="productsTray-wrapper">
                 {title && <label className='categoryTitle brand_title' htmlFor="">{title}</label>}
-                {more && <span>
+                {/* {more && <span>
                     <Link to='/shop' className='more'>VIEW ALL</Link>
-                </span>}
+                </span>} */}
                 <div className="card_container">
                     <Swiper
                         slidesPerView='auto'

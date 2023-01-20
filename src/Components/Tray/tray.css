@@ -1,0 +1,10 @@
+.tray_container{
+    padding: 6rem 4rem 0 4rem ;
+    display: grid;
+}
+.card_container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+}

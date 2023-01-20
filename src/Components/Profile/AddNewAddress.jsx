@@ -1,7 +1,5 @@
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
-import { useDatabase } from "../../Hooks/useDatabase";
-import AlertBox from "../MUIComponents/AlertBox/AlertBox";
 import { TextField } from "../MUIComponents/TextField";
 import "./styles.css";
 import { userAddressSchema } from "../../Schema/YupSchema";
@@ -218,7 +216,6 @@ function AddNewAddress({ open, close }) {
           </Grid>
         </form>
       </Grid>
-      <Divider sx={{ paddingTop: 5 }} />
     </div>
   );
 }

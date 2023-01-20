@@ -1,11 +1,9 @@
 import { Box, Button, Grid, Modal, TextField, Typography } from '@mui/material'
 import react, { useState } from 'react'
 import { useStore } from '../../Context/Store';
-import { useAuth } from '../../Hooks/useAuth';
 
 function ChangePassword() {
     const [password, setPassword] = useState('')
-    const { updateUserPassword } = useAuth()
     const toggled = useStore(state => state.model.toggle)
 
     const box_style = {

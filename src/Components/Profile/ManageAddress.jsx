@@ -1,26 +1,17 @@
-import react, { useState } from "react";
+import { useState } from "react";
 import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Address from "./Address";
-import { useStore } from "../../Context/Store";
 import { Typography } from "@mui/material";
-import { useDatabase } from "../../Hooks/useDatabase";
 import AddNewAddress from "./AddNewAddress";
-import useAuthentication from "../../Hooks/useAuthentication";
 import useUserData from "../../Hooks/useUserData";
 
 function ManageAddress() {
-  const {
-    currentUser,
-    updateUser,
-    isLoading,
-    updateUserAddress
-  } = useUserData();
+  const { currentUser } = useUserData();
 
   const { address, default_address } = currentUser.data
-
   const [open, setOpen] = useState(false);
 
   return (

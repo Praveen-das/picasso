@@ -21,19 +21,6 @@
     height: 100%;
 }
 
-.brand_title{
-    line-height: 75%;
-    font-family: c;
-    font-size: 12rem;
-    font-weight: 700;
-    display: flex;
-    padding-bottom: 2rem;
-    white-space: nowrap;
-    color: black;
-  -webkit-text-fill-color: white;
-  -webkit-text-stroke: 3px rgb(41, 41, 41);
-  /* transform: translateX(100%); */
-}
 .more{
     font-weight: 900;
     font-size: 1.4rem;

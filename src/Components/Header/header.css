@@ -1,45 +1,58 @@
-.navbar *{
+.navbar * {
     box-sizing: border-box;
 }
-.navbar{
+
+.navbar {
     box-sizing: border-box;
     width: 100%;
-    height: 60px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0;
     padding: 0 2rem;
-    background: rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.781);
+    backdrop-filter: blur(25px);
     z-index: 100;
     transition: 0.18s;
-    box-shadow: 0 -10px 15px 5px var(--shadow);
+    /* box-shadow: 0 -10px 15px 5px var(--shadow); */
+    font-size: 0.8em;
 }
-.navbar a:any-link{
+
+.navbar a:any-link {
     color: #33364d;
 }
-.navbar .left{
+
+.navbar .left {
     display: flex;
+    gap: 2rem;
     align-items: center;
 }
-.logo{
+
+.navbar_middle {
+    position: absolute;
+    inset: 0;
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
+    gap: 4rem;
+    z-index: 1;
 }
-.header_brandName{
+
+.header_brandName {
+    font-size: 1.1rem;
     font-weight: 800;
+    cursor: pointer;
 }
-.logo img{
-    border-radius: 50%;
-}
-.catagory{
+
+.catagory {
     padding-left: 2rem;
     position: relative;
     font-size: 0.8em;
 }
-.catagory::after{
+
+.catagory::after {
     content: url(../../Assets/Icons/arrow-down.svg);
     position: absolute;
     width: 11px;
@@ -48,32 +61,39 @@
     top: 2px;
     opacity: 0.7;
 }
-.navbar .right{
+
+.navbar .right {
     display: flex;
     align-items: center;
     gap: 2rem;
-    font-size: 0.8em;
+}
+.navbar .left,
+.navbar .right{
+    z-index: 2;
 }
 .shop,
 .marketplace,
 .create,
-.login{
+.login {
     position: relative;
 }
+
 .marketplace,
-.create{
+.create {
     word-wrap: normal;
 }
-.login{
+
+.login {
     border: none;
     background: none;
     border-left: 1px solid rgb(107, 107, 107);
     line-height: 20px;
     padding: 0.5rem 0 0.5rem 1.5rem;
 }
+
 .shop::after,
 .marketplace::after,
-.create::after{
+.create::after {
     content: '';
     position: absolute;
     background-size: contain;
@@ -83,29 +103,30 @@
     aspect-ratio: 1;
     object-fit: contain;
 }
-.marketplace::after{
+
+.marketplace::after {
     top: -2px;
     width: 20px;
     opacity: 0.7;
 }
-.logo:hover.logo label,
+
 .catagory:hover,
 .shop:hover,
 .marketplace:hover,
 .create:hover,
-.login:hover{
+.login:hover {
     color: var(--brand);
     cursor: pointer;
 }
 
 @media (max-width: 425px) {
-    .navbar .right{
+    .navbar .right {
         display: none !important;
     }
+
     .navbar {
         height: 70px;
         justify-content: center;
         box-shadow: 0 0px 5px 2px var(--shadow);
     }
 }
-

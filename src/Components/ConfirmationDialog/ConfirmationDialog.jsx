@@ -3,8 +3,9 @@ import Box from '@mui/system/Box';
 import './confirmationDialog.css'
 import Slide from '@mui/material/Slide';
 import ReactDom from 'react-dom';
+import { useState } from 'react';
 
-export function confirmAction(title, message, onConfirmation) {
+export default function confirmAction(title, message, onConfirmation) {
     const portal = document.getElementById('portal')
 
     const removeDialog = () => {
@@ -12,7 +13,7 @@ export function confirmAction(title, message, onConfirmation) {
     }
 
     ReactDom.render(
-        <ConfirmationDialog
+        <Dialog
             removeDialog={removeDialog}
             title={title}
             message={message}
@@ -20,45 +21,44 @@ export function confirmAction(title, message, onConfirmation) {
         />, portal)
 }
 
-function ConfirmationDialog({ removeDialog, title, message, onConfirmation }) {
+function Dialog({ removeDialog, title, message, onConfirmation }) {
+    const [open, setOpen] = useState(true)
 
     const box_style = {
         position: 'absolute',
+        display: 'flex',
+        justifyContent: 'center',
+        left: 0,
+        right: 0,
         top: '20px',
-        left: '50%',
-        transform: 'translate(-50%, 0)',
         bgcolor: 'background.paper',
         outline: 'none',
     };
 
     const handleSubmit = () => {
         onConfirmation()
-        removeDialog()
+        setOpen(false)
     }
 
     return (
-        <>
-            <Modal
-                open={true}
-                onClose={() => removeDialog()}
-                closeAfterTransition
-            >
+        <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            closeAfterTransition
+        >
+            <Slide in={open} onExited={() => removeDialog()}>
                 <Box sx={box_style}>
-                    <Slide in={true}>
-                        <div className="dialog">
-                            <label>{title}</label>
-                            <p>{message}</p>
-                            <div className='dialog_buttons'>
-                                <button onClick={() => removeDialog()} className='button_text'>CANCEL</button>
-                                <button onClick={handleSubmit}
-                                    className='button_secondary'>CONFIRM</button>
-                            </div>
+                    <div className="dialog">
+                        <label>{title}</label>
+                        <p>{message}</p>
+                        <div className='dialog_buttons'>
+                            <button onClick={() => setOpen(false)} className='button_text'>CANCEL</button>
+                            <button onClick={handleSubmit}
+                                className='button_secondary'>CONFIRM</button>
                         </div>
-                    </Slide>
+                    </div>
                 </Box>
-            </Modal>
-        </>
+            </Slide>
+        </Modal >
     )
 }
-
-export default ConfirmationDialog

@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
-import react, { createContext, useContext, useEffect } from 'react'
-import { IKContext } from 'imagekitio-react'
+import { createContext, useContext, useEffect } from 'react'
 import gsap from 'gsap';
 import scrollTrigger from 'gsap/ScrollTrigger';
 

@@ -14,12 +14,12 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AlertBox from "../../MUIComponents/AlertBox/AlertBox";
 import { TextField } from "../../MUIComponents/TextField";
 import { Button } from "../../MUIComponents/Button";
-import useAuthentication from "../../../Hooks/useAuthentication";
+import useAuth from "../../../Hooks/useAuth";
 import { useFormik } from "formik";
 import { profileCredentialFormSchema } from "../../../Schema/YupSchema";
 
 export default function ProfileCredentialForm({ user }) {
-  const { updateUser } = useAuthentication();
+  const { updateUser } = useAuth();
   const { copyToClipboard } = useHelper();
   const set = useStore((state) => state.set);
 
@@ -83,8 +83,8 @@ export default function ProfileCredentialForm({ user }) {
       updateUser(values)
         .then(() => {
           set(({ alert }) => {
-            alert.toggled = true;
             alert.message = `${Object.keys(values)[0]} changed successfully`;
+            alert.toggled = true;
           });
           resetForm();
           setSubmitting(false);

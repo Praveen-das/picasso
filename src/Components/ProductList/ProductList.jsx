@@ -1,45 +1,38 @@
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import react, { useEffect, useState } from 'react';
 import Status from '../Status/Status';
 import './productList.css'
-import { useDatabase } from '../../Hooks/useDatabase';
-import { confirmAction } from '../ConfirmationDialog/ConfirmationDialog';
+import confirmAction from '../ConfirmationDialog/ConfirmationDialog';
+import useSales from '../../Hooks/Sales/useSales';
 
-function ProductList({ product }) {
-    const [status, setStatus] = useState('')
-    const { handleOrder } = useDatabase()
-
+function ProductList({ order }) {
+    const { updateStatus } = useSales()
+    console.log(order);
     const cancelOrder = () => {
         confirmAction(
             'Cancel order',
-            'Are you sure you want to  cancel the order ?',
-            () => handleOrder('Cancelled', product.id),
+            'Are you sure you want to  cancel this order ?',
+            () => updateStatus.mutateAsync({ id: order.id, status: 'cancelled' }).then((response) => console.log(response)),
         )
     }
 
-    useEffect(() => {
-        setStatus(product.status)
-    }, [product.status])
-
-    if (!product) return
     return (
         <>
             <div className="checkout__product">
-                <img src={product.products.image[0] + '/tr:w-100'} alt="" />
+                <img src={order.cart_item.product.images[0].url + '/tr:w-100'} alt="" />
                 <div className='checkout__product--details'>
-                    <div><label className='checkout__product--name' htmlFor="">{product.products.name}</label></div>
-                    <Typography width='90%' variant='caption' fontSize={14}>{product.products.description}</Typography>
+                    <div><label className='checkout__product--name' htmlFor="">{order.cart_item.product.name}</label></div>
+                    <Typography width='90%' variant='caption' fontSize={14}>{order.cart_item.product.desc}</Typography>
                     <span></span>
                     <div id='statusAndCancel'>
-                        <Status status={status} />
-                        {status !== 'Cancelled' && <Button onClick={() => cancelOrder()} sx={{ color: 'var(--brand)', minWidth: '80px', maxHeight: '22px', borderRadius: '25px' }} size='small'>Cancel</Button>}
+                        <Status status={order.status} />
+                        <Button disabled={order.status === 'cancelled'} onClick={() => cancelOrder()} sx={{ color: 'var(--brand)', minWidth: '80px', maxHeight: '22px', borderRadius: '25px' }} size='small'>Cancel</Button>
                     </div>
                 </div>
                 <div className='orders_right'>
-                    <label className='orderedDate' htmlFor="">Delivery by : {product.delivery_date}</label>
+                    <label className='orderedDate' htmlFor="">Delivery by : {order.delivery_date}</label>
                     <br />
-                    <label className='price' htmlFor="">Rs. {product.products.price}</label>
+                    <label className='price' htmlFor="">Rs. {order.cart_item.price}</label>
                 </div>
             </div>
         </>

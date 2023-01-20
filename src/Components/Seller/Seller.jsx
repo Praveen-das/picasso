@@ -1,5 +1,5 @@
 import { Grid, Paper, Tab, Tabs } from '@mui/material';
-import react, { useState } from 'react';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { TabPanel } from './TabPannel';
 import Dashboard from '../SellerComponents/Dashboard/Dashboard';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import './style.css'
 
 export default function Seller() {
-    const [value, setValue] = useState(1);
+    const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);

@@ -3,13 +3,11 @@ import "./login.css";
 import { useFormik } from "formik";
 import { loginValidation } from "../../Schema/YupSchema";
 import { TF_Style } from "../SellerComponents/AddProduct/style";
-import { getCurrentUser, signin } from "../../lib/user.api";
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import useAuthentication from "../../Hooks/useAuthentication";
+import useAuth from "../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-function Signin({ onClose }) {
-  const { signin } = useAuthentication()
+function Signin() {
+  const { signin } = useAuth()
 
   const {
     values,
@@ -19,16 +17,16 @@ function Signin({ onClose }) {
     handleBlur,
     handleSubmit,
     isSubmitting,
-    setFieldError
+    setFieldError,
+    setSubmitting
   } = useFormik({
     initialValues: {
       email: "praveendask97@gmail.com",
       password: "asdasdasd",
     },
     validationSchema: loginValidation,
-    onSubmit: (values, { setSubmitting }) => {
+    onSubmit: (values) => {
       handleLogin(values);
-      setSubmitting(false);
     },
     validateOnChange: false
   })
@@ -37,9 +35,13 @@ function Signin({ onClose }) {
 
   function handleLogin(values) {
     signin(values)
-      .then(() => navigate(-1))
+      .then(() => {
+        setSubmitting(false)
+        navigate('/')
+      })
       .catch((err) => {
         const { field, message } = err.response.data
+        setSubmitting(false)
         setFieldError(field, message)
       });
   };

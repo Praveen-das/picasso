@@ -1,24 +1,20 @@
-import react from 'react'
 import Banner from '../Components/Banner/Banner'
 import Header from '../Components/Header/Header'
 import Categories from '../Components/Categories/Categories'
 
 import './style.css'
+import { ScrollRestoration } from 'react-router-dom'
+import Tray from '../Components/Tray/Tray'
 
 function HomePage() {
     return (
         <>
+            <ScrollRestoration />
             <Header />
             <Banner />
-            {/* <AboutUs /> */}
             <Categories />
-            {/* <div className="category1">
-                <Tray more height={400} data={data} from='110%' to='-50%' parent='category1' title='NEW ARRIVALS' />
-            </div>
-            <div className="category2">
-                <Tray more height={400} data={data} from='-130%' to='10%' parent='category2' title='BEST SELLING' />
-            </div> */}
-            {/* <Footer /> */}
+            <Tray title='FEATURED PRODUCTS' url='products/popular?limit=5' />
+            <Tray title='NEW ARRIVALS' url='products/latest?limit=5' />
         </>
     )
 }

@@ -4,16 +4,21 @@ import ReactDOM from "react-dom";
 import App from "./App";
 // import FirebaseContext from './Context/FirebaseContext';
 import HelperContext from "./Context/HelperContext";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const client = new QueryClient({
+export const client = new QueryClient({
   defaultOptions: {
-    queries: { staleTime: 300000 },
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 60000
+    }
   },
 });
 
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <HelperContext>
         <App />
       </HelperContext>

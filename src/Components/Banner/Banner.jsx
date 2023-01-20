@@ -1,18 +1,17 @@
-import react, { useEffect } from 'react'
+import { useEffect } from 'react'
 import './banner.css'
 import gsap from 'gsap'
 import { Link } from 'react-router-dom'
 import Card from '../Card/Card'
-import arrowLeft from '../../Assets/Icons/arrowLeft.svg'
 
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
-import { useStore } from '../../Context/Store'
 import Section from '../Devices/Section/Section'
+import { useProducts } from '../../Hooks/useProducts'
 
 function Banner() {
-    const data = useStore(state => state?.database?.allProducts)
+    const { data } = useProducts()
 
     useEffect(() => {
         const tl = gsap.timeline({ defaults: { duration: 0.2 } })
@@ -52,10 +51,10 @@ function Banner() {
                         className="mySwiper"
                     >
                         {
-                            data?.map((product, index) =>
+                            data && data[0]?.map((product, index) =>
                                 <SwiperSlide key={index}>
                                     {/* <div className="banner_card--wrapper"> */}
-                                        <Card product={product} height={400} />
+                                    <Card product={product} height={400} />
                                     {/* </div> */}
                                 </SwiperSlide>
                             )

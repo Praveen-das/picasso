@@ -1,11 +1,10 @@
-import react, { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { IconButton } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
 import './search.css'
 
 function Search({ onKeyUp = () => null, onSearch = () => null }) {
-    const [active, setActive] = useState(null)
+    const [focused, setFocused] = useState(null)
     const [query, setQuery] = useState('')
     const input = useRef()
 
@@ -23,15 +22,15 @@ function Search({ onKeyUp = () => null, onSearch = () => null }) {
     const handleQuery = () => {
         if (query !== '') {
             onSearch(query)
-            setActive(false)
+            setFocused(false)
             handleClose()
             return
         }
-        setActive(!active)
+        setFocused(!focused)
     }
 
     const handleClose = () => {
-        setActive(!active)
+        setFocused(!focused)
         // setQuery('')
         clearTimeout(timer.current)
         // input.current.value = ''
@@ -41,10 +40,13 @@ function Search({ onKeyUp = () => null, onSearch = () => null }) {
         <>
             <div
                 className="searchbox_hitarea"
-                style={{ display: active ? 'unset' : 'none' }}
+                style={{ display: focused ? 'unset' : 'none' }}
                 onClick={handleClose}
             />
             <div className='searchbox_wrapper'>
+                <IconButton onClick={() => handleQuery()}>
+                    <SearchIcon id='search' sx={{ fontSize: 20 }} />
+                </IconButton>
                 <input
                     id='searchbox'
                     type="text"
@@ -52,13 +54,11 @@ function Search({ onKeyUp = () => null, onSearch = () => null }) {
                     onKeyUp={(e) => handleSearch(e)}
                     ref={input}
                     className={
-                        active === null ? '' :
-                            active ? 'searchbox--expand' :
+                        focused === null ? '' :
+                            focused ? 'searchbox--expand' :
                                 'searchbox--shrink'}
                 />
-                <IconButton onClick={() => handleQuery()}>
-                    <SearchIcon id='search' sx={{ fontSize: 20 }} />
-                </IconButton>
+                
             </div>
         </>
     )

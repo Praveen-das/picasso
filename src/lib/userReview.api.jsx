@@ -16,9 +16,14 @@ const updateUserReview = async ({ review_id, updates }) => {
     return await axiosClient.put(`/reviews/update/${review_id}`, updates)
 }
 
-export default {
+const _getProductsWithAverageRating = async () => {
+    return await axiosClient.get(`/reviews/average`)
+}
+
+export {
     _getProductReview,
     addUserReview,
     deleteUserReview,
-    updateUserReview
+    updateUserReview,
+    _getProductsWithAverageRating
 }

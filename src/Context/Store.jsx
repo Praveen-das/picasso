@@ -1,5 +1,4 @@
 import create from "zustand";
-import { AuthSlice } from "./Slices/AuthSlice";
 import { devtools, persist } from "zustand/middleware";
 import produce from "immer";
 
@@ -13,18 +12,54 @@ const INITIAL_STATE = {
     type: "success",
     time: 3000,
   },
-  auth: {
-    user: undefined,
-    status: "NOT_INITIALIZED",
-    error: null,
-  },
+  messages: {},
   form: { error: { global: undefined } },
   edit: { name: false, username: false, email: false },
+  onlineUsers: []
+  // query: '',
 };
 
-const store = (set) => ({
+const store = (set, get) => ({
   ...INITIAL_STATE,
-  ...AuthSlice(set),
+  query: '',
+  setQuery: (value) => set(state => state.query = value),
+  setOnlineUsers: (users) => set(({ onlineUsers: users })),
+  addOnlineUser: (user) => {
+    set(state => {
+      if (state.onlineUsers.find(o => o.user_id === user.user_id))
+        return {
+          onlineUsers: state.onlineUsers.map(o => {
+            if (o.user_id === user.user_id) {
+              o.sid = user.sid
+              o.active = true
+            }
+            return o
+          })
+        }
+      return { onlineUsers: [...state.onlineUsers, user] }
+    })
+  },
+  setMessage: (chat) => set(pre => {
+    if (pre.messages[chat.room]) {
+      return { messages: { [chat.room]: [...pre.messages[chat.room], chat] } }
+    }
+    return { messages: { [chat.room]: [chat] } }
+  }),
+  getMessage: (uid, sid) => set(pre => pre.messages
+    .filter(message => message.token.includes(uid))
+    .filter(message => message.token.includes(sid))),
+  removeDisconnectedUser: (user) => {
+    set(state => ({
+      onlineUsers: state.onlineUsers.map(o => {
+        if (o.user_id === user.user_id) {
+          o.active = false
+          o.lastActive = user.lastActive
+        }
+        return o
+      })
+    }))
+  },
+  filter: [],
   set: (fn) => set(produce(fn)),
 });
 

@@ -6,10 +6,8 @@ import Sell from '@mui/icons-material/Sell';
 import Account from '@mui/icons-material/Person';
 import Logout from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../../Hooks/useAuth'
 
 function Menu({ open, close }) {
-    const { signout } = useAuth()
     const mounted = useRef(false)
 
     useEffect(() => {
@@ -43,7 +41,7 @@ function Menu({ open, close }) {
                 </div>
                 <ul>
                     <li >
-                        <Link id='menu_link' to='/checkout'>
+                        <Link id='menu_link' to='/cart'>
                             <Cart className='menu_icon' />
                             Cart
                         </Link>

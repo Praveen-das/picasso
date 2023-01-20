@@ -1,16 +1,13 @@
-import react, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
-import { useFirebase } from '../../../Context/FirebaseContext'
 import './products.css'
 import AddProduct from '../AddProduct/AddProduct'
 import Search from '../../Search/Search'
-import { confirmAction } from '../../ConfirmationDialog/ConfirmationDialog'
-import { useDatabase } from '../../../Hooks/useDatabase'
-import { useStore } from '../../../Context/Store'
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { _deleteProduct, fetchProducts } from '../../../lib/product.api'
-import { useAdmin, useProducts } from '../../../Hooks/useProducts'
+import confirmAction from '../../ConfirmationDialog/ConfirmationDialog'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { _deleteProduct } from '../../../lib/product.api'
+import { useAdmin } from '../../../Hooks/useProducts'
 import { Pagination, Skeleton } from '@mui/material'
 
 const skeleton = new Array(20).fill()
@@ -53,10 +50,6 @@ function Products() {
         <>
             {model && <AddProduct setModel={setModel} model={model} _product={model === 'update' ? product : null} />}
             <div className="dashboard-wrapper">
-                {/* <AlertMessage
-                    dialog={dialog}
-                    setDialog={setDialog}
-                /> */}
                 <div id="dashboard">
                     <div className="actionbar">
                         <span >

@@ -1,16 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import controller from '../lib/userReview.api'
+import {
+    addUserReview,
+    deleteUserReview,
+    _getProductReview,
+    updateUserReview,
+    _getProductsWithAverageRating
+} from '../lib/userReview.api'
 
 const useReviews = (productId) => {
-    const {
-        addUserReview,
-        deleteUserReview,
-        _getProductReview,
-        updateUserReview } = controller
 
     const queryClient = useQueryClient()
 
     const reviews = useQuery(['review', productId], () => _getProductReview(productId), { enabled: !!productId })
+    const productsWithAverageRating = useQuery(['productsWithAverageRating'], _getProductsWithAverageRating)
 
     const addReview = useMutation(addUserReview, {
         onSuccess: () => queryClient.invalidateQueries(['review'])
@@ -22,7 +24,10 @@ const useReviews = (productId) => {
 
 
     const updateReview = useMutation(updateUserReview, {
-        onSuccess: () => queryClient.invalidateQueries(['review'])
+        onSuccess: () => {
+            queryClient.invalidateQueries(['review'])
+            queryClient.invalidateQueries(['product'])
+        }
     })
 
     return {

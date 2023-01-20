@@ -1,9 +1,10 @@
 .product_card{
   display: flex;
+  justify-content: center;
   position: relative;
   flex-direction: column;
   flex: 1 auto;
-  margin-top: 4rem;
+  margin-top: 1rem;
   width: 100%;
 }
 .product_card .painting{
@@ -11,15 +12,18 @@
   width: 100%;
   height: 100%;
   vertical-align: middle;
+  border-radius: 10px;
 }
 .product_card--actions{
   background: var(--overlay);
+  backdrop-filter: blur(25px);
   position: absolute;
   display: flex;
   flex-direction: column;
   inset: 0;
   transition: 0.2s;
   opacity: 0;
+  border-radius: 10px;
 }
 .product_card--actions:hover{
   opacity: 1;
@@ -32,12 +36,6 @@
   border: 2px solid white;
   padding: 0.7em 1.5em;
 }
-.painting {
-  /* width: auto ;
-  min-width: 250px;
-  max-width: 600px;
-  height: 100%; */
-}
 .shop_products .painting {
   min-width: unset;
   max-width: unset;
@@ -45,9 +43,9 @@
 }
 
 .product_name{
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   position: absolute;
-  top: -45px;
+  top: -25px;
 }
 .product_artist{
   font-family: 'Cinzel', serif;

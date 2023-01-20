@@ -1,11 +1,12 @@
-.create-account{
+.create-account {
     border: none;
     background: none;
-    cursor:  pointer;
+    cursor: pointer;
     color: var(--brand);
 }
+
 .login_left,
-.login_right{
+.login_right {
     position: relative;
     height: 100%;
     display: grid;
@@ -13,17 +14,20 @@
     background: white;
     transition: transform, 1s;
 }
-.login_left{
+
+.login_left {
     text-align: center;
     transform: translateX(100px);
     /* z-index: 2; */
 }
+
 .signinStyle,
-.signupStyle{
+.signupStyle {
     position: absolute;
     transition: transform, 0.5s 0.2s;
 }
-.signup_btn{
+
+.signup_btn {
     width: 70px;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -34,11 +38,13 @@
     place-items: center;
     cursor: pointer;
 }
-.signup_btn:hover{
+
+.signup_btn:hover {
     box-shadow: 2px 2px 15px 3.5px var(--shadow);
 }
+
 .signup_hero,
-.signin_hero{
+.signin_hero {
     display: grid;
     justify-items: center;
     align-content: center;
@@ -48,4 +54,15 @@
     margin: auto;
     padding: 0 5em;
     transition: transform, 1s;
+}
+
+#success_dialog {
+    width: 350px;
+    display: grid;
+    justify-items: center;
+    gap: 2em;
+    background: white;
+    padding: 4rem 2rem;
+    gap: 1rem;
+    margin-top: -1rem;
 }

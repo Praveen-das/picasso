@@ -1,122 +1,156 @@
-import react, { useEffect, useState } from 'react'
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import React, { useState } from 'react'
 import './checkout.css'
-import { useDatabase } from '../../Hooks/useDatabase';
-import { useLocation } from 'react-router-dom';
 
-import Divider from '@mui/material/Divider';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-
-import EmptyCart from './EmptyCart';
-import { useStore } from '../../Context/Store';
-import AddressCarousel from './AddressCarousel';
-import QuantityInput from '../QuantityInput/QuantityInput';
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { Grid } from '@mui/material';
+import AddressList, { Address } from './Components/AddressList/AddressList';
+import PaymentMethod from './Components/PaymentMethod/PaymentMethod';
+import Products from './Components/Products/Products';
 import { useCart } from '../../Hooks/useCart';
+import AddNewAddress from '../Profile/AddNewAddress';
+import useSales from '../../Hooks/Sales/useSales';
 
 function Checkout() {
-    const { cart, removeFromCart, updateCart } = useCart()
-    const uid = useStore(state => state.userData?.uid)
-    const defaultAddress = useStore(state => state.userData?.defaultAddress)
-    const { makeOrder, handleAvailableQuantity } = useDatabase()
+  const [activeStep, setActiveStep] = useState(0);
+  const [address, setAddress] = useState({});
+  const [method, setMethod] = useState('card');
+  const [open, setOpen] = useState(false)
 
-    const [totalAmount, setTotalAmount] = useState(0)
-    const [paymentMethod, setPaymentMethod] = useState('card')
+  const { createOrder } = useSales()
+  const { cart } = useCart()
 
-    useEffect(() => {
-        if (!!cart.data?.length)
-            setTotalAmount(cart.data?.reduce((x, y) => x + (y.product?.price * y.quantity), 0))
-    }, [cart])
+  const handleNext = () => {
+    setActiveStep((pre) => pre + 1);
+  };
+  
+  const handleBack = () => {
+    setActiveStep((pre) => pre - 1);
+  };
 
-    const createInvoice = (data) => {
-        const invoice = {
-            products: data,
-            seller_id: data.uid,
-            user_id: uid,
-            paymentMethod: paymentMethod,
-            status: 'processing',
-            address: defaultAddress,
-            totalAmount: totalAmount,
-            // product_quantity: quantity[0]
-        }
-        return invoice
-    }
+  const handleOrder = () => {
+    createOrder.mutateAsync({
+      method,
+      cart_items: cart.data[0]
+    })
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+  };
 
-    const handleCheckout = () => {
-        cart.data?.forEach((item, index) => {
-            makeOrder(createInvoice(item)).then(() =>
-                handleAvailableQuantity(item.id)
-                // handleAvailableQuantity(item.id, quantity[index])
-            )
-        })
-    }
-
-    const style = {
-        typography: {
-            sx: { color: 'var(--brand)' },
-            variant: 'h6',
-            fontSize: 16,
-            fontWeight: 600
-        }
-    }
-
-    return (
-        <>
-            <Grid container p='2rem 2rem 2rem 5rem' spacing={3} position='relative'>
-                <Grid item xs={8}>
-                    <AddressCarousel />
-                    <Grid item mt={4} xs={12}>
-                        <Grid item xs={12} mb={2}>
-                            <Typography {...style.typography}>Products</Typography>
-                        </Grid>
-                        <div className="checkout__product--wrapper">
-                            {
-                                cart && cart.data?.map(({ id, product, quantity }) =>
-                                    <div key={id} className="checkout__product">
-                                        <div className='product_imgNQty'>
-                                            <img src={product.images[0].url + '/tr:w-100'} alt="" />
-                                            <div className='product_qty'>
-                                                <QuantityInput onChange={(quantity) => updateCart.mutateAsync({ id, quantity })} defaultValue={quantity} />
-                                            </div>
-                                        </div>
-                                        <div className='checkout__product--details'>
-                                            <label className='checkout__product--name' htmlFor="">{product.name}</label>
-                                            <Typography width='90%' variant='caption' fontSize={14}>{product.desc}</Typography>
-                                            <label className='checkout__product--price' htmlFor="">Rs. {product.price * quantity}</label>
-                                            <Button onClick={() => removeFromCart(id)} className='checkout__product--deleteBtn'>
-                                                remove
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </div>
-                    </Grid>
-                </Grid>
-                <Grid item xs={4} position='sticky' alignSelf='flex-start' top='-3rem'>
-                    <Grid item xs={12} mb={1} ml={-2}>
-                        <Typography variant="h5" sx={{ fontWeight: '800' }}>Checkout</Typography>
-                    </Grid>
-                    <div className="checkout__wrapper">
-                        <Grid item xs={12} m='1.5rem 0 0 1.4rem'>
-                            <Typography {...style.typography}>Order details</Typography>
-                        </Grid>
-                        <div className="checkout__checkout">
-                            <label>Price</label>
-                            <label>{totalAmount}</label>
-                            <label>Delivery charge</label>
-                            <label>Free</label>
-                            <label>Discount price</label>
-                            <label>{totalAmount}</label>
-                            <label>Total amount</label>
-                            <label>{totalAmount}</label>
-                        </div>
-                        <Grid item xs={12} padding='0 1.5rem'>
-                            <Divider sx={{ width: '100%' }} />
-                        </Grid>
-                        <Grid item xs={12} m='1.5rem 0 0 1.4rem'>
+  return (
+    <Grid container spacing={2} p='1rem 4rem'>
+      <Grid item xs={8}>
+        <Box maxWidth={750}>
+          <Stepper activeStep={activeStep} orientation="vertical" >
+            <Step>
+              <StepLabel>
+                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 0 ? 'var(--brand)' : 'var(--brandMain)'}>
+                  {open ? 'Add Shipping Address' : activeStep === 0 ? 'Select a delivery address' : 'Delivery Address'}
+                </Typography>
+              </StepLabel>
+              <Box display={activeStep === 0 && 'none'}>
+                <div className="addressList">
+                  <Address data={address} />
+                </div>
+              </Box>
+              <StepContent >
+                <Box sx={{ mt: 1.5 }}>
+                  {
+                    open ? <AddNewAddress open={open} close={() => setOpen(false)} /> :
+                      <AddressList setAddress={setAddress} />
+                  }
+                </Box>
+                <Box display={open && 'none'} sx={{ mb: 1 }}>
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{
+                        mt: 3,
+                        mr: 1,
+                        p: '10px 20px',
+                        borderRadius: '100px',
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      Use this address
+                    </Button>
+                    <Button
+                      onClick={setOpen}
+                      sx={{ mt: 3, mr: 1, p: '10px 20px', }}
+                    >
+                      New Address
+                    </Button>
+                  </div>
+                </Box>
+              </StepContent>
+            </Step>
+            <Step>
+              <StepLabel>
+                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 1 ? 'var(--brand)' : 'var(--brandMain)'}>
+                  {activeStep === 1 ? 'Select a payment method' : 'Payment method'}
+                </Typography>
+              </StepLabel>
+              <StepContent>
+                <Box sx={{ mt: 1.5 }}>
+                  <PaymentMethod method={method} setMethod={setMethod} />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{
+                        mt: 3,
+                        mr: 1,
+                        p: '10px 20px',
+                        borderRadius: '100px',
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      Use this method
+                    </Button>
+                    <Button
+                      onClick={handleBack}
+                      sx={{ mt: 3, mr: 1, p: '10px 20px', }}
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </Box>
+              </StepContent>
+            </Step>
+            <Step>
+              <StepLabel>
+                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 2 ? 'var(--brand)' : 'var(--brandMain)'}>
+                  {activeStep === 2 ? 'Review items and delivery' : 'Items and delivery'}
+                </Typography>
+              </StepLabel>
+              <StepContent>
+                <Box sx={{ mt: 1.5 }}>
+                  <Products />
+                </Box>
+              </StepContent>
+            </Step>
+          </Stepper>
+          {activeStep === 2 && (
+            <Paper square elevation={0} sx={{ mt: 2 }}>
+              <Typography>All steps completed - you&apos;re finished</Typography>
+              <Button variant='contained' onClick={handleOrder} sx={{ mt: 4, mr: 1 }}>
+                Place order
+              </Button>
+            </Paper>
+          )}
+        </Box>
+      </Grid>
+      
+      {/* <Grid item xs={12} m='1.5rem 0 0 1.4rem'>
                             <Typography {...style.typography}>Payment options</Typography>
                         </Grid>
                         <div className="checkout__method">
@@ -130,16 +164,9 @@ function Checkout() {
                                 <LocalShippingIcon sx={{ fontSize: '18px' }} />
                                 <label htmlFor="">COD</label>
                             </div>
-                        </div>
-                        <Grid item xs={12} p='1.5rem' pt={0}>
-                            <Button onClick={() => handleCheckout()} size='large' variant='contained' fullWidth>Checkout</Button>
-                        </Grid>
-                    </div>
-                </Grid>
-            </Grid>
-        </>
-    )
-    return < EmptyCart />
+                        </div> */}
+    </Grid>
+  );
 }
 
 export default Checkout

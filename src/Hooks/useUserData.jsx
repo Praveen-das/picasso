@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCurrentUser,
+  _addToRecentlyViewed,
   _addUserAddress,
   _deleteUserAddress,
   _updateUser,
@@ -19,19 +20,25 @@ function useUserData() {
   });
 
   const { mutateAsync: addUserAddress } = useMutation(_addUserAddress, {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
   });
 
   const { mutateAsync: updateUserAddress } = useMutation(_updateUserAddress, {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
   });
 
   const { mutateAsync: deleteUserAddress } = useMutation(_deleteUserAddress, {
-    onSuccess: () => {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
+  const addToRecentlyViewed = useMutation(_addToRecentlyViewed, {
+    onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
   });
@@ -44,6 +51,7 @@ function useUserData() {
     updateUserAddress,
     deleteUserAddress,
     isLoading,
+    addToRecentlyViewed
   };
 }
 

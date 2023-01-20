@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./addProduct.css";
 import {
   Grid,
@@ -16,7 +16,7 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { Box } from "@mui/system";
 import { useHelper } from "../../../Context/HelperContext";
 import { IKContext, IKUpload } from "imagekitio-react";
-import { FieldArray, Form, Formik } from "formik";
+import { FieldArray, Formik } from "formik";
 import {
   productUpdateValidation,
   productValidation,
@@ -31,9 +31,8 @@ import { useAdmin } from "../../../Hooks/useProducts";
 
 function AddProduct({ setModel, model, _product }) {
 
-  const { addProduct, updateProduct } = useAdmin()
+  const { addProduct, updateProduct, products } = useAdmin()
 
-  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const { theme } = useHelper();
 
@@ -42,8 +41,8 @@ function AddProduct({ setModel, model, _product }) {
   const initialValues = {
     name: "",
     desc: "",
-    category_id: 1,
-    material_id: 1,
+    category_id: 0,
+    material_id: 0,
     width: "",
     height: "",
     quantity: "",
@@ -71,7 +70,7 @@ function AddProduct({ setModel, model, _product }) {
     if (model === "add")
       return addProduct.mutateAsync(obj)
         .then(() => setModel(false))
-    updateProduct({ id: _product.id, updates: obj }).then(() =>
+    updateProduct.mutateAsync({ id: _product.id, updates: obj }).then(() =>
       setModel(false)
     );
   }
@@ -165,7 +164,7 @@ function AddProduct({ setModel, model, _product }) {
                             name="category_id"
                             label="Category"
                             select
-                            value={values?.category_id || 1}
+                            value={values?.category_id}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={
@@ -174,9 +173,11 @@ function AddProduct({ setModel, model, _product }) {
                             helperText={touched.category_id && errors.category_id}
                             {...TF_Style}
                           >
-                            <MenuItem value={1}>Ten</MenuItem>
-                            <MenuItem value={2}>Twenty</MenuItem>
-                            <MenuItem value={3}>Thirty</MenuItem>
+                            {
+                              products.data && products.data[2]?.map(category => (
+                                <MenuItem key={category?.id} value={category?.id}>{category?.name}</MenuItem>
+                              ))
+                            }
                           </TextField>
                         </Grid>
                         {/*********** MATERIAL ***********/}
@@ -186,7 +187,7 @@ function AddProduct({ setModel, model, _product }) {
                             name="material_id"
                             label="Material"
                             select
-                            value={values?.material_id || 1}
+                            value={values?.material_id}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={
@@ -195,9 +196,11 @@ function AddProduct({ setModel, model, _product }) {
                             helperText={touched.material_id && errors.material_id}
                             {...TF_Style}
                           >
-                            <MenuItem value={1}>Ten</MenuItem>
-                            <MenuItem value={2}>Twenty</MenuItem>
-                            <MenuItem value={3}>Thirty</MenuItem>
+                            {
+                              products.data && products.data[3]?.map(material => (
+                                <MenuItem key={material?.id} value={material?.id}>{material?.name}</MenuItem>
+                              ))
+                            }
                           </TextField>
                         </Grid>
                         {/*********** WIDTH ***********/}

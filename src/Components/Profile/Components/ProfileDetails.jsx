@@ -8,9 +8,7 @@ import { Grid, Divider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 
-import { useAuth } from "../../../Hooks/useAuth";
 import ProfileCredentialForm from "../Components/ProfileCredentialForm";
-import { handleExceptions } from "../../../Hooks/useExceptionHandler";
 import useUserData from "../../../Hooks/useUserData";
 
 function ProfileDetails() {
