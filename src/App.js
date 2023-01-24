@@ -43,49 +43,6 @@ function App() {
   // }, [currentUser, client])
   // let [users, setUsers] = useState([])
 
-  const setOnlineUsers = useStore(state => state.setOnlineUsers)
-  const addUser = useStore(state => state.addOnlineUser)
-  const removeUser = useStore(state => state.removeDisconnectedUser)
-  const setMessage = useStore(state => state.setMessage)
-
-  useEffect(() => {
-    if (currentUser.isLoading) return
-    if (currentUser.isFetching) return
-
-    //-----------------extablish connection-----------------//
-    let user_id = currentUser.data?.id || localStorage.getItem('user_id')
-    let username = currentUser.data?.displayName || 'unknown user'
-    let photo = currentUser.data?.photo || ''
-
-    if (!user_id) {
-      user_id = Math.floor(Math.random() * 9999999).toString()
-      localStorage.setItem('user_id', user_id)
-    }
-
-    socket.auth = { user: { username, photo, user_id } }
-    socket.connect()
-
-    //-----------------listen for connected users-----------------//
-    socket.on('users', connectedUsers => setOnlineUsers(connectedUsers))
-    socket.on("user connected", (user) => addUser(user));
-
-    //-----------------listen for disconnected users-----------------//
-    socket.on("user disconnected", (user) => removeUser(user));
-
-    //-----------------listen for messages-----------------//
-    socket.on('receive', chat => setMessage(chat))
-
-    return () => {
-      socket.off('connect')
-      socket.off('users')
-      socket.off('user connected')
-      socket.off('receive')
-      socket.off('disconnect')
-      socket.disconnect()
-      // localStorage.clear()
-    }
-  }, [currentUser])
-
   if (currentUser.isLoading) return <LoadingScreen />
 
   const auth = () => currentUser.data !== null && redirect("/")
@@ -118,6 +75,7 @@ function App() {
 
   return (
     <>
+      <Messenger />
       <Alert />
       <div id='App'>
         <RouterProvider router={router} />
@@ -126,4 +84,61 @@ function App() {
     </>
   );
 }
+
+function Messenger() {
+  const { currentUser } = useUserData()
+
+  const setOnlineUsers = useStore(state => state.setOnlineUsers)
+  const addUser = useStore(state => state.addOnlineUser)
+  const removeUser = useStore(state => state.removeDisconnectedUser)
+  const setMessage = useStore(state => state.setMessage)
+
+  useEffect(() => {
+    if (currentUser.isLoading) return
+    if (currentUser.isFetching) return
+
+    //-----------------extablish connection-----------------//
+    let user_id = currentUser.data?.id || localStorage.getItem('user_id')
+    let username = currentUser.data?.displayName || 'unknown user'
+    let photo = currentUser.data?.photo || ''
+
+    if (!user_id) {
+      user_id = Math.floor(Math.random() * 9999999).toString()
+      localStorage.setItem('user_id', user_id)
+    }
+
+    socket.auth = { user: { username, photo, user_id } }
+    socket.user_id = user_id
+    socket.connect()
+
+    //-----------------listen for connected users-----------------//
+    socket.on('users', connectedUsers => setOnlineUsers(connectedUsers))
+    socket.on("user connected", (user) => addUser(user));
+
+    //-----------------listen for disconnected users-----------------//
+    socket.on("user disconnected", (user) => removeUser(user));
+
+    //-----------------listen for messages-----------------//
+    socket.on('receive', chat => {
+      let receiver = chat.user_id
+      if (chat.user_id === socket.user_id) {
+        receiver = chat.to
+        chat.self = true
+      }
+      setMessage(chat, receiver)
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('users')
+      socket.off('user connected')
+      socket.off('receive')
+      socket.off('disconnect')
+      socket.disconnect()
+    }
+  }, [currentUser])
+
+  return <></>
+}
+
 export default App;

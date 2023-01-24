@@ -11,12 +11,6 @@ export default function Store() {
     const user_id = useUserData()?.currentUser.data?.id || 'praveen'
     const room = useRef(`${sid}|${user_id || 'praveen'}`)
 
-    useEffect(() => {
-        socket.on('message', message => {
-            console.log(message)
-        })
-    }, [socket])
-
     return (
         <div style={{ display: 'grid', justifyContent: 'center', gap: 20 }}>
             <input onChange={(e) => setSendMessage(e.target.value)} type="text" />

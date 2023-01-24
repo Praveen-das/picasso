@@ -12,6 +12,7 @@ const INITIAL_STATE = {
     type: "success",
     time: 3000,
   },
+  room: null,
   messages: {},
   form: { error: { global: undefined } },
   edit: { name: false, username: false, email: false },
@@ -40,14 +41,23 @@ const store = (set, get) => ({
     })
   },
   setMessage: (chat) => set(pre => {
+    const room = get().room
+    if (chat.room === room) chat.active = true
     if (pre.messages[chat.room]) {
       return { messages: { [chat.room]: [...pre.messages[chat.room], chat] } }
     }
     return { messages: { [chat.room]: [chat] } }
   }),
-  getMessage: (uid, sid) => set(pre => pre.messages
-    .filter(message => message.token.includes(uid))
-    .filter(message => message.token.includes(sid))),
+  setRoom: (uid, sid) => set({ room: [uid || 0, sid || 1].sort().join('|') }),
+  changeActiveStatus: (room, time) => set(pre => {
+    const messages = pre.messages[room].map((chat) => {
+      if (chat.receivedOn === time) {
+        chat.active = true
+      }
+      return chat
+    })
+    return { messages: { [room]: messages } }
+  }),
   removeDisconnectedUser: (user) => {
     set(state => ({
       onlineUsers: state.onlineUsers.map(o => {
