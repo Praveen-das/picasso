@@ -20,7 +20,7 @@ function ChangePassword() {
 
     const handlePasswordUpdation = () => {
         if (password.newPassword !== password.confirmPassword) return
-        return updateUserPassword(password.newPassword)
+        // return updateUserPassword(password.newPassword)
     }
 
     return (

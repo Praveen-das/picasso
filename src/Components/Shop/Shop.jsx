@@ -1,17 +1,36 @@
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
 import Box from '@mui/material/Box';
 import { Button, Menu, MenuItem, Skeleton, Typography } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
-import BreadCrumb from '../Breadcrumbs/BreadCrumbs';
+import axios from 'axios';
+import Masonry from '@mui/lab/Masonry';
+
+function getDimension() {
+    function generate(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    const dimension = {
+        // height: generate(200, 300),
+        aspectRatio: 1,
+    }
+    return dimension
+}
 
 function Shop() {
     const navigate = useNavigate()
     const { state } = useLocation()
-
+    
     const { data, isFetching, isLoading } = useProducts()
+    
+    const [dummy, setDummy] = useState([])
+    useEffect(() => {
+        axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=50')
+            .then(({ data }) => setDummy(data))
+    }, [])
 
     const [productList, count] = data || []
     const [anchorEl, setAnchorEl] = useState(null);
@@ -92,11 +111,19 @@ function Shop() {
                         </Menu>
                     </div>
                 </div>
-                <div className="images_tray">
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={10}>
                     {
-                        productList ? productList.map((o) => (
-                            <Card key={o.id} product={o} height={280} />
-                        )) :
+                        dummy?.map((o) => (
+                            <Card sx={{ width: '100%' }} key={o.id} product={o} />
+                        ))
+                    }
+                </Masonry>
+                {/* <div >
+                    {
+                        productList ?
+                            productList.map((o) => (
+                                <Card key={o.id} product={o} height={280} />
+                            )) :
                             skeleton.map((o, i) => (
                                 <Box key={i} height={280} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
                                     <Skeleton />
@@ -105,7 +132,22 @@ function Shop() {
                                 </Box>
                             ))
                     }
-                </div>
+                </div> */}
+                {/* <div className="images_tray">
+                    {
+                        productList ?
+                            productList.map((o) => (
+                                <Card key={o.id} product={o} height={280} />
+                            )) :
+                            skeleton.map((o, i) => (
+                                <Box key={i} height={280} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
+                                    <Skeleton />
+                                    <Skeleton sx={{ my: '4px' }} width="60%" />
+                                    <Skeleton variant='rectangular' height={'250px'} />
+                                </Box>
+                            ))
+                    }
+                </div> */}
             </div>
             {/* <Pagination page={page || 1} onChange={(_, value) => navigate(`/shop`, { state: { page: value } })} color="primary" count={Math.ceil((count?.id || 0) / 2)} /> */}
         </>

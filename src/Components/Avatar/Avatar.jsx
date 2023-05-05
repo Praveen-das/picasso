@@ -1,8 +1,6 @@
-import react from 'react'
-import { Avatar as CustomAvatar } from '@mui/material/'
+import { Avatar as _Avatar } from '@mui/material/'
 
 function Avatar({ displayName, sx, profilePicture }) {
-
     function stringToColor(string) {
         let hash = 0;
         let i;
@@ -21,10 +19,7 @@ function Avatar({ displayName, sx, profilePicture }) {
     }
 
     function handleProfilePicture() {
-
-        if (profilePicture)
-            return { src: profilePicture }
-
+        if (profilePicture) return { src: profilePicture }
         if (!displayName) return
         const name = displayName.toUpperCase()
         const haveLastName = name.trim().indexOf(' ') !== -1
@@ -42,7 +37,7 @@ function Avatar({ displayName, sx, profilePicture }) {
     }
     return (
         <>
-            <CustomAvatar sx={{ width: sx && sx.width, height: sx && sx.height }} {...handleProfilePicture()} />
+            <_Avatar sx={{ width: sx && sx.width, height: sx && sx.height, }} {...handleProfilePicture()} />
         </>
     )
 }

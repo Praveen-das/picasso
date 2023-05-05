@@ -4,11 +4,11 @@ import { TextField } from "../MUIComponents/TextField";
 import "./styles.css";
 import { userAddressSchema } from "../../Schema/YupSchema";
 import { useFormik } from "formik";
-import useUserData from "../../Hooks/useUserData";
+import useCurrentUser from "../../Hooks/useCurrentUser";
 
 function AddNewAddress({ open, close }) {
   const isMounted = useRef(false);
-  const { addUserAddress } = useUserData();
+  const { addUserAddress } = useCurrentUser();
 
   const style = {
     fullWidth: true,

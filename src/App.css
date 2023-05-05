@@ -1,32 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-html,
+/* html,
 body,
-#root{
-    height: 100%;
-}
-
-html,
-body,
-#root,
-#App {
+#root {
     min-height: 100%;
-}
-#App{
-    
-    margin-bottom: 2rem;
-}
+} */
+
 :root {
-    --brand: hsl(246, 87%, 58%);
+    /* --brand: hsl(246, 87%, 58%); */
+    /* --brand: #4622fe; */
+    --brand: #5e47f9;
     --brandMain: #33364d;
     --shadow: #b5d0ff;
-    --overlay: rgba(0, 0, 0, 0.836);
+    /* --overlay: rgba(0, 0, 0, 0.836); */
+    --overlay: #5e47f9b3;
     --brandGradient: linear-gradient(30deg, #aa23ff, #2081ff);
     --Title: 'Oswald', sans-serif;
     --subTitle: 'Montserrat';
     --neu: #dde1e7;
+    --header: 70px;
+    --shade: #eff3f8;
+    --fullHeight: calc(100vh - var(--header));
 }
+
 body {
     margin: 0;
     padding: 0 !important;
@@ -34,7 +32,6 @@ body {
     /* cursor:url(./Assets/Icons/brush.png),auto; */
     color: #33364d;
     /* text-shadow: 0 0 1px rgba(0, 0, 0, 0.438); */
-    height: 100%;
 }
 
 /* #root >*{
@@ -110,19 +107,16 @@ a:hover {
     pointer-events: none;
 }
 
-.productsTray-wrapper .swiper,
-.Banner .swiper {
+.productsTray-wrapper .swiper {
     padding-bottom: 5px !important;
     height: 100%;
 }
 
-.productsTray-wrapper .swiper>*,
-.Banner .swiper>* {
+.productsTray-wrapper .swiper>* {
     box-sizing: border-box !important;
 }
 
-.productsTray-wrapper .swiper .swiper-slide,
-.Banner .swiper .swiper-slide {
+.productsTray-wrapper .swiper .swiper-slide {
     width: auto !important;
     height: 100%;
 }

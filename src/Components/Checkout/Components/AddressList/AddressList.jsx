@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Radio from '@mui/material/Radio';
 import './addresslist.css'
-import useUserData from '../../../../Hooks/useUserData';
+import useCurrentUser from '../../../../Hooks/useCurrentUser';
 import { Box, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useRef } from 'react';
@@ -12,7 +12,7 @@ function AddressList({ setAddress }) {
 
     const {
         currentUser,
-    } = useUserData();
+    } = useCurrentUser();
 
     const { address } = currentUser.data || { address: [] }
 

@@ -1,86 +1,54 @@
-.Banner {
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: repeat(2,50%);
-  align-items: center;
-  width: 100%;
-  height: calc(100vh - 60px);
-  overflow: hidden;
-  /* background: linear-gradient(to left, rgba(0, 0, 0, 0.301) 30%, white,white); */
-}
-
-.Banner-left {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding-left: 4.5rem;
-}
 .brandName {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
-  font-size: 2rem;
-  font-weight: 800;
-  width: 80%;
+  font-size: 9rem;
+  font-family: Bebas Neue;
+  line-height: 140px;
+  width: 400px;
+  font-weight: 100;
 }
-.letterSpacing{
-  letter-spacing: 0.2em;
-}
+
 .p1 {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
   width: 90%;
   font-family: 'Josefin Sans';
-  text-transform: uppercase;
-  font-size: 4rem;
-  font-weight: 200;
-  margin: 2rem 0;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.151);
+  font-size: 1.4rem;
+  margin: 1rem 0;
+  color: #9f9f9f;
 }
-.banner_card--wrapper{
+
+.banner_card--wrapper {
   transform: translateY(-1em);
   height: 400px;
 }
+
 @media only screen and (max-width: 1024px) {
-  .banner_card--wrapper{
+  .banner_card--wrapper {
     height: 350px;
   }
-  .Banner-left{
-    padding-left: 3.5rem;
-    margin-bottom: 2em;
-  }
+
 }
+
 @media only screen and (max-width: 425px) {
-  .Banner{
-    display: flex !important;
-    flex-direction: column;
-    height: unset;
-  }
-  .brandName{
+  .brandName {
     width: 100%;
     font-size: 1.2rem;
     text-align: center;
   }
-  .p1{
+
+  .p1 {
     width: 100%;
     font-size: 2.5rem;
     /* margin: 1rem 0; */
     text-align: center;
   }
-  .Banner .button_primary{
-    display:none;
-  }
-  .Banner-right .mySwiper{
-    /* transform: translateY(-2em) !important; */
-  }
-  .banner_card--wrapper{
+
+  .banner_card--wrapper {
     height: 250px;
   }
-  .Banner-left{
-    justify-content: unset;
-    margin-top: 2em;
-    padding-left: 0;
-  }
+
+ 
 }
 
+.swiper {
+  overflow: visible !important;
+}

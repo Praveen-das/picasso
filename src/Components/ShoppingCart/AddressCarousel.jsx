@@ -8,11 +8,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
 import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
-import useUserData from '../../Hooks/useUserData';
+import useCurrentUser from '../../Hooks/useCurrentUser';
 
 function AddressCarousel() {
     const [open, setOpen] = useState(false)
-    const { currentUser, updateUser } = useUserData()
+    const { currentUser, updateUser } = useCurrentUser()
 
     const { address, default_address } = currentUser.data
 

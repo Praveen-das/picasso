@@ -1,10 +1,10 @@
 import React from 'react'
 import Header from '../Components/Header/Header'
-import { Messenger } from '../Components/Messenger/Messenger'
-import useUserData from '../Hooks/useUserData'
+import Messenger from '../Components/Messenger/Messenger'
+import useCurrentUser from '../Hooks/useCurrentUser'
 
 function ChatPage() {
-    const { currentUser } = useUserData()
+    const { currentUser } = useCurrentUser()
 
     return (
         <>

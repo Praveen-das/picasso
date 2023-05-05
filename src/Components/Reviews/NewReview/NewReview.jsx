@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating'
 import './newReview.css'
 import useReviews from '../../../Hooks/useReviews';
-import useUserData from '../../../Hooks/useUserData';
+import useCurrentUser from '../../../Hooks/useCurrentUser';
 import confirmAction from '../../ConfirmationDialog/ConfirmationDialog';
 import { Fade } from '@mui/material';
 
@@ -15,7 +15,7 @@ function NewReview({ product, open, setOpen, userReview }) {
     const [review, setReview] = useState({ title: '', message: '' })
     const [vote, setVote] = useState(null)
     const { addReview, updateReview, deleteReview } = useReviews()
-    const { currentUser } = useUserData()
+    const { currentUser } = useCurrentUser()
 
     const box_style = {
         position: 'absolute',

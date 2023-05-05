@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './banner.css'
 import gsap from 'gsap'
 import { Link } from 'react-router-dom'
@@ -9,9 +9,34 @@ import 'swiper/swiper.min.css';
 import { Mousewheel } from "swiper"
 import Section from '../Devices/Section/Section'
 import { useProducts } from '../../Hooks/useProducts'
+import Vibrant from 'node-vibrant';
+import { useStore } from '../../Context/Store'
+import axios from 'axios'
+import { Box, Grid, Typography } from '@mui/material'
+// import ColorThief from 'colorthief'
+
+const categories = [
+    'oil paintings', 'murals', 'fabric painting', 'watercolor', 'digital'
+]
 
 function Banner() {
     const { data } = useProducts()
+    const [img, setImg] = useState(data && data)
+    const [preIdx, setPreIdx] = useState(-1)
+    const setColor = useStore(s => s.setColor)
+
+    useEffect(() => {
+        if (data) setImg(data[0][0]?.images[0]?.url)
+    }, [data])
+
+    // useEffect(() => {
+    //     if (img) {
+    //         const vibrant = new Vibrant(img);
+    //         vibrant.getPalette().then((palette) => {
+    //             document.documentElement.style.background = palette.Vibrant.hex;
+    //         });
+    //     }
+    // }, [img])
 
     useEffect(() => {
         const tl = gsap.timeline({ defaults: { duration: 0.2 } })
@@ -26,16 +51,27 @@ function Banner() {
         })
     }, [])
 
+    const [dummy, setDummy] = useState([])
+    useEffect(() => {
+        axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=9')
+            .then(({ data }) => setDummy(data))
+    }, [])
+
     return (
         <>
-            <div className="Banner" id='banner'>
-                <div className="Banner-left">
-                    <label className='brandName letterSpacing' htmlFor="">ARTWORLD</label>
-                    <label className='p1' htmlFor="">Every Purchase Will Be Made With Pleasure</label>
-                    <Link to='/shop' className='button_primary'>SHOP NOW</Link>
-                </div>
-                <div className="Banner-right">
+            <Grid container spacing={4} p='2rem 5rem' overflow='hidden'>
+                <Grid item xs={6} >
+                    <Box
+                        display='flex'
+                        flexDirection='column'
+                    >
+                        <label className='brandName' htmlFor="">BEAUTY IN STYLE</label>
+                        <label className='p1' htmlFor="">Find the latest collections that suit your needs and tastes</label>
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
                     <Swiper
+                        onActiveIndexChange={(e) => setPreIdx(e.activeIndex - 1)}
                         slidesPerView='auto'
                         spaceBetween={20}
                         breakpoints={{
@@ -52,16 +88,76 @@ function Banner() {
                     >
                         {
                             data && data[0]?.map((product, index) =>
-                                <SwiperSlide key={index}>
-                                    {/* <div className="banner_card--wrapper"> */}
-                                    <Card product={product} height={400} />
-                                    {/* </div> */}
+                                <SwiperSlide key={index} style={{ opacity: index <= preIdx ? 0 : 1, transition: 'opacity 0.2s', width: 'auto' }} >
+                                    <Card sx={{ height: 260 }} product={product} />
                                 </SwiperSlide>
                             )
                         }
                     </Swiper>
-                </div>
-            </div>
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    width='100%'
+                    my={2}
+                    position='relative'
+                    sx={{
+                        "::after": {
+                            content: "'ARTWORLD'",
+                            position: 'absolute',
+                            top: '-70px',
+                            right: 0,
+                            fontSize: '9rem',
+                            fontFamily: 'Bebas Neue',
+                            fontWeight: 100,
+                            color: 'white',
+                            textShadow: `0 0 1px black,0 0 1px black,0 0 1px black`,
+                        },
+                    }}
+                >
+                    <Box
+                        display='flex'
+                        justifyContent='right'
+                        gap={2}
+                        mr={5}
+
+                    >
+                        <Typography
+                            alignSelf='end'
+                            lineHeight='30px'
+                            mr={2}
+                            variant='h3'
+                            fontFamily='Bebas Neue'
+                        >categories</Typography>
+                        {
+                            categories.map(category => (
+                                <Box
+                                    display='flex'
+                                    justifyContent='center'
+                                    alignItems='center'
+                                    width='90px'
+                                    height='90px'
+                                    boxShadow='0px 4px 20px #d1d1d1'
+                                    bgcolor='white'
+                                    zIndex={100}
+                                    sx={{
+                                        transition: '0.2s',
+                                        backdropFilter: 'blur(10px)',
+                                        ":hover": {
+                                            bgcolor: 'var(--overlay)',
+                                            color: 'white',
+                                            boxShadow: '0px 4px 5px #d1d1d1',
+                                            translate: '0 -10px'
+                                        }
+                                    }}
+                                >
+                                    <Typography sx={{ pointerEvents: 'none' }} fontFamily='Bebas Neue' >{category}</Typography>
+                                </Box>
+                            ))
+                        }
+                    </Box>
+                </Grid>
+            </Grid>
             {/* <Section /> */}
         </>
     )

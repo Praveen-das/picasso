@@ -9,10 +9,10 @@ import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 
 import ProfileCredentialForm from "../Components/ProfileCredentialForm";
-import useUserData from "../../../Hooks/useUserData";
+import useCurrentUser from "../../../Hooks/useCurrentUser";
 
 function ProfileDetails() {
-  const { currentUser, updateUser, isLoading } = useUserData();
+  const { currentUser, updateUser, isLoading } = useCurrentUser();
 
   const handleInput = () => {
     document.getElementById("IKUploader").click();

@@ -17,12 +17,17 @@ const _updateUser = async (updates) => {
 };
 
 const getCurrentUser = async () => {
-  return (
-    (await axiosClient
-      .get("/user")
-      .then((res) => res.data)
-      .catch((err) => '')) || null
-  );
+  // let id = sessionStorage.getItem('user_id')
+
+  // if (!id) {
+  //   id = crypto.randomUUID()
+  //   sessionStorage.setItem('user_id', id)
+  // }
+  return await axiosClient.get("/user").then(({ data }) => data || null)
+};
+
+const _getUserById = async (uid) => {
+  return await axiosClient.get(`/user/${uid}`).then(({ data }) => data || null)
 };
 
 const authenticateUsingGmail = async () => {
@@ -52,6 +57,7 @@ export {
   authenticateUsingGmail,
 
   getCurrentUser,
+  _getUserById,
   _updateUser,
 
   _addUserAddress,

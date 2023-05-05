@@ -4,10 +4,10 @@ import favourite_active from '../../Assets/Icons/favourite-active.svg'
 import './card.css'
 import { Link, useNavigate } from 'react-router-dom'
 import useWishlist from '../../Hooks/useWishlist'
-import useUserData from '../../Hooks/useUserData'
+import useCurrentUser from '../../Hooks/useCurrentUser'
 import { useEffect } from 'react'
 
-function Card({ product, height }) {
+function Card({ product, sx }) {
     const [wishlist, setWishlist] = useState(null)
 
     const {
@@ -16,7 +16,7 @@ function Card({ product, height }) {
         removeFromWishlist
     } = useWishlist()
 
-    const { currentUser } = useUserData()
+    const { currentUser } = useCurrentUser()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -27,10 +27,10 @@ function Card({ product, height }) {
     const defaultImage = images?.find((o) => o.fileId === product.defaultImage)
 
     return (
-        <Link className='product_card' style={{ height }} to={`/shop/product/${product?.id}`}>
-            <label className='product_name' htmlFor="">{product?.rating}</label>
+        <Link style={{ position: 'relative', display: 'inline-block' }} to={`/shop/product/${product?.id}`}>
+            {/* <img style={{ ...sx, display: 'block' }} src={product?.urls?.small} alt="" /> */}
+            <img  style={{ ...sx, display: 'block' }} src={defaultImage?.url + '/tr:w-200'} alt="" />
             {/* <label className='product_artist' htmlFor="">{product?.category?.name}</label> */}
-            <img className='painting' src={defaultImage?.url + '/tr:w-200'} alt="" />
             <div className="product_card--actions">
                 <div className="favourite-wrapper">
                     {
@@ -58,7 +58,7 @@ function Card({ product, height }) {
                             />
                     }
                 </div>
-                <label style={{pointerEvents:'none'}} htmlFor="">VIEW ARTWORK</label>
+                <label style={{ pointerEvents: 'none' }} htmlFor="">VIEW ARTWORK</label>
             </div>
         </Link>
     )

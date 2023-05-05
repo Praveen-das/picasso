@@ -65,10 +65,10 @@ function Menu({ open, close }) {
                         </Link>
                     </li>
                     <li>
-                        <div id='menu_link' onClick={() => signout()}>
+                        {/* <div id='menu_link' onClick={() => signout()}>
                             <Logout className='menu_icon' />
                             Logout
-                        </div>
+                        </div> */}
                     </li>
                 </ul>
             </div>

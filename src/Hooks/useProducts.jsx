@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../lib/product.api";
 
 Array.prototype.groupItems = function () {
@@ -14,8 +14,12 @@ Array.prototype.groupItems = function () {
 }
 
 export function useProducts() {
-    const { state } = useLocation()
-    const facets = state?.filter?.groupItems()
+    let { state } = useLocation()
+    const { id: seller_id } = useParams()
+
+    const facets = state?.filter?.groupItems() || {}
+    if (seller_id) Object.assign(facets, { seller_id })
+
     return useQuery(
         [
             'products',
@@ -45,7 +49,11 @@ export function useProductQuery(queryKey, url, state) {
     })
 }
 
-export function useAdmin() {
+export function useSellerProducts(id) {
+
+}
+
+export function useAdmin(id) {
     const queryClient = useQueryClient();
 
     const [page, setPage] = useState(1)

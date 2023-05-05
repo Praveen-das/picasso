@@ -20,10 +20,15 @@ export default function HelperContext({ children }) {
         },
         typography: {
             fontFamily: 'Montserrat',
-            // h6: {
-            //     fontSize: 14,
-            //     fontWeight: 600,
-            // },
+            h10: {
+                fontSize: '0.9rem',
+                fontWeight: 500,
+            },
+            caption2: {
+                fontSize: '0.9rem',
+                fontWeight: 400,
+                color:'grey'
+            },
             // h5: {
             //     fontWeight: 700,
             // },

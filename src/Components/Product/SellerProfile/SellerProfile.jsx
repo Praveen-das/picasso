@@ -1,65 +1,53 @@
-import styled from '@emotion/styled';
-import { Avatar, Badge, Button, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import React, { useEffect } from 'react'
-import useUserData from '../../../Hooks/useUserData';
+import useCurrentUser from '../../../Hooks/useCurrentUser';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ChatIcon from '@mui/icons-material/Chat';
 import { useNavigate } from 'react-router-dom';
-import { useOnlineUsers } from '../../../Hooks/useMessenger';
 import { useState } from 'react';
+import { OnlineBadge } from '../../MUIComponents/OnlineBadge';
+import { useStore } from '../../../Context/Store';
+import moment from 'moment'
+import Avatar from '../../Avatar/Avatar';
 
-export default function SellerProfile({ seller }) {
+function SellerProfile({ product_id, sellerId }) {
     const navigate = useNavigate()
-    const [online, setOnline] = useState(false)
-    const { data: online_users } = useOnlineUsers()
+    const [seller, setSeller] = useState(null)
+    const connectedUsers = useStore(s => s.connectedUsers)
+    const setChatWidget = useStore(s => s.setChatWidget); 
+    const { open } = useStore(s => s.chatWidget);
+    const { currentUser } = useCurrentUser();
 
     useEffect(() => {
-        if (!online_users) return
-        online_users.forEach(user => {
-            user?.user_id === seller?.id ?
-                setOnline(true) :
-                setOnline(false)
-        })
-    }, [online_users, seller])
-
-
-    const StyledBadge = styled(Badge)(({ theme }) => ({
-        '& .MuiBadge-badge': {
-            backgroundColor: online ? '#44b700' : 'grey',
-            color: online ? '#44b700' : 'grey',
-            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-            scale: '1.7'
-        }
-    }));
-
-    const handleAvatar = () => {
-        if (seller?.photo)
-            return { src: seller?.photo }
-        return { children: seller?.displayName?.split(' ').map(o => o[0]).join('') }
-    }
+        const user = connectedUsers.find(user => user?.user_id === sellerId)
+        setSeller(user)
+    }, [connectedUsers, sellerId])
 
     return (
-        <div style={{ display: 'grid', gap: 20, marginTop: 20 }}>
+        <div style={{ display: 'grid', gap: 20, marginTop: 10,}}>
             <div className='seller_profile'>
                 <div style={{ gridRow: 'span 2' }}>
-                    <StyledBadge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        variant="dot"
-                    >
-                        <Avatar {...handleAvatar()} sx={{ width: 56, height: 56 }} className='customer-profile--picture' alt="Remy Sharp" />
-                    </StyledBadge>
+                    <OnlineBadge online={seller?.active} scale={1.7} >
+                        <Avatar displayName={seller?.username || ''} profilePicture={seller?.photo} sx={{ width: 56, height: 56 }} />
+                    </OnlineBadge>
                 </div>
                 <div>
-                    <Typography fontWeight={600} fontSize={20}>{seller?.displayName}</Typography>
-                    <Typography variant='caption' fontSize={12} color='GrayText'>Online | 97.5% Positive Feedback</Typography>
+                    <Typography fontWeight={600} fontSize={20}>{seller?.username}</Typography>
+                    <Typography variant='caption' fontSize={12} color='GrayText'>{seller?.active ? 'Online' : moment(seller?.lastActive).fromNow()}</Typography>
                 </div>
                 <span></span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <Button onClick={() => navigate(`/store/${seller?.id}`)} sx={{ borderRadius: '10px' }} startIcon={<StorefrontIcon />} variant='outlined'>Visit Store</Button>
-                <Button sx={{ borderRadius: '10px' }} startIcon={<ChatIcon />} variant='outlined'>Chat</Button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,maxWidth:400 }}>
+                <Button onClick={() => navigate(`/store/${sellerId}`)} sx={{ borderRadius: '10px' }} startIcon={<StorefrontIcon />} variant='outlined'>Visit Store</Button>
+                {
+                    sellerId !== currentUser.data?.id &&
+                    <Button onClick={() => {
+                        if(!currentUser.data) return navigate('/login')
+                        setChatWidget(!open, true, { ...seller, product_id })
+                    }} sx={{ borderRadius: '10px' }} startIcon={<ChatIcon />} variant='outlined'>Chat</Button>
+                }
             </div>
         </div>
     )
 }
+export default SellerProfile

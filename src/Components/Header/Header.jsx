@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import "./header.css";
 import { Link, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
@@ -6,108 +6,73 @@ import Avatar from "../Avatar/Avatar";
 import { useNavigate } from "react-router-dom";
 import Search from "../Search/Search";
 import AccountsIcon from "@mui/icons-material/ManageAccounts";
-import CartIcon from "@mui/icons-material/ShoppingCart";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteIcon from "@mui/icons-material/FavoriteBorder";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useStore } from "../../Context/Store";
-import SearchIcon from "@mui/icons-material/Search";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Menu from "./Device/Menu";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCurrentUser } from "../../lib/user.api";
-import useUserData from "../../Hooks/useUserData";
+import useCurrentUser from "../../Hooks/useCurrentUser";
 import useAuth from "../../Hooks/useAuth";
-import { joinStrings } from "../../Utils/joinStrings";
-import LoginIcon from '@mui/icons-material/Login';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { Badge } from "@mui/material";
-
+import { Badge, BottomNavigationAction, Box, Drawer, Menu } from "@mui/material";
+import CartIcon from '@mui/icons-material/ShoppingBagOutlined';
+import LoginIcon from '@mui/icons-material/LoginOutlined';
+import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
+import MenuIcon from '@mui/icons-material/DehazeRounded';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
 
 function Header() {
   const navigate = useNavigate();
   const { state } = useLocation()
   const { logout } = useAuth();
-  const { currentUser } = useUserData();
-  const { data: receivers } = useQuery(['receivers'], () => '')
-
-  const style = {
-    sx: {
-      fontSize: 16,
-      display: "block",
-    },
-  };
-
-  const hover = () => {
-    let elements = document.getElementsByName("dropdown-menu-item");
-    document.documentElement.style.setProperty("--opacity", 1);
-
-    elements.forEach((elm, index) => {
-      elm.onmouseenter = () => {
-        if (index === 0) {
-          document.documentElement.style.setProperty("--top", 0);
-        }
-        if (index === 1) {
-          document.documentElement.style.setProperty("--top", "25%");
-        }
-        if (index === 2) {
-          document.documentElement.style.setProperty("--top", "50%");
-        }
-        if (index === 3) {
-          document.documentElement.style.setProperty("--top", "75%");
-        }
-      };
-    });
-  };
+  const { currentUser } = useCurrentUser();
 
   return (
-    <>
+    <nav id='navbar'>
       <div className="navbar">
-        {/* <IconButton onClick={() => setOpen(!open)} sx={{ position: 'absolute', left: '8px' }}>
-                <MenuIcon />
-                </IconButton>
-            <Menu open={open} close={() => setOpen(!open)} /> */}
         <div className="left">
           <Link to="/">
             <label className="header_brandName" htmlFor="logo">
               ARTWORLD.
             </label>
           </Link>
-          <Link to="/shop" className="shop" htmlFor="">
-            New Arrivels
-          </Link>
-          <Link to="/shop" className="shop" htmlFor="">
-            All Categories
-          </Link>
+
           <Search onSearch={(query) => navigate(`/search`, { state: { ...state, query } })} />
         </div>
         {/* <div className="navbar_middle">
           
         </div> */}
         <div className="right">
-          <Link to="/shop" className="shop" htmlFor="">
-            Shop
-          </Link>
+          {/* 
           <Link to="/sell" className="marketplace" htmlFor="">
             Sell
+          </Link> */}
+          {/* <MessagesLink /> */}
+          <Link id='nav_links' to="/cart">
+            <FavoriteIcon fontSize='small' />
+            Wishlist
           </Link>
-          <Badge badgeContent={receivers?.length || 0} color="primary">
-            <Link to='/chat' className='create' htmlFor="">Messages</Link>
-          </Badge>
+          <Link id='nav_links' to='/cart' htmlFor="">
+            <CartIcon fontSize='small' />
+            Cart
+          </Link>
+          {
+            currentUser.data !== null ?
+              <Link to="/my-profile">
+                <PersonIcon fontSize='small' />
+                Account
+              </Link> :
+              <Link id='nav_links' to="/login" >
+                <LoginIcon fontSize='small' />
+                Log in
+              </Link>
+          }
           {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
-                        <Link to='/cart' className='create' htmlFor="">CART</Link>
-                    </Badge> */}
-          {currentUser.data != null ? (
+          </Badge> */}
+          {/* {currentUser.data !== null ? (
             <DropDown>
               <Avatar
                 displayName={currentUser.data?.displayName}
                 profilePicture={currentUser.data?.photo}
               />
-              <Link to="/my-profile">
-                <AccountsIcon {...style} />
-                Account
-              </Link>
+
               <Link to="/cart">
                 <CartIcon {...style} />
                 My Cart
@@ -125,14 +90,62 @@ function Header() {
             <Link to="/login" style={{ display: 'flex', placeItems: 'center', gap: 10 }}>
               LOG IN
             </Link>
-          )}
+          )} */}
         </div>
         {/* <IconButton sx={{ position: 'absolute', right: '8px' }}>
                     <SearchIcon />
                 </IconButton> */}
       </div>
-    </>
+      {/* <Box
+        sx={{
+          mx: 4,
+          py: 1.5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          fontSize: 13,
+          borderTop: '1px solid #e7e7e78a',
+          position: 'sticky',
+          top: 0
+        }}
+      >
+        <Link style={{ display: 'flex', alignItems: 'center', fontSize: 14, fontWeight: 700 }} to="/shop" htmlFor="">
+          <MenuIcon fontSize="small" sx={{ mr: 2 }} />
+          All Categories
+        </Link>
+        <Box display='flex' gap={3} textTransform='uppercase'>
+          <Link to="/shop" className='nav_bottom' htmlFor="">
+            Latest
+          </Link>
+          <Link to="/shop" className='nav_bottom' htmlFor="">
+            Product
+          </Link>
+          <Link to="/shop" className='nav_bottom' htmlFor="">
+            Shop
+          </Link>
+        </Box>
+        <Link style={{ marginLeft: 'auto' }} to="/sell" htmlFor="">
+          Sell on Artworld
+        </Link>
+      </Box> */}
+    </nav>
   );
 }
 
 export default Header;
+
+function MessagesLink() {
+  const unreadMessages = useStore(s => s.unreadMessages)
+  const totalUnreadMessages = useMemo(() => {
+    const u_msg = Array.from(unreadMessages?.values())
+    return u_msg?.reduce((c, a) => {
+      c += a.length
+      return c
+    }, 0) || 0
+  }, [unreadMessages])
+
+  return <Badge badgeContent={totalUnreadMessages} color="primary">
+    <Link to='/chat' className='create' htmlFor="">Messages</Link>
+  </Badge>;
+}
+

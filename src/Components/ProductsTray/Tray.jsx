@@ -56,7 +56,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
                             data?.map((product, index) =>
                                 <SwiperSlide key={index}>
                                     <div className="card_wrapper">
-                                        <Card height={height} product={product} />
+                                        <Card sx={{ height: 100, borderRadius: '10px' }} product={product} />
                                     </div>
                                 </SwiperSlide>
                             )

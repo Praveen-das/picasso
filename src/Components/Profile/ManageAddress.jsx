@@ -6,10 +6,10 @@ import Box from "@mui/material/Box";
 import Address from "./Address";
 import { Typography } from "@mui/material";
 import AddNewAddress from "./AddNewAddress";
-import useUserData from "../../Hooks/useUserData";
+import useCurrentUser from "../../Hooks/useCurrentUser";
 
 function ManageAddress() {
-  const { currentUser } = useUserData();
+  const { currentUser } = useCurrentUser();
 
   const { address, default_address } = currentUser.data
   const [open, setOpen] = useState(false);

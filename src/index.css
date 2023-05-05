@@ -1,0 +1,7 @@
+#main_wrapper {
+    position: 'absolute';
+    inset: 0;
+    background: 'grey';
+    display: 'grid';
+    place-items: 'center';
+}

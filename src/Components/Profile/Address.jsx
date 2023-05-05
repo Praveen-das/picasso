@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { Box, Grid, IconButton, Menu, MenuItem, MenuList, Typography } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import useUserData from '../../Hooks/useUserData';
+import useCurrentUser from '../../Hooks/useCurrentUser';
 
 function Address({ data, onClick, defaultAddress }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [popover, setPopover] = useState(false)
 
-    const { updateUser, deleteUserAddress } = useUserData();
+    const { updateUser, deleteUserAddress } = useCurrentUser();
 
     const addressStyling = () => {
         if (defaultAddress)
