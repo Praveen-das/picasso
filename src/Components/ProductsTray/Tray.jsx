@@ -6,10 +6,7 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
-import 'swiper/swiper.min.css';
-import { Mousewheel } from "swiper"
-
+import { Swiper, Mousewheel, SwiperSlide } from '../../lib/Swiper'
 
 function Tray({ height, data, title, parent, from, to, more }) {
 
@@ -36,7 +33,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
         })
         tl.from(`.${parent} .card_wrapper`, { stagger: 0.1, duration: 0.1, opacity: 0 })
     }, [from, to, parent])
-    
+
     return (
         <>
             <div className="productsTray-wrapper">

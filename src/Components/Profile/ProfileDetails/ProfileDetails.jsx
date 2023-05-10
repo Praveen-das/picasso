@@ -8,7 +8,7 @@ import { Grid, Divider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 
-import ProfileCredentialForm from "../Components/ProfileCredentialForm";
+import ProfileCredentialForm from "./ProfileCredentialForm";
 import useCurrentUser from "../../../Hooks/useCurrentUser";
 
 function ProfileDetails() {
@@ -32,7 +32,7 @@ function ProfileDetails() {
         <ChangePassword />
         <div id="avatar">
           <Avatar
-            sx={{ width: 80, height: 80 }}
+            sx={{ width: 70, height: 70 }}
             displayName={currentUser.data?.displayName}
             profilePicture={currentUser.data?.photo}
           />

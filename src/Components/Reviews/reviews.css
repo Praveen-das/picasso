@@ -11,14 +11,7 @@
     /* flex-direction:column; */
     font-size: 1.5rem;
 }
-.customer_reviews--customers{
-    font-weight: 600;
-    
-}
-.customer_reviews--reviews{
-    font-weight: 300;
-    line-height: 40px;
-}
+
 .review_wrapper{
     display: flex;
     flex-direction: column;

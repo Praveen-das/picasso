@@ -187,7 +187,7 @@ function ChatBoxHeader() {
     >
       <Box width='100%' display='flex' justifyContent='space-between' alignItems='center'>
         <Box sx={{ translate: '0 -10px' }}>
-          <OnlineBadge online={user?.active} scale={1.7} >
+          <OnlineBadge online={user?.active} >
             <Avatar displayName={user?.username} profilePicture={user?.photo} sx={{ width: 40, height: 40 }} />
           </OnlineBadge>
         </Box>

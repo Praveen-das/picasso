@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { memo, useEffect, useState } from 'react'
 import Review from './Review/Review'
 import NewReview from './NewReview/NewReview'
@@ -25,8 +25,10 @@ function Reviews({ product }) {
       <NewReview open={open} setOpen={setOpen} product={product && product} userReview={userReview} />
       <section aria-describedby='customer reviews' className='customer_reviews'>
         <div className="customer_reviews--label">
-          <label className='customer_reviews--customers' htmlFor="customer">Customers</label>
-          <label className='customer_reviews--reviews' htmlFor="customer">Reviews({reviews?.length})</label>
+          <Box display='flex' alignItems='end'>
+            <Typography variant='h5' fontWeight={600}>Customers&nbsp;</Typography>
+            <Typography variant='h5'>Reviews({reviews?.length})</Typography>
+          </Box>
           {/* {
             reviews.data?.find(({ user_id }) => user_id === currentUser?.id) ?
               <Button onClick={() => setOpen(!open)} sx={{ marginLeft: 'auto' }}>Edit review</Button>

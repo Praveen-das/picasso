@@ -11,7 +11,10 @@ body,
 :root {
     /* --brand: hsl(246, 87%, 58%); */
     /* --brand: #4622fe; */
-    --brand: #5e47f9;
+    --BH: 253;
+    --BS: 100%;
+    --brand: hsl(var(--BH), var(--BS), 60%);
+    --brandDark: hsl(var(--BH), var(--BS), 55%);
     --brandMain: #33364d;
     --shadow: #b5d0ff;
     /* --overlay: rgba(0, 0, 0, 0.836); */

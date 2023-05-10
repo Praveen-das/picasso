@@ -16,18 +16,6 @@
   color: #9f9f9f;
 }
 
-.banner_card--wrapper {
-  transform: translateY(-1em);
-  height: 400px;
-}
-
-@media only screen and (max-width: 1024px) {
-  .banner_card--wrapper {
-    height: 350px;
-  }
-
-}
-
 @media only screen and (max-width: 425px) {
   .brandName {
     width: 100%;
@@ -41,11 +29,6 @@
     /* margin: 1rem 0; */
     text-align: center;
   }
-
-  .banner_card--wrapper {
-    height: 250px;
-  }
-
  
 }
 

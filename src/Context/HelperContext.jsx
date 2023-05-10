@@ -12,6 +12,7 @@ const ContextProvider = createContext()
 
 export default function HelperContext({ children }) {
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
+    var brandDark = getComputedStyle(document.body).getPropertyValue('--brandDark').replaceAll(/\s/g, '')
 
     const theme = createTheme({
         root: {
@@ -44,7 +45,7 @@ export default function HelperContext({ children }) {
         palette: {
             primary: {
                 main: brand,
-                dark: '#1a71e4',
+                dark: brandDark,
                 contrastText: '#fff',
             },
             secondary: {

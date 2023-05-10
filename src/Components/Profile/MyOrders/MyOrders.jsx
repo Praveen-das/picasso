@@ -1,8 +1,8 @@
 import { Button, Typography } from '@mui/material'
-import SalesOrder from '../ProductList/ProductList'
-import { ReactComponent as NoOrders } from '../../Assets/Images/noorders.svg'
+import SalesOrder from '../../ProductList/ProductList'
+import { ReactComponent as NoOrders } from '../../../Assets/Images/noorders.svg'
 import { useNavigate } from 'react-router-dom'
-import useOrders from "../../Hooks/Sales/useOrders"
+import useOrders from "../../../Hooks/Sales/useOrders"
 
 function MyOrders() {
     const orders = useOrders()

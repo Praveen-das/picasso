@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { _addToWishlist, _removeFromWishlist, _getUserWishlist } from "../lib/product.api";
 
-
 function useWishlist() {
     const queryClient = useQueryClient();
 
@@ -18,7 +17,7 @@ function useWishlist() {
             queryClient.invalidateQueries(['wishlist'])
         },
     })
-
+    
     return {
         wishlists,
         addToWishlist,

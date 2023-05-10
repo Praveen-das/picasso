@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Address from "./Address";
 import { Typography } from "@mui/material";
 import AddNewAddress from "./AddNewAddress";
-import useCurrentUser from "../../Hooks/useCurrentUser";
+import useCurrentUser from "../../../Hooks/useCurrentUser";
 
 function ManageAddress() {
   const { currentUser } = useCurrentUser();

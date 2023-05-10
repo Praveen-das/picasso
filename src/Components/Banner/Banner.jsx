@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './banner.css'
 import gsap from 'gsap'
-import { Link } from 'react-router-dom'
 import Card from '../Card/Card'
 
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
-import 'swiper/swiper.min.css';
-import { Mousewheel } from "swiper"
-import Section from '../Devices/Section/Section'
+import { Swiper, SwiperSlide, Mousewheel } from '../../lib/Swiper'
+
 import { useProducts } from '../../Hooks/useProducts'
-import Vibrant from 'node-vibrant';
-import { useStore } from '../../Context/Store'
 import axios from 'axios'
 import { Box, Grid, Typography } from '@mui/material'
-// import ColorThief from 'colorthief'
+import useWishlist from '../../Hooks/useWishlist'
 
 const categories = [
     'oil paintings', 'murals', 'fabric painting', 'watercolor', 'digital'
@@ -21,45 +16,41 @@ const categories = [
 
 function Banner() {
     const { data } = useProducts()
-    const [img, setImg] = useState(data && data)
     const [preIdx, setPreIdx] = useState(-1)
-    const setColor = useStore(s => s.setColor)
+    // const { wishlist } = useWishlist()
 
-    useEffect(() => {
-        if (data) setImg(data[0][0]?.images[0]?.url)
-    }, [data])
+    const app = useRef();
 
-    // useEffect(() => {
-    //     if (img) {
-    //         const vibrant = new Vibrant(img);
-    //         vibrant.getPalette().then((palette) => {
-    //             document.documentElement.style.background = palette.Vibrant.hex;
-    //         });
-    //     }
-    // }, [img])
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            const tl = gsap.timeline({ defaults: { duration: 0.4 } })
+            tl.from(br.current, {
+                delay: 0.5,
+                opacity: 0
+            }).from('.brandName,.p1', {
+                'clipPath': 'polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)',
+                y: 50,
+                opacity: 0,
+                stagger: 0.2
+            })
+        }, app)
 
-    useEffect(() => {
-        const tl = gsap.timeline({ defaults: { duration: 0.2 } })
-        tl.from('.Banner-right', {
-            delay: 0.2,
-            opacity: 0
-        }).from('.brandName,.p1,.Banner .button_primary', {
-            'clipPath': 'polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)',
-            y: 50,
-            opacity: 0,
-            stagger: 0.1
-        })
+        return () => ctx.revert();
     }, [])
 
     const [dummy, setDummy] = useState([])
+
     useEffect(() => {
         axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=9')
             .then(({ data }) => setDummy(data))
     }, [])
 
+    const br = useRef()
+
+
     return (
         <>
-            <Grid container spacing={4} p='2rem 5rem' overflow='hidden'>
+            <Grid ref={app} container spacing={4} p='2rem 5rem' overflow='hidden'>
                 <Grid item xs={6} >
                     <Box
                         display='flex'
@@ -69,7 +60,7 @@ function Banner() {
                         <label className='p1' htmlFor="">Find the latest collections that suit your needs and tastes</label>
                     </Box>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid ref={br} item xs={6}>
                     <Swiper
                         onActiveIndexChange={(e) => setPreIdx(e.activeIndex - 1)}
                         slidesPerView='auto'
@@ -130,8 +121,9 @@ function Banner() {
                             fontFamily='Bebas Neue'
                         >categories</Typography>
                         {
-                            categories.map(category => (
+                            categories.map((category, key) => (
                                 <Box
+                                    key={key}
                                     display='flex'
                                     justifyContent='center'
                                     alignItems='center'
@@ -144,7 +136,7 @@ function Banner() {
                                         transition: '0.2s',
                                         backdropFilter: 'blur(10px)',
                                         ":hover": {
-                                            bgcolor: 'var(--overlay)',
+                                            bgcolor: 'var(--brand)',
                                             color: 'white',
                                             boxShadow: '0px 4px 5px #d1d1d1',
                                             translate: '0 -10px'
@@ -158,7 +150,6 @@ function Banner() {
                     </Box>
                 </Grid>
             </Grid>
-            {/* <Section /> */}
         </>
     )
 }

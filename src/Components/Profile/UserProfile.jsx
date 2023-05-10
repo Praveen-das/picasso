@@ -1,18 +1,21 @@
-import { Box, Button, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Paper, Tab, Tabs, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import ProfileDetails from './Components/ProfileDetails'
-import ManageAddress from './ManageAddress'
-import MyOrders from './MyOrders'
+import ProfileDetails from './ProfileDetails/ProfileDetails'
+import ManageAddress from './ManageAddress/ManageAddress'
+import MyOrders from './MyOrders/MyOrders'
+import MyWishlist from './MyWishlist/MyWishlist'
 
 import { styled } from '@mui/material/styles';
+import { Box, Grid, Paper, Tab, Tabs } from '@mui/material'
+
 import LocalMallIcon from '@mui/icons-material/LocalMallOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
 import HomeIcon from '@mui/icons-material/HomeOutlined';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import { useStore } from '../../Context/Store'
-import Avatar from '../Avatar/Avatar'
-import socket from '../../lib/ws'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useLocation, useNavigate } from 'react-router-dom'
+import { MessengerSettings } from './MessengerSettings/MessengerSettings'
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -62,10 +65,11 @@ function CTabs({ children, value, onChange }) {
 }
 
 function UserProfile() {
-    const [value, setValue] = useState(3);
+    const navigate = useNavigate()
+    const { tab } = useLocation().state
 
     const handleChange = (_, newValue) => {
-        setValue(newValue);
+        navigate('/profile', { state: { tab: newValue } })
     };
 
     const Item = styled(Paper)(({ theme }) => ({
@@ -92,30 +96,36 @@ function UserProfile() {
     return (
         <Grid container sx={{ flexGrow: 1, bgcolor: 'background.paper' }}>
             <Grid item sx={{ paddingTop: { xs: 0, md: 3 }, paddingLeft: { xs: 0, sm: 1, md: 0 } }} xs={12} md={2} >
-                <CTabs value={value} onChange={handleChange}>
+                <CTabs value={tab} onChange={handleChange}>
                     <Tab {...tabStyling} icon={<PersonIcon fontSize='small' />} label="Personal Details" />
                     <Tab {...tabStyling} icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
+                    <Tab {...tabStyling} icon={<FavoriteBorderIcon fontSize='small' />} label="My Wishlist" />
                     <Tab {...tabStyling} icon={<HomeIcon fontSize='small' />} label="Manage Address" />
                     <Tab {...tabStyling} icon={<ChatBubbleIcon fontSize='small' />} label="Chat Settings" />
                 </CTabs>
             </Grid>
             <Grid item xs={12} md>
-                <TabPanel value={value} index={0}>
+                <TabPanel value={tab} index={0}>
                     <Item {...itemStyling} >
                         <ProfileDetails />
                     </Item>
                 </TabPanel>
-                <TabPanel value={value} index={1}>
+                <TabPanel value={tab} index={1}>
                     <Item {...itemStyling}>
                         <MyOrders />
                     </Item>
                 </TabPanel>
-                <TabPanel value={value} index={2}>
+                <TabPanel value={tab} index={2}>
+                    <Item {...itemStyling}>
+                        <MyWishlist />
+                    </Item>
+                </TabPanel>
+                <TabPanel value={tab} index={3}>
                     <Item {...itemStyling}>
                         <ManageAddress />
                     </Item>
                 </TabPanel>
-                <TabPanel value={value} index={3}>
+                <TabPanel value={tab} index={4}>
                     <Item {...itemStyling}>
                         <MessengerSettings />
                     </Item>
@@ -127,60 +137,3 @@ function UserProfile() {
 
 export default UserProfile
 
-function MessengerSettings() {
-    const blockedUsers = useStore(s => s.blockedUsers)
-    const connectedUsers = useStore(s => s.connectedUsers)
-    const [users, setUsers] = useState([])
-
-    useEffect(() => {
-        const list = connectedUsers?.filter(o => blockedUsers?.includes(o.user_id))
-        setUsers(list)
-    }, [connectedUsers, blockedUsers])
-
-    const style = {
-        title: { fontSize: 16, fontWeight: 600, color: "primary" },
-        summery: { variant: "subtitle2", lineHeight: "30px", color: "#111" },
-    };
-
-    return (
-        <Grid container>
-            <Grid item xs={12} mb={2}>
-                <Typography variant="h5" fontWeight={800} color="#333">
-                    Chat Settings
-                </Typography>
-            </Grid>
-            <Grid container px={2}>
-                <Grid item xs={12} mb={2}>
-                    <Typography {...style.title} >
-                        Blocked users
-                    </Typography>
-                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                        {
-                            users.map((user, i) => (
-                                <>
-                                    <ListItem
-                                        secondaryAction={
-                                            <Button onClick={() => socket.emit('unblock_room', user?.user_id)} variant='text'>Unblock</Button>
-                                        }>
-                                        <ListItemAvatar>
-                                            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={<Typography fontWeight={500}>{user?.username}</Typography>}
-                                            secondary={user?.user_id}
-                                        />
-
-                                    </ListItem>
-                                    {
-                                        i !== 0 || i + 1 !== users.length &&
-                                        <Divider sx={{ width: '100%' }} />
-                                    }
-                                </>
-                            ))
-                        }
-                    </List>
-                </Grid>
-            </Grid>
-        </Grid>
-    )
-}

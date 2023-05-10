@@ -1,17 +1,9 @@
 #quantity {
     width: 100px;
     display: flex;
-    justify-content: space-between;
+    position: relative;
     align-items: center;
-    box-shadow: 0 0 3px #0000003a;
+    box-shadow: 0 0 2px hsl(0, 0%, 0% , 50%);
     border-radius: 10px;
-    padding: 5px;
+    padding: 9px;
 }
-
-/* #quantity button {
-    border: none;
-    border-radius: 50%;
-    aspect-ratio: 1;
-    font-size: 20px;
-    cursor: pointer;
-} */

@@ -25,19 +25,18 @@ function Avatar({ displayName, sx, profilePicture }) {
         const haveLastName = name.trim().indexOf(' ') !== -1
 
         return {
-            sx: {
-                bgcolor: stringToColor(name),
-                width: sx && sx.width,
-                height: sx && sx.height
-            },
+            sx: { bgcolor: stringToColor(name) },
             children: haveLastName ?
                 `${name.split(' ')[0][0]}${name.split(' ')[1][0]}` :
                 `${name.split(' ')[0][0]}`
         };
     }
+    
+    const props = handleProfilePicture()
+
     return (
         <>
-            <_Avatar sx={{ width: sx && sx.width, height: sx && sx.height, }} {...handleProfilePicture()} />
+            <_Avatar {...props} sx={{ ...props?.sx, ...sx }} />
         </>
     )
 }

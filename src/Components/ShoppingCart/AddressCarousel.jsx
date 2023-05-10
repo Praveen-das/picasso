@@ -5,9 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import QuantityInput from '../QuantityInput/QuantityInput';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js'
-import 'swiper/swiper.min.css';
-import { Mousewheel } from "swiper"
+import { Swiper, SwiperSlide, Mousewheel } from '../../lib/Swiper'
 import useCurrentUser from '../../Hooks/useCurrentUser';
 
 function AddressCarousel() {

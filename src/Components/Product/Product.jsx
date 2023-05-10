@@ -1,25 +1,33 @@
-import { useEffect, useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './product.css'
 import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
-import { Avatar, Badge, Box, Button, Container, Divider, Grid, IconButton, Rating, Skeleton, Tab, Tabs, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary,   Box, Button, Divider, Grid, IconButton,Rating, Skeleton, Typography } from '@mui/material';
 import FloatingCart from '../FloatingCart/FloatingCart';
 import { useCart } from '../../Hooks/useCart';
 import useCurrentUser from '../../Hooks/useCurrentUser';
 import Tray from '../ProductsTray/Tray'
 import { useProduct } from '../../Hooks/useProducts';
 import SellerProfile from './SellerProfile/SellerProfile';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import ShareIcon from '@mui/icons-material/Share';
+import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ChatIcon from '@mui/icons-material/Chat';
 import { useStore } from '../../Context/Store';
+import StarEmptyIcon from '@mui/icons-material/StarBorderRounded';
+import StarIcon from '@mui/icons-material/StarRounded';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ShareIcon from '@mui/icons-material/Share';
+import WishlistButton from '../WishlistButton/WishlistButton'
+
 
 function Product() {
     const [quantity, setQuantity] = useState(1)
     const [defaultImg, setDefaultImg] = useState(0)
+    const [seller, setSeller] = useState(null)
 
     const setChatWidget = useStore(s => s.setChatWidget);
+    const connectedUsers = useStore(s => s.connectedUsers)
+
     const navigate = useNavigate()
     const { currentUser, addToRecentlyViewed } = useCurrentUser()
     const { addToCart, removeFromCart, cart: cart_items } = useCart()
@@ -27,6 +35,8 @@ function Product() {
 
     const params = useParams()
     const { data: product } = useProduct(params?.product_id)
+
+    const sellerId = product?.sales_person?.id
 
     // useEffect(() => {
     //     if (currentUser.isLoading) return
@@ -58,6 +68,7 @@ function Product() {
                 addToCart.mutateAsync({
                     product_id: product?.id,
                     quantity,
+                    // size: itemsSize,
                     price: quantity * product?.price,
                     discount: product?.discount
                 })
@@ -99,6 +110,12 @@ function Product() {
 
     const sizes = ['12x24', '24x48', '48x96']
 
+    const handleChatWidget = () => {
+        const user = connectedUsers.find(user => user?.user_id === sellerId)
+        if (!currentUser.data) return navigate('/login')
+        setChatWidget(true, true, { ...user, product_id: product?.id })
+    }
+
     const handleSharing = () => {
         navigator.share({
             url: window.location.href
@@ -107,9 +124,11 @@ function Product() {
             .catch((err) => console.log(err))
     }
 
-    const handleChatWidget = () => {
-        // if (!currentUser.data) return navigate('/login')
-        // setChatWidget(!open, true, { ...seller, product_id })
+    const [itemsSize, setSize] = useState(sizes[0])
+
+    const IconButtonProps = {
+        fontSize: 'small',
+        color: 'primary'
     }
 
     return (
@@ -117,7 +136,18 @@ function Product() {
             {/* {currentUser.data && <FloatingCart />} */}
             <Grid container columnSpacing={8} p='1rem 3rem'>
                 {/*--------------- LEFT ---------------*/}
-                <Grid item xs={4.5} display='flex' flexDirection='column' pt={2} alignItems='center' gap={2}>
+                <Grid
+                    item
+                    xs={6}
+                    display='flex'
+                    flexDirection='column'
+                    pt={2}
+                    alignItems='center'
+                    gap={2}
+                    position='sticky'
+                    alignSelf='start'
+                    top='2rem'
+                >
                     <img id='productImage' src={product?.images[defaultImg].url + '/tr:w-200'} alt="" />
                     <div className="alt_images">
                         {
@@ -128,156 +158,188 @@ function Product() {
                     </div>
                 </Grid>
                 {/*--------------- MIDDLE ---------------*/}
-                <Grid item xs={4} display={'flex'} flexDirection='column' rowGap={2} >
-                    <Typography textTransform='capitalize' variant='h4' fontWeight={600}>{product?.name || <Skeleton width='60%' />}</Typography>
-                    <Box display='flex' alignItems='center' gap={1} fontWeight={500}>
-                        by
-                        <Typography component='a' textTransform='capitalize' fontWeight={600}>{product?.sales_person.displayName}</Typography>
+                <Grid item xs={6} display={'flex'} flexDirection='column' rowGap={3} >
+                    <Box display='flex' alignItems='center' gap={1}>
+                        <Typography textTransform='capitalize' variant='h3' fontWeight={700}>{product?.name || <Skeleton width='60%' />}</Typography>
+                        <Box ml='auto' display={'flex'} gap={1} width={100}>
+                            {
+                                sellerId !== currentUser.data?.id &&
+                                <IconButton onClick={() => handleChatWidget()}>
+                                    <ChatIcon {...IconButtonProps} />
+                                </IconButton>
+                            }
+                            <WishlistButton productId={product?.id} />
+                            <IconButton
+                                onClick={handleSharing}
+                            >
+                                <ShareIcon {...IconButtonProps} />
+                            </IconButton>
+                        </Box>
                     </Box>
-                    <div id="rating">
-                        <Rating name="read-only" value={product?.rating || 0} readOnly />
+                    <Box display='flex' alignItems='center' gap={1} mt={-2.5} fontWeight={500} >
+                        by
+                        <SellerProfile seller={product?.sales_person} />
+                    </Box>
+                    <Box display='flex' alignItems='center' gap={1} >
+                        <Rating icon={<StarIcon />} emptyIcon={<StarEmptyIcon />} name="read-only" value={product?.rating || 0} />
+                        <Typography {...style}> {product?.rating || 0}&nbsp;</Typography>
                         <label id='bull' htmlFor="">&bull;</label>
                         <Typography {...style}> {product?.reviews.length || 0}&nbsp;Reviews</Typography>
-                    </div>
-                    <table style={{ width: '100%' }}>
-                        <tbody>
-                            <tr>
-                                <td><Typography fontWeight={700} fontSize={14}>CATEGORY</Typography></td>
-                                <td><Typography fontWeight={700} fontSize={14}>MATERIAL</Typography></td>
-                                <td><Typography fontWeight={700} fontSize={14}>STOCK</Typography></td>
-                            </tr>
-                            <tr>
-                                <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.category?.name}</Typography></td>
-                                <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.material?.name}</Typography></td>
-                                <td>
-                                    <Typography {...style}>{product?.quantity}</Typography>
-                                    {/* <Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.width} x {product?.height}</Typography> */}
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                    <Box>
-                        <Typography {...title}>Description</Typography>
-                        <Typography {...paragraph}>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, doloribus perferendis ratione nisi rerum repellendus asperiores ab laboriosam. Rerum ratione maxime aut temporibus ex voluptas ut, ea quae iste nihil.
-                        </Typography>
                     </Box>
-                    {/* <Box>
-                        <Typography {...title}>Seller</Typography>
-                        <SellerProfile product_id={product?.id} sellerId={product?.sales_person.id} />
-                    </Box> */}
-                    <Box>
-                        <Typography {...title}>Additional information</Typography>
-                        <div className='product_info'>
-                            <span className='product_info_items'>
-                                <Typography {...style2}>Delivery :</Typography>
-                                <Typography {...style}>Shipping from kottayam, Kerala</Typography>
-                            </span>
-                            <span className='product_info_items'>
-                                <Typography {...style2}>Shipping :</Typography>
-                                <Typography {...style}>Free International Shipping</Typography>
-                            </span>
-                            <span className='product_info_items'>
-                                <Typography {...style2}>Arrive :</Typography>
-                                <Typography {...style}>Estimated arrival on 25 - 27 Oct  2023</Typography>
-                            </span>
-                        </div>
-                    </Box>
-                </Grid>
-
-                {/*--------------- RIGHT ---------------*/}
-                <Grid item xs={3.5} display={'flex'} flexDirection='column' rowGap={4}>
-                    <Box
-                        boxSizing='border-box'
-                        display='flex'
-                        alignItems='center'
-                        justifyContent='center'
-                        gap={2}
-                        color='white'
-                        bgcolor={'var(--brand)'}
-                        borderRadius={'10px'}
-                        padding='1rem 1.5rem'
-                    >
-                        <Typography fontWeight={600} variant='h6'>25% OFF</Typography>
-                        <Typography fontSize={12} sx={{ bgcolor: '#ffffff23', p: '10px 15px', borderRadius: 2 }}>Until Oct 30, 2022</Typography>
-                    </Box>
-                    <Box display='flex' alignItems='center' gap={1}>
-                        <Typography {...style} >Select size</Typography>
+                    <Divider />
+                    <Typography {...paragraph}>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, doloribus perferendis ratione nisi rerum repellendus asperiores ab laboriosam. Rerum ratione maxime aut temporibus ex voluptas ut, ea quae iste nihil.
+                    </Typography>
+                    <Box display='flex' alignItems='center' gap={2}>
+                        Select size
                         {
-                            sizes.map(size => (
+                            sizes.map((size, key) => (
                                 <Box
-                                    display='flex'
-                                    justifyContent='center'
-                                    alignItems='center'
-                                    boxShadow='0px 4px 20px #d1d1d1'
-                                    bgcolor='white'
-                                    p='0.2rem 1rem'
-                                    borderRadius='10px'
+                                    key={key}
+                                    component='button'
+                                    onClick={() => setSize(size)}
+                                    p='10px 15px'
+                                    border='none'
+                                    borderRadius={2}
+                                    bgcolor={itemsSize === size && 'var(--brand)'}
+                                    color={itemsSize === size && 'white'}
+                                    gap={2}
                                     sx={{
-                                        transition: '0.2s',
-                                        backdropFilter: 'blur(10px)',
+                                        transition: '0.1s',
+                                        cursor: 'pointer',
                                         ":hover": {
-                                            bgcolor: 'var(--overlay)',
-                                            color: 'white',
-                                            boxShadow: '0px 4px 5px #d1d1d1',
-                                            translate: '0 -5px'
+                                            bgcolor: 'var(--brand)',
+                                            translate: itemsSize !== size ? '0 -5px' : 'undefined',
+                                            color: 'white'
                                         }
                                     }}
-                                >
-                                    <Typography sx={{ pointerEvents: 'none' }} fontFamily='Bebas Neue' >{size}</Typography>
-                                </Box>
+                                >{size}</Box>
                             ))
                         }
                     </Box>
-                    <Box display='flex' alignItems='center' gap={4}>
-                        <Button {...handleCartButton()} sx={{ borderRadius: 500, px: 3, py: 1.2 }} variant='contained' size='small' >Add to cart</Button>
-                        <Box>
-                            <Typography lineHeight={1} fontSize='1.5em' color={'black'} fontWeight={600} >₹{product?.price - (product?.price * 25) / 100 || 0 * quantity}</Typography>
-                            <Typography lineHeight={1} sx={{ ...style, textDecoration: 'line-through', fontSize: 14, fontWeight: 500 }} >₹{product?.price || 0 * quantity}</Typography>
+                    <Box display='flex' gap={2} position='relative' alignItems='center'>
+                        <Typography
+                            lineHeight={1}
+                            variant='h4'
+                            fontWeight={700}
+                        >
+                            ₹{product?.price - (product?.price * product?.discount) / 100 || 0 * quantity}
+                        </Typography>
+                        {
+                            product?.discount > 0 &&
+                            <Typography
+                                lineHeight={1}
+                                sx={{
+                                    ...style,
+                                    textDecoration: 'line-through',
+                                    fontSize: 16,
+                                    fontWeight: 600,
+                                    position: 'absolute',
+                                    bottom: -18,
+                                    mb: 3
+                                }}
+                            >₹{product?.price || 0 * quantity}</Typography>
+                        }
+                        {
+                            product?.discount > 0 &&
+                            <Typography
+                                fontWeight={800}
+                                color='var(--brand)'
+                                sx={{ bgcolor: '#5e47f921' }}
+                                borderRadius={2.5}
+                                px={1.5}
+                                py={1}
+                            >{product?.discount}% OFF</Typography>
+                        }
+                    </Box>
+                    <Box display='flex' alignItems='center' gap={4} mt={1}>
+                        <QuantityInput />
+                        <Box display='flex' alignItems='center' gap={4}>
+                            <Button
+                                {...handleCartButton()}
+                                startIcon={<CartIcon />}
+                                sx={{ borderRadius: 3, px: 5, py: 1.5 }}
+                                variant='contained'
+                            />
                         </Box>
                     </Box>
-                    <Box display='flex' gap={4}>
-                        <Button onClick={handleChatWidget} startIcon={<ChatIcon />} size='small'>Chat Seller</Button>
-                        <Button onClick={handleSharing} startIcon={<ShareIcon />} size='small'>Share Product</Button>
-                    </Box>
-                    {/* <Typography
-                        fontSize={18}
-                        color={'black'}
-                        fontWeight={700}
-                        textTransform='capitalize'
-                    >Set Order</Typography> */}
-
-                    {/* <Box marginLeft={-0.5} display='flex' alignItems={'center'} justifyContent={'space-between'}>
-                        <QuantityInput onChange={(value) => setQuantity(value)} />
-                        <div className='product_info_items'>
-                            <Typography {...style}>Stock :</Typography>
-                            <Typography {...style2}>{product?.quantity}</Typography>
-                        </div>
-                    </Box> */}
-                    {/* <Box display='flex' alignItems={'center'} justifyContent={'space-between'}>
-                        <Typography
-                            fontSize={16}
-                            color={'black'}
-                            fontWeight={700}
-                            textTransform='capitalize'
-                        >Total price :</Typography>
-                        <Typography fontSize='1.5em' color={'black'} fontWeight={600} >{product?.price || 0 * quantity}</Typography>
-                    </Box> */}
-
-                </Grid >
-
-                <Grid item xs={12} mt={5}>
+                    {/* <Divider sx={{ mt: 2 }} /> */}
+                    <div>
+                        <Accordion >
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography {...title}>SPECIFICATIONS</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <table style={{ width: '100%' }}>
+                                    <tbody>
+                                        <tr>
+                                            <td><Typography fontWeight={700} fontSize={14}>Category</Typography></td>
+                                            <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.category?.name}</Typography></td>
+                                        </tr>
+                                        <tr>
+                                            <td><Typography fontWeight={700} fontSize={14}>Material</Typography></td>
+                                            <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.material?.name}</Typography></td>
+                                        </tr>
+                                        <tr>
+                                            <td><Typography fontWeight={700} fontSize={14}>Stock</Typography></td>
+                                            <td><Typography {...style}>{product?.quantity}</Typography></td>
+                                        </tr>
+                                        <tr>
+                                            <td><Typography fontWeight={700} fontSize={14}>Weight</Typography></td>
+                                            <td><Typography {...style}>372g</Typography></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion >
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography {...title}>SHIPPING DETAILS</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <div className='product_info'>
+                                    <span className='product_info_items'>
+                                        <Typography {...style2}>Delivery :</Typography>
+                                        <Typography {...style}>Shipping from kottayam, Kerala</Typography>
+                                    </span>
+                                    <span className='product_info_items'>
+                                        <Typography {...style2}>Shipping :</Typography>
+                                        <Typography {...style}>Free International Shipping</Typography>
+                                    </span>
+                                    <span className='product_info_items'>
+                                        <Typography {...style2}>Arrive :</Typography>
+                                        <Typography {...style}>Estimated arrival on 25 - 27 Oct  2023</Typography>
+                                    </span>
+                                </div>
+                            </AccordionDetails>
+                        </Accordion>
+                    </div>
+                    {/* <Divider/> */}
                     <Reviews product={product} />
                 </Grid>
+                <Divider sx={{ mt: 2 }} />
+
+                {/*--------------- RIGHT ---------------*/}
+                {/* <Grid item xs={6} />
+                <Grid item xs={6} mt={5}>
+                    <Reviews product={product} />
+                </Grid> */}
             </Grid >
-            {
+            {/* {
                 currentUser.data !== null &&
                 <>
                     <label className='recently_viewed' htmlFor="">Recently viewed</label>
                     <Tray height={230} data={currentUser.data?.recently_viewed?.map(o => o.product)} from='110%' to='-50%' parent='productContainer_wrapper' />
                 </>
-            }
+            } */}
         </>
     )
 }

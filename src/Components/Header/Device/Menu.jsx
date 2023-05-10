@@ -59,7 +59,7 @@ function Menu({ open, close }) {
                         </Link>
                     </li>
                     <li>
-                        <Link id='menu_link' to='/my-profile'>
+                        <Link id='menu_link' to='/profile'>
                             <Account className='menu_icon' />
                             Account
                         </Link>

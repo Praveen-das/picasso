@@ -11,7 +11,7 @@ function Tray({ title, url }) {
     const { data } = useProductQuery(title, url)
 
     const [dummy, setDummy] = useState([])
-    
+
     useEffect(() => {
         axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=9')
             .then(({ data }) => setDummy(data))
@@ -25,7 +25,7 @@ function Tray({ title, url }) {
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
                     <Masonry spacing={15} columns={3} >
                         {
-                            data&& data[0]?.map(item => (<Card sx={{ width: '100%' }} key={item.id} product={item} />))
+                            data && data[0]?.map(item => (<Card sx={{ width: '100%' }} key={item.id} product={item} />)) || <></>
                         }
                     </Masonry>
                 </Box>

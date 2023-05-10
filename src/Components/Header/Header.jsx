@@ -45,23 +45,23 @@ function Header() {
             Sell
           </Link> */}
           {/* <MessagesLink /> */}
-          <Link id='nav_links' to="/cart">
+          <Link id='nav_links' to="/wishlist">
             <FavoriteIcon fontSize='small' />
-            Wishlist
+            {/* Wishlist */}
           </Link>
           <Link id='nav_links' to='/cart' htmlFor="">
             <CartIcon fontSize='small' />
-            Cart
+            {/* Cart */}
           </Link>
           {
             currentUser.data !== null ?
-              <Link to="/my-profile">
+              <Link to="/profile">
                 <PersonIcon fontSize='small' />
-                Account
+                {/* Account */}
               </Link> :
               <Link id='nav_links' to="/login" >
                 <LoginIcon fontSize='small' />
-                Log in
+                {/* Log in */}
               </Link>
           }
           {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">

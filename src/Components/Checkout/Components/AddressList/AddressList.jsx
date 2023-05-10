@@ -5,7 +5,7 @@ import useCurrentUser from '../../../../Hooks/useCurrentUser';
 import { Box, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useRef } from 'react';
-import AddNewAddress from '../../../Profile/AddNewAddress'
+import AddNewAddress from '../../../Profile/ManageAddress/AddNewAddress'
 
 function AddressList({ setAddress }) {
     const [value, setValue] = useState(0)

@@ -55,7 +55,7 @@ function App() {
       <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
       <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
       <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
-      <Route path="/my-profile" element={<ProfilePage />} loader={privateRoute} />
+      <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
     </Route>
   );
 

@@ -14,7 +14,7 @@ import AddressList, { Address } from './Components/AddressList/AddressList';
 import PaymentMethod from './Components/PaymentMethod/PaymentMethod';
 import Products from './Components/Products/Products';
 import { useCart } from '../../Hooks/useCart';
-import AddNewAddress from '../Profile/AddNewAddress';
+import AddNewAddress from '../Profile/ManageAddress/AddNewAddress';
 import useSales from '../../Hooks/Sales/useSales';
 
 function Checkout() {
