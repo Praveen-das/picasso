@@ -13,9 +13,16 @@ body,
     /* --brand: #4622fe; */
     --BH: 253;
     --BS: 100%;
+
+    /* -----brand----- */
     --brand: hsl(var(--BH), var(--BS), 60%);
     --brandDark: hsl(var(--BH), var(--BS), 55%);
+    --brandLight50: hsl(var(--BH), var(--BS), 95%);
+    --brandLight100: hsl(var(--BH), var(--BS), 90%);
+    --brandLight200: hsl(var(--BH), var(--BS), 0%);
     --brandMain: #33364d;
+    /* --------------- */
+
     --shadow: #b5d0ff;
     /* --overlay: rgba(0, 0, 0, 0.836); */
     --overlay: #5e47f9b3;

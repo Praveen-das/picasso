@@ -10,9 +10,13 @@ import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 
 import ProfileCredentialForm from "./ProfileCredentialForm";
 import useCurrentUser from "../../../Hooks/useCurrentUser";
+import useAuth from "../../../Hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 function ProfileDetails() {
   const { currentUser, updateUser, isLoading } = useCurrentUser();
+  const { logout } = useAuth()
+  const navigate = useNavigate()
 
   const handleInput = () => {
     document.getElementById("IKUploader").click();
@@ -106,6 +110,15 @@ function ProfileDetails() {
             </Typography>
           </div>
           <LoadingButton variant="text">Delete account</LoadingButton>
+        </Grid>
+        <Grid item xs={12} display="flex" alignItems='center' justifyContent="space-between">
+          <div>
+            <Typography {...style.title}>Log out</Typography>
+            <Typography {...style.summery}>
+              Log out of your account.
+            </Typography>
+          </div>
+          <LoadingButton loading={logout.isLoading} onClick={() => logout.mutateAsync().then(() => navigate('/'))} variant="contained">Log out</LoadingButton>
         </Grid>
       </Grid>
     </>

@@ -18,8 +18,7 @@ function WishlistButton({ productId, color = 'primary', size = 'small' }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!wishlists.data)
-            return;
+        if (!wishlists.data) return;
         setWishlist(wishlists.data?.find(p => p.product_id === productId));
     }, [wishlists, productId]);
 

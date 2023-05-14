@@ -66,7 +66,7 @@ function CTabs({ children, value, onChange }) {
 
 function UserProfile() {
     const navigate = useNavigate()
-    const { tab } = useLocation().state
+    const { tab } = useLocation().state || { tab: 0 }
 
     const handleChange = (_, newValue) => {
         navigate('/profile', { state: { tab: newValue } })

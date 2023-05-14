@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import './product.css'
 import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
-import { Accordion, AccordionDetails, AccordionSummary,   Box, Button, Divider, Grid, IconButton,Rating, Skeleton, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, IconButton, Rating, Skeleton, Typography } from '@mui/material';
 import FloatingCart from '../FloatingCart/FloatingCart';
 import { useCart } from '../../Hooks/useCart';
 import useCurrentUser from '../../Hooks/useCurrentUser';
@@ -81,31 +81,12 @@ function Product() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
-    const style = {
-        fontSize: 15,
-        color: 'GrayText',
-        fontWeight: 500,
-        variant: 'subtitle2',
-    }
-    const style2 = {
-        fontSize: 15,
-        fontWeight: 700,
-        variant: 'subtitle2',
-        textTransform: 'capitalize'
-    }
-
+    
     const title = {
         fontSize: 16,
         fontWeight: 600,
         lineHeight: 3,
         textTransform: 'capitalize'
-    }
-
-    const paragraph = {
-        variant: 'subtitle2',
-        lineHeight: 1.8,
-        fontSize: 15,
     }
 
     const sizes = ['12x24', '24x48', '48x96']
@@ -182,12 +163,12 @@ function Product() {
                     </Box>
                     <Box display='flex' alignItems='center' gap={1} >
                         <Rating icon={<StarIcon />} emptyIcon={<StarEmptyIcon />} name="read-only" value={product?.rating || 0} />
-                        <Typography {...style}> {product?.rating || 0}&nbsp;</Typography>
+                        <Typography variant='text.grey'> {product?.rating || 0}&nbsp;</Typography>
                         <label id='bull' htmlFor="">&bull;</label>
-                        <Typography {...style}> {product?.reviews.length || 0}&nbsp;Reviews</Typography>
+                        <Typography variant='text.grey'> {product?.reviews.length || 0}&nbsp;Reviews</Typography>
                     </Box>
                     <Divider />
-                    <Typography {...paragraph}>
+                    <Typography variant='paragraph'>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, doloribus perferendis ratione nisi rerum repellendus asperiores ab laboriosam. Rerum ratione maxime aut temporibus ex voluptas ut, ea quae iste nihil.
                     </Typography>
                     <Box display='flex' alignItems='center' gap={2}>
@@ -223,14 +204,13 @@ function Product() {
                             variant='h4'
                             fontWeight={700}
                         >
-                            ₹{product?.price - (product?.price * product?.discount) / 100 || 0 * quantity}
+                            ₹{(product?.price - (product?.price * product?.discount) / 100 || 0) * quantity}
                         </Typography>
                         {
                             product?.discount > 0 &&
                             <Typography
                                 lineHeight={1}
                                 sx={{
-                                    ...style,
                                     textDecoration: 'line-through',
                                     fontSize: 16,
                                     fontWeight: 600,
@@ -253,7 +233,7 @@ function Product() {
                         }
                     </Box>
                     <Box display='flex' alignItems='center' gap={4} mt={1}>
-                        <QuantityInput />
+                        <QuantityInput onChange={value => setQuantity(value)} />
                         <Box display='flex' alignItems='center' gap={4}>
                             <Button
                                 {...handleCartButton()}
@@ -277,20 +257,20 @@ function Product() {
                                 <table style={{ width: '100%' }}>
                                     <tbody>
                                         <tr>
-                                            <td><Typography fontWeight={700} fontSize={14}>Category</Typography></td>
-                                            <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.category?.name}</Typography></td>
+                                            <td><Typography variant='title.primary'>Category</Typography></td>
+                                            <td><Typography variant='text.grey'>{product?.category?.name}</Typography></td>
                                         </tr>
                                         <tr>
-                                            <td><Typography fontWeight={700} fontSize={14}>Material</Typography></td>
-                                            <td><Typography color='GrayText' fontWeight={600} fontSize={14}>{product?.material?.name}</Typography></td>
+                                            <td><Typography variant='title.primary'>Material</Typography></td>
+                                            <td><Typography variant='text.grey'>{product?.material?.name}</Typography></td>
                                         </tr>
                                         <tr>
-                                            <td><Typography fontWeight={700} fontSize={14}>Stock</Typography></td>
-                                            <td><Typography {...style}>{product?.quantity}</Typography></td>
+                                            <td><Typography variant='title.primary'>Stock</Typography></td>
+                                            <td><Typography variant='text.grey'>{product?.quantity}</Typography></td>
                                         </tr>
                                         <tr>
-                                            <td><Typography fontWeight={700} fontSize={14}>Weight</Typography></td>
-                                            <td><Typography {...style}>372g</Typography></td>
+                                            <td><Typography variant='title.primary'>Weight</Typography></td>
+                                            <td><Typography variant='text.grey'>372g</Typography></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -307,16 +287,16 @@ function Product() {
                             <AccordionDetails>
                                 <div className='product_info'>
                                     <span className='product_info_items'>
-                                        <Typography {...style2}>Delivery :</Typography>
-                                        <Typography {...style}>Shipping from kottayam, Kerala</Typography>
+                                        <Typography variant='title.primary'>Delivery :</Typography>
+                                        <Typography variant='text.grey'>Shipping from kottayam, Kerala</Typography>
                                     </span>
                                     <span className='product_info_items'>
-                                        <Typography {...style2}>Shipping :</Typography>
-                                        <Typography {...style}>Free International Shipping</Typography>
+                                        <Typography variant='title.primary'>Shipping :</Typography>
+                                        <Typography variant='text.grey'>Free International Shipping</Typography>
                                     </span>
                                     <span className='product_info_items'>
-                                        <Typography {...style2}>Arrive :</Typography>
-                                        <Typography {...style}>Estimated arrival on 25 - 27 Oct  2023</Typography>
+                                        <Typography variant='title.primary'>Arrive :</Typography>
+                                        <Typography variant='text.grey'>Estimated arrival on 25 - 27 Oct  2023</Typography>
                                     </span>
                                 </div>
                             </AccordionDetails>

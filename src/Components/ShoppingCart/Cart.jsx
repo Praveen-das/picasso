@@ -24,7 +24,7 @@ function Cart() {
 
     return (
         <>
-            <Grid container p='1rem 2rem 2rem 2rem' spacing={3} position='relative'>
+            <Grid container p='1rem 2rem 2rem 2rem' spacing={4} position='relative'>
                 <Grid item xs={8}>
                     <Grid item xs={12} mb={2} >
                         <Typography variant="h6" sx={{ fontWeight: '800' }}>SHOPPING CART</Typography>

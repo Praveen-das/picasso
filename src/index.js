@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from "./App";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import HelperContext from "./Context/HelperContext";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { MUIContext } from './Context/MUIContext';
 
 export const client = new QueryClient({
   defaultOptions: {
@@ -22,9 +22,9 @@ root.render(
   <StrictMode>
     <QueryClientProvider client={client}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <HelperContext>
+      <MUIContext>
         <App />
-      </HelperContext>
+      </MUIContext>
     </QueryClientProvider>
   </StrictMode>
 );
