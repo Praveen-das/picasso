@@ -17,7 +17,7 @@ import LoadingScreen from "./Components/MUIComponents/LoadingScreen"
 import Header from "./Components/Header/Header";
 import HomePage from "./Pages/HomePage";
 
-const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
+const CheckoutPage = lazy(() => import('./Pages/CheckoutPage'))
 const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
 const ProfilePage = lazy(() => import("./Pages/ProfilePage"))
 const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
@@ -55,7 +55,7 @@ function App() {
       <Route path="/login" element={<Login />} loader={privateRoute} />
 
       <Route path="/chat" element={<ChatPage />} loader={privateRoute} />
-      {/* <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} /> */}
+      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
       <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
       <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
       <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
