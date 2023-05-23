@@ -7,7 +7,7 @@ import {
   redirect,
 } from "react-router-dom";
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import "./App.css";
 
 import { MUIContext } from './Context/MUIContext';
@@ -31,7 +31,9 @@ const Alert = lazy(() => import("./Components/Alert/Alert"))
 
 function App() {
   const { currentUser } = useCurrentUser()
-
+  useEffect(() => {
+    console.log(currentUser.data);
+  }, [currentUser])
   const privateRoute = async ({ request }) => {
     const { pathname } = new URL(request.url)
 
