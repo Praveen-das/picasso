@@ -1,9 +1,9 @@
-// import Checkout from '../Components/Checkout/Checkout'
+import Checkout from '../Components/Checkout/Checkout'
 
 function CheckoutPage() {
     return (
         <>
-            {/* <Checkout /> */}
+            <Checkout />
         </>
     )
 }

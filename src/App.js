@@ -17,13 +17,13 @@ import LoadingScreen from "./Components/MUIComponents/LoadingScreen"
 import Header from "./Components/Header/Header";
 import HomePage from "./Pages/HomePage";
 
+const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
 const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
 const ProfilePage = lazy(() => import("./Pages/ProfilePage"))
 const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
 const SellerPage = lazy(() => import("./Pages/SellerPage"))
 const ProductPage = lazy(() => import("./Pages/ProductPage"))
 const ShoppingCartPage = lazy(() => import("./Pages/ShoppingCartPage"))
-const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
 const StorePage = lazy(() => import("./Pages/StorePage"))
 const ChatPage = lazy(() => import("./Pages/ChatPage"))
 const Login = lazy(() => import("./Components/Login/Login"))
@@ -74,10 +74,10 @@ function Layout() {
   return (
     <>
       <MUIContext>
-        <Alert />
-        <ChatEngin currentUser={currentUser} />
         <Header />
         <Suspense fallback={<LoadingScreen />}>
+          <Alert />
+          <ChatEngin currentUser={currentUser} />
           <Outlet />
         </Suspense>
         {/* <Footer /> */}
