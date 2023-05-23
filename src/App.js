@@ -17,7 +17,7 @@ import LoadingScreen from "./Components/MUIComponents/LoadingScreen"
 import Header from "./Components/Header/Header";
 import HomePage from "./Pages/HomePage";
 
-const CheckoutPage = lazy(() => import('./Pages/CheckoutPage'))
+const CheckoutPage = lazy(() => import('./Pages/CheckoutPages'))
 const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
 const ProfilePage = lazy(() => import("./Pages/ProfilePage"))
 const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
