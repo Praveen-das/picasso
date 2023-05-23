@@ -1,9 +1,9 @@
-import Cart from '../Components/ShoppingCart/Cart'
+// import Cart from '../Components/ShoppingCart/Cart'
 
 function ShoppingCartPage() {
     return (
         <>
-            <Cart />
+            {/* <Cart /> */}
         </>
     )
 }
