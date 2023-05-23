@@ -23,7 +23,7 @@ const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
 const SellerPage = lazy(() => import("./Pages/SellerPage"))
 const ProductPage = lazy(() => import("./Pages/ProductPage"))
 const ShoppingCartPage = lazy(() => import("./Pages/ShoppingCartPage"))
-const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
+// const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
 const StorePage = lazy(() => import("./Pages/StorePage"))
 const ChatPage = lazy(() => import("./Pages/ChatPage"))
 const Login = lazy(() => import("./Components/Login/Login"))
@@ -55,7 +55,7 @@ function App() {
       <Route path="/login" element={<Login />} loader={privateRoute} />
 
       <Route path="/chat" element={<ChatPage />} loader={privateRoute} />
-      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
+      {/* <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} /> */}
       <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
       <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
       <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
