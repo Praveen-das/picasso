@@ -1,11 +1,9 @@
-import Checkout from '../Components/Checkout/Checkout'
-import Header from '../Components/Header/Header'
+// import Checkout from '../Components/Checkout/Checkout'
 
 function CheckoutPage() {
     return (
         <>
-            <Header />
-            <Checkout />
+            {/* <Checkout /> */}
         </>
     )
 }

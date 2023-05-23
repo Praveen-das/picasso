@@ -1,5 +1,4 @@
 import React from 'react'
-import Header from '../Components/Header/Header'
 import Messenger from '../Components/Messenger/Messenger'
 import useCurrentUser from '../Hooks/useCurrentUser'
 
@@ -8,7 +7,6 @@ function ChatPage() {
 
     return (
         <>
-            <Header />
             <Messenger uid={currentUser.data?.id} />
         </>
     )

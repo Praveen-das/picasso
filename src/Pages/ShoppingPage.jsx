@@ -1,4 +1,3 @@
-import Header from '../Components/Header/Header'
 import Shop from '../Components/Shop/Shop'
 import { ScrollRestoration } from 'react-router-dom'
 import Sidebar from '../Components/Sidebar/Sidebar'
@@ -8,7 +7,6 @@ function ShoppingPage() {
     return (
         <div id='wrapper'>
             <ScrollRestoration />
-            <Header />
             <Grid container  spacing={2} >
                 <Grid item xs={2.5}>
                     <Sidebar />
