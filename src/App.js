@@ -7,7 +7,7 @@ import {
   redirect,
 } from "react-router-dom";
 
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import "./App.css";
 
 import { MUIContext } from './Context/MUIContext';
@@ -23,7 +23,7 @@ const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
 const SellerPage = lazy(() => import("./Pages/SellerPage"))
 const ProductPage = lazy(() => import("./Pages/ProductPage"))
 const ShoppingCartPage = lazy(() => import("./Pages/ShoppingCartPage"))
-// const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
+const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
 const StorePage = lazy(() => import("./Pages/StorePage"))
 const ChatPage = lazy(() => import("./Pages/ChatPage"))
 const Login = lazy(() => import("./Components/Login/Login"))
@@ -31,9 +31,7 @@ const Alert = lazy(() => import("./Components/Alert/Alert"))
 
 function App() {
   const { currentUser } = useCurrentUser()
-  useEffect(() => {
-    console.log(currentUser.data);
-  }, [currentUser])
+
   const privateRoute = async ({ request }) => {
     const { pathname } = new URL(request.url)
 
@@ -57,7 +55,7 @@ function App() {
       <Route path="/login" element={<Login />} loader={privateRoute} />
 
       <Route path="/chat" element={<ChatPage />} loader={privateRoute} />
-      {/* <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} /> */}
+      <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
       <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
       <Route path="/sell" element={<SellerPage />} loader={privateRoute} />
       <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
