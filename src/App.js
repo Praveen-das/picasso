@@ -12,13 +12,6 @@ import "./App.css";
 
 import { MUIContext } from './Context/MUIContext';
 
-// import useCurrentUser from "./Hooks/useCurrentUser";
-
-// import Footer from "./Components/Footer/Footer";
-// import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
-
-import { getCurrentUser } from "./lib/user.api";
-
 import useCurrentUser from "./Hooks/useCurrentUser"
 import LoadingScreen from "./Components/MUIComponents/LoadingScreen"
 import Header from "./Components/Header/Header";
