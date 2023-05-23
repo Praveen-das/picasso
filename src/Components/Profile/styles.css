@@ -33,6 +33,7 @@
     width: 100%;
     grid-template-columns: 25% auto auto;
     align-items: center;
+    min-height: 35px;
 }
 
 .accordionDetails_style {

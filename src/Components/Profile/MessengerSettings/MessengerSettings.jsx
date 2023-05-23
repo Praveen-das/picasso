@@ -5,7 +5,7 @@ import Avatar from '../../Avatar/Avatar';
 import socket from '../../../lib/ws';
 
 
-export function MessengerSettings() {
+export default function MessengerSettings() {
     const blockedUsers = useStore(s => s.blockedUsers);
     const connectedUsers = useStore(s => s.connectedUsers);
     const [users, setUsers] = useState([]);

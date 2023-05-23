@@ -47,16 +47,36 @@ export const signupValidation = yup.object({
     .required("Password is required"),
 });
 
-export const profileCredentialFormSchema = yup.object({
-  displayName: yup.string(),
-  email: yup.string("Enter your email").email("Enter a valid email"),
+export const displayNameSchema = yup.object(
+  {
+    displayName: yup
+      .string()
+      .min(5, "displayName should be in between 5 to 20 characters in length")
+      .max(20, "displayName should be in between 5 to 20 characters in length")
+  })
+export const emailSchema = yup.object({ email: yup.string("Enter your email").email("Enter a valid email") })
+
+export const passwordSchema = yup.object({
+  old_password: yup
+    .string("Enter your old password")
+    .required('This field is required'),
   password: yup
     .string("Enter your password")
-    .min(8, "Password should be of minimum 8 characters length"),
+    .min(8, "Password should be a minimum of 8 characters in length")
+    .required('This field is required'),
   c_password: yup
-    .string("Enter your password")
-    .oneOf([yup.ref("password"), null], "Passwords doesn't match"),
-});
+    .string("Confirm your password")
+    .oneOf([yup.ref("password"), null], "Passwords doesn't match")
+    .required('This field is required'),
+})
+
+export const socialSchema = yup.object({
+  social: yup.array()
+    .of(yup.object({
+      name: yup.string(),
+      url: yup.string().url('must me a valid URL.')
+    }))
+})
 
 export const userAddressSchema = yup.object({
   name: yup.string().required("Enter your name"),
@@ -67,5 +87,5 @@ export const userAddressSchema = yup.object({
   mobile: yup.string().required("Enter your phone number"),
   alternate_phone: yup.mixed(),
   email: yup.string().email("Enter a valid email"),
-  isDefault:yup.boolean()
+  isDefault: yup.boolean()
 });

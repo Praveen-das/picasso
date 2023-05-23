@@ -8,8 +8,8 @@ const _removeFromCart = async (cart_id) => {
     return await axiosClient.delete(`/cart/delete/${cart_id}`)
 }
 
-const _updateCart = async ({ id, quantity, price }) => {
-    return await axiosClient.put(`/cart/update/${id}`, { quantity, price })
+const _updateCart = async ({ id, ...data }) => {
+    return await axiosClient.put(`/cart/update/${id}`, data)
 }
 
 const _clearCart = async () => {

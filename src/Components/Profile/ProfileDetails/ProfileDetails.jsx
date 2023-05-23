@@ -1,10 +1,9 @@
 import Avatar from "../../Avatar/Avatar";
 import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
-import ChangePassword from "../../ChangePassword/ChangePassword";
 import { IKUpload, IKContext } from "imagekitio-react";
 import "../styles.css";
 
-import { Grid, Divider } from "@mui/material";
+import { Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
 
@@ -14,7 +13,7 @@ import useAuth from "../../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 function ProfileDetails() {
-  const { currentUser, updateUser, isLoading } = useCurrentUser();
+  const { currentUser, updateUser } = useCurrentUser();
   const { logout } = useAuth()
   const navigate = useNavigate()
 
@@ -27,13 +26,9 @@ function ProfileDetails() {
     summery: { variant: "subtitle2", lineHeight: "30px", color: "#111" },
   };
 
-  const handleEmailVerification = () => {
-  };
-
   return (
     <>
       <Grid item xs={6} gap={2} mb="2rem" display="flex" alignItems="center">
-        <ChangePassword />
         <div id="avatar">
           <Avatar
             sx={{ width: 70, height: 70 }}
@@ -59,7 +54,7 @@ function ProfileDetails() {
             </IKContext>
           </button>
         </div>
-        <div>
+        <div style={{ width: '100%' }}>
           <Typography
             whiteSpace="nowrap"
             variant="h5"
@@ -67,41 +62,12 @@ function ProfileDetails() {
             fontWeight={700}
             mb={0.5}
           >
-            {currentUser.data?.displayName}
-          </Typography>
-          <Typography variant="body2" color="var(--brand)">
-            {currentUser.data?.emailVerified
-              ? "Varified"
-              : "Account is not varified"}
+            {currentUser.data?.displayName || 'loading...'}
           </Typography>
         </div>
       </Grid>
-      <Divider sx={{ width: "100%" }} />
-      <Grid container columnSpacing={8} rowSpacing={4} p={2}>
+      <Grid container columnSpacing={8} rowSpacing={4} >
         <ProfileCredentialForm user={currentUser.data} />
-        {!currentUser.data?.emailVerified && (
-          <>
-            <Grid item xs={12}>
-              <Divider sx={{ width: "100%" }} />
-            </Grid>
-            <Grid item xs={12} display="flex" justifyContent="space-between">
-              <div>
-                <Typography {...style.title}>Verify Account</Typography>
-                <Typography {...style.summery}>
-                  We use this to let you sign in and populate your profile
-                  information.
-                </Typography>
-              </div>
-              <LoadingButton
-                loading={isLoading}
-                variant="text"
-                onClick={handleEmailVerification}
-              >
-                Verify Now
-              </LoadingButton>
-            </Grid>
-          </>
-        )}
         <Grid item xs={12} display="flex" justifyContent="space-between">
           <div>
             <Typography {...style.title}>Delete Account</Typography>
@@ -125,4 +91,4 @@ function ProfileDetails() {
   );
 }
 
-export default ProfileDetails;
+export default ProfileDetails

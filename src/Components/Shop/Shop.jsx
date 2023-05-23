@@ -1,24 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
-import Box from '@mui/material/Box';
-import { Button, Menu, MenuItem, Skeleton, Typography } from '@mui/material';
+import { Button, Menu, MenuItem,  Typography } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
-import axios from 'axios';
 import Masonry from '@mui/lab/Masonry';
-
-function getDimension() {
-    function generate(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min
-    }
-
-    const dimension = {
-        // height: generate(200, 300),
-        aspectRatio: 1,
-    }
-    return dimension
-}
 
 function Shop() {
     const navigate = useNavigate()
@@ -26,12 +12,6 @@ function Shop() {
     
     const { data, isFetching, isLoading } = useProducts()
     
-    const [dummy, setDummy] = useState([])
-    useEffect(() => {
-        axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=50')
-            .then(({ data }) => setDummy(data))
-    }, [])
-
     const [productList, count] = data || []
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -113,7 +93,7 @@ function Shop() {
                 </div>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={10}>
                     {
-                        dummy?.map((o) => (
+                        data?.map((o) => (
                             <Card sx={{ width: '100%' }} key={o.id} product={o} />
                         ))
                     }

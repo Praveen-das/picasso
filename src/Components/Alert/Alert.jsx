@@ -6,7 +6,6 @@ import "./style.css";
 
 function AlertMessage() {
   const { toggled, message, type, time } = useStore((state) => state.alert);
-
   const handleClose = (_, reason) => {
     if (reason === "clickaway") return;
     useStore.setState((pre) => ({
@@ -21,13 +20,13 @@ function AlertMessage() {
     <Snackbar
       sx={{ transform: "translateY(1.5rem)" }}
       open={toggled}
-      autoHideDuration={time || 3000}
+      autoHideDuration={3000}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <MuiAlert
         severity={type || "success"}
-        sx={{ height: 50, alignItems: "center" }}
+        sx={{ height: 50, alignItems: "center", ".MuiAlert-message:first-letter": { textTransform: 'capitalize' } }}
         variant="filled"
       >
         {message}

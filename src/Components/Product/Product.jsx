@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import './product.css'
 import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, IconButton, Rating, Skeleton, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Divider, Grid, IconButton, Rating, Skeleton, Typography } from '@mui/material';
 import FloatingCart from '../FloatingCart/FloatingCart';
 import { useCart } from '../../Hooks/useCart';
 import useCurrentUser from '../../Hooks/useCurrentUser';
@@ -18,6 +18,7 @@ import StarIcon from '@mui/icons-material/StarRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ShareIcon from '@mui/icons-material/Share';
 import WishlistButton from '../WishlistButton/WishlistButton'
+import { calculateDiscount } from '../../Utils/utils';
 
 
 function Product() {
@@ -65,13 +66,18 @@ function Product() {
             children: 'ADD TO CART',
             onClick: () => {
                 if (!currentUser.data) return navigate('/login')
-                addToCart.mutateAsync({
+
+                let price = quantity * product?.price,
+                    discount = calculateDiscount(product?.price, 12, quantity)
+
+                const cartItem = {
                     product_id: product?.id,
                     quantity,
                     // size: itemsSize,
-                    price: quantity * product?.price,
-                    discount: product?.discount
-                })
+                    price,
+                    discount
+                }
+                addToCart.mutateAsync(cartItem)
             }
         }
     }
@@ -81,7 +87,7 @@ function Product() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    
+
     const title = {
         fontSize: 16,
         fontWeight: 600,
@@ -149,7 +155,11 @@ function Product() {
                                     <ChatIcon {...IconButtonProps} />
                                 </IconButton>
                             }
-                            <WishlistButton productId={product?.id} />
+                            <WishlistButton
+                                iconButton={<IconButton />}
+                                productId={product?.id}
+                                color='var(--brand)'
+                            />
                             <IconButton
                                 onClick={handleSharing}
                             >
@@ -162,7 +172,7 @@ function Product() {
                         <SellerProfile seller={product?.sales_person} />
                     </Box>
                     <Box display='flex' alignItems='center' gap={1} >
-                        <Rating icon={<StarIcon />} emptyIcon={<StarEmptyIcon />} name="read-only" value={product?.rating || 0} />
+                        <Rating readOnly icon={<StarIcon />} emptyIcon={<StarEmptyIcon />} name="read-only" value={product?.rating || 0} />
                         <Typography variant='text.grey'> {product?.rating || 0}&nbsp;</Typography>
                         <label id='bull' htmlFor="">&bull;</label>
                         <Typography variant='text.grey'> {product?.reviews.length || 0}&nbsp;Reviews</Typography>
@@ -174,28 +184,15 @@ function Product() {
                     <Box display='flex' alignItems='center' gap={2}>
                         Select size
                         {
-                            sizes.map((size, key) => (
-                                <Box
-                                    key={key}
-                                    component='button'
+                            sizes.map((size, key) =>
+                                <Chip
+                                    label={size}
                                     onClick={() => setSize(size)}
-                                    p='10px 15px'
-                                    border='none'
-                                    borderRadius={2}
-                                    bgcolor={itemsSize === size && 'var(--brand)'}
-                                    color={itemsSize === size && 'white'}
-                                    gap={2}
-                                    sx={{
-                                        transition: '0.1s',
-                                        cursor: 'pointer',
-                                        ":hover": {
-                                            bgcolor: 'var(--brand)',
-                                            translate: itemsSize !== size ? '0 -5px' : 'undefined',
-                                            color: 'white'
-                                        }
-                                    }}
-                                >{size}</Box>
-                            ))
+                                    color={itemsSize === size ? 'primary' : 'default'}
+                                    size='large'
+                                    key={key}
+                                />
+                            )
                         }
                     </Box>
                     <Box display='flex' gap={2} position='relative' alignItems='center'>

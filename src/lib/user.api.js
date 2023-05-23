@@ -50,6 +50,13 @@ const _addToRecentlyViewed = async (id) => {
   return await axiosClient.post(`/user/rv/add/${id}`).then(res => res.data);
 };
 
+const _addSocialMediaLink = async (data) => {
+  return await axiosClient.post(`/user/social`, data).then(res => res.data);
+};
+const _removeSocialMediaLink = async (id) => {
+  return await axiosClient.delete(`/user/social/${id}`).then(res => res.data);
+};
+
 export {
   signupUser,
   signinUser,
@@ -63,5 +70,8 @@ export {
   _addUserAddress,
   _updateUserAddress,
   _deleteUserAddress,
-  _addToRecentlyViewed
+  _addToRecentlyViewed,
+
+  _addSocialMediaLink,
+  _removeSocialMediaLink
 };

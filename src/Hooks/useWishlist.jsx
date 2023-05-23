@@ -4,8 +4,6 @@ import { _addToWishlist, _removeFromWishlist, _getUserWishlist } from "../lib/pr
 function useWishlist() {
     const queryClient = useQueryClient();
 
-    const wishlists = useQuery(['wishlist'], _getUserWishlist)
-
     const addToWishlist = useMutation(_addToWishlist, {
         onSuccess: () => {
             queryClient.invalidateQueries(['wishlist'])
@@ -19,7 +17,6 @@ function useWishlist() {
     })
     
     return {
-        wishlists,
         addToWishlist,
         removeFromWishlist
     }

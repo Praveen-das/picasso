@@ -1,17 +1,24 @@
-import { Button, Typography } from '@mui/material'
+import { Button, Divider, Grid, Typography } from '@mui/material'
 import SalesOrder from '../../ProductList/ProductList'
 import { ReactComponent as NoOrders } from '../../../Assets/Images/noorders.svg'
 import { useNavigate } from 'react-router-dom'
-import useOrders from "../../../Hooks/Sales/useOrders"
+import { Fragment } from 'react'
+import useCurrentUser from '../../../Hooks/useCurrentUser'
 
 function MyOrders() {
-    const orders = useOrders()
+    const { currentUser } = useCurrentUser();
+    const orders = currentUser.data?.sales_order_personTosales_order_customer_id
     const navigate = useNavigate()
 
     return (
-        <>
+        <Grid item xs={12} display='grid' pl={2} gap={3}>
+            <Grid item xs={12} ml={-2}>
+                <Typography variant="h5" fontWeight={800} color="#333">
+                    My Orders({orders?.length})
+                </Typography>
+            </Grid>
             {
-                !orders.data?.length ?
+                !orders?.length ?
                     <div style={{
                         position: 'absolute',
                         inset: 0,
@@ -28,11 +35,17 @@ function MyOrders() {
                         <Button onClick={() => navigate('/shop')} sx={{ mt: 3 }} variant='contained'>Back to shopping</Button>
                     </div>
                     :
-                    orders.data?.map((order) =>
-                        <SalesOrder key={order.id} order={order} />
+                    orders?.map((order, key) =>
+                        <Fragment key={orders?.id || key}>
+                            <SalesOrder order={order} />
+                            {
+                                orders && orders[key + 1] &&
+                                <Divider variant='fullWidth' />
+                            }
+                        </Fragment>
                     )
             }
-        </>
+        </Grid>
     )
 }
 

@@ -1,19 +1,25 @@
 .brandName {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
   font-size: 9rem;
-  font-family: Bebas Neue;
+  font-family: var(--Title);
   line-height: 140px;
-  width: 400px;
   font-weight: 100;
 }
 
-.p1 {
+
+.p1,
+.p2 {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
-  width: 90%;
-  font-family: 'Josefin Sans';
+  font-family: var(--Sub);
   font-size: 1.4rem;
+  font-weight: 600;
   margin: 1rem 0;
   color: #9f9f9f;
+}
+
+.p2{
+  font-family: serif;
+  color: blueviolet;
 }
 
 @media only screen and (max-width: 425px) {
@@ -29,7 +35,7 @@
     /* margin: 1rem 0; */
     text-align: center;
   }
- 
+
 }
 
 .swiper {

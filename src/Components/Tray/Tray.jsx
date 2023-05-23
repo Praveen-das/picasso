@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import './tray.css'
 import Card from '../Card/Card'
 import { useProductQuery } from '../../Hooks/useProducts'
 import Masonry from '@mui/lab/Masonry';
 import { Box, Container, Typography } from '@mui/material';
-import axios from 'axios';
 
 
 function Tray({ title, url }) {
     const { data } = useProductQuery(title, url)
-
-    const [dummy, setDummy] = useState([])
-
-    useEffect(() => {
-        axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=9')
-            .then(({ data }) => setDummy(data))
-    }, [])
 
     return (
         <>

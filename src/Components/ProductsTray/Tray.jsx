@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
-import { Swiper, Mousewheel, SwiperSlide } from '../../lib/Swiper'
+// import Swiper from '../../lib/Swiper'
+// import Mousewheel from '../../lib/Swiper'
+// import SwiperSlide from '../../lib/Swiper'
 
 function Tray({ height, data, title, parent, from, to, more }) {
 
@@ -42,7 +44,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
                     <Link to='/shop' className='more'>VIEW ALL</Link>
                 </span>} */}
                 <div className="card_container">
-                    <Swiper
+                    {/* <Swiper
                         slidesPerView='auto'
                         spaceBetween={20}
                         mousewheel={true}
@@ -58,7 +60,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
                                 </SwiperSlide>
                             )
                         }
-                    </Swiper>
+                    </Swiper> */}
                 </div>
             </div>
         </>

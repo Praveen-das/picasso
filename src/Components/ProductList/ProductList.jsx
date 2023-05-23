@@ -1,13 +1,16 @@
-import { Button } from '@mui/material';
+import { Button, Chip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Status from '../Status/Status';
 import './productList.css'
 import confirmAction from '../ConfirmationDialog/ConfirmationDialog';
 import useSales from '../../Hooks/Sales/useSales';
+import { FlexBox } from '../Profile/MyWishlist/MyWishlist';
+import { calculateDiscount } from '../../Utils/utils';
+import { Link } from 'react-router-dom';
 
 function ProductList({ order }) {
     const { updateStatus } = useSales()
-    console.log(order);
+
     const cancelOrder = () => {
         confirmAction(
             'Cancel order',
@@ -19,21 +22,29 @@ function ProductList({ order }) {
     return (
         <>
             <div className="checkout__product">
-                <img src={order.cart_item.product.images[0].url + '/tr:w-100'} alt="" />
+                <div className='product_imgNQty'>
+                    <img src={order.cart_item.product.images[0].url + '/tr:w-100'} alt="" />
+                </div>
                 <div className='checkout__product--details'>
-                    <div><label className='checkout__product--name' htmlFor="">{order.cart_item.product.name}</label></div>
-                    <Typography width='90%' variant='caption' fontSize={14}>{order.cart_item.product.desc}</Typography>
-                    <span></span>
-                    <div id='statusAndCancel'>
+                    <Link to={`/shop/product/${order.cart_item.product?.id}`} >
+                        <Typography textTransform='capitalize' fontSize={18} fontWeight={500} >{order.cart_item.product.name}</Typography>
+                    </Link>
+                    <FlexBox gap={1} color='grey' mt={0.25} fontWeight={500}>
+                        <FlexBox alignItems='baseline' gap={2}>
+                            <Typography color='var(--brandMain)' fontSize={20} fontWeight={600}>
+                                ₹{order.cart_item.product.price - calculateDiscount(order.cart_item.product.price, order.cart_item.product.discount)}
+                            </Typography>
+                        </FlexBox>
+                    </FlexBox>
+                    <FlexBox gap={1} mt={2}>
                         <Status status={order.status} />
                         <Button disabled={order.status === 'cancelled'} onClick={() => cancelOrder()} sx={{ color: 'var(--brand)', minWidth: '80px', maxHeight: '22px', borderRadius: '25px' }} size='small'>Cancel</Button>
-                    </div>
+                    </FlexBox>
                 </div>
-                <div className='orders_right'>
+                {/* <div className='orders_right'>
                     <label className='orderedDate' htmlFor="">Delivery by : {order.delivery_date}</label>
                     <br />
-                    <label className='price' htmlFor="">Rs. {order.cart_item.price}</label>
-                </div>
+                </div> */}
             </div>
         </>
     )

@@ -6,10 +6,9 @@ import {
   _deleteUserAddress,
   _updateUser,
   _updateUserAddress,
+  _addSocialMediaLink,
+  _removeSocialMediaLink,
 } from "../lib/user.api";
-import { useMemo } from "react";
-
-// function useUserDetails
 
 function useCurrentUser() {
   const queryClient = useQueryClient();
@@ -45,24 +44,51 @@ function useCurrentUser() {
     },
   });
 
-  return useMemo(() => ({
-    currentUser,
-    updateUser,
-    addUserAddress,
-    updateUserAddress,
-    deleteUserAddress,
-    isLoading,
-    addToRecentlyViewed
-  }), [
-    currentUser,
-    updateUser,
-    addUserAddress,
-    updateUserAddress,
-    deleteUserAddress,
-    isLoading,
-    addToRecentlyViewed
-  ])
+  const addSocialMediaLink = useMutation(_addSocialMediaLink, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
 
+  const removeSocialMediaLink = useMutation(_removeSocialMediaLink, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
+  return {
+    currentUser,
+    updateUser,
+    addUserAddress,
+    updateUserAddress,
+    deleteUserAddress,
+    isLoading,
+    addToRecentlyViewed,
+    addSocialMediaLink,
+    removeSocialMediaLink
+  }
+
+}
+
+export function useCurrentUserHelpers() {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: updateUser, isLoading } = useMutation(_updateUser, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
+  const addSocialMediaLink = useMutation(_addSocialMediaLink, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
+  return {
+    updateUser,
+    addSocialMediaLink
+  }
 }
 
 export default useCurrentUser;

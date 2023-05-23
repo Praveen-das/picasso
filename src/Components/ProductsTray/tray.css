@@ -1,16 +1,3 @@
-@font-face {
-    font-family: a;
-    src: url(../../Assets/Font/Montserrat-Black.ttf);
-}
-@font-face {
-    font-family: b;
-    src: url(../../Assets/Font/Montserrat-Bold.ttf);
-}
-@font-face {
-    font-family: c;
-    src: url(../../Assets/Font/Montserrat-ExtraBold.ttf);
-}
-
 .productsTray-wrapper{
     box-sizing: border-box;
     width: 100%;

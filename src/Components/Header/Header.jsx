@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import "./header.css";
 import { Link, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
@@ -34,7 +34,7 @@ function Header() {
             </label>
           </Link>
 
-          <Search onSearch={(query) => navigate(`/search`, { state: { ...state, query } })} />
+          {/* <Search onSearch={(query) => navigate(`/search`, { state: { ...state, query } })} /> */}
         </div>
         {/* <div className="navbar_middle">
           
@@ -45,7 +45,7 @@ function Header() {
             Sell
           </Link> */}
           {/* <MessagesLink /> */}
-          <Link id='nav_links' to="/wishlist">
+          <Link id='nav_links' to="/profile" state={{ tab: 2 }}>
             <FavoriteIcon fontSize='small' />
             {/* Wishlist */}
           </Link>
@@ -55,8 +55,8 @@ function Header() {
           </Link>
           {
             currentUser.data !== null ?
-              <Link to="/profile">
-                <PersonIcon fontSize='small' />
+              <Link id='nav_links' to="/profile">
+                <PersonIcon />
                 {/* Account */}
               </Link> :
               <Link id='nav_links' to="/login" >

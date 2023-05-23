@@ -12,6 +12,9 @@ export function MUIContext({ children }) {
         },
         typography: {
             fontFamily: 'Montserrat',
+            // allVariants:{
+            //     color:'var(--brandMain)'
+            // },
             'title.primary': {
                 fontSize: 16,
                 fontWeight: 700,
@@ -53,27 +56,71 @@ export function MUIContext({ children }) {
                 main: '#fff',
                 dark: '#1a71e4',
                 contrastText: brand
-            }
+            },
+            facebook: {
+                main: 'hsl(220.65deg 44.08% 41.37%)',
+                dark: 'hsl(220.65deg 44.08% 31.37%)',
+                contrastText: 'white'
+            },
+            instagram: {
+                main: 'hsl(11, 90%, 61%)',
+                dark: 'hsl(11, 90%, 51%)',
+                contrastText: 'white'
+            },
+            twitter: {
+                main: 'hsl(203, 89%, 53%)',
+                dark: 'hsl(203, 89%, 43%)',
+                contrastText: 'white'
+            },
+            linkedIn: {
+                main: 'hsl(201, 100%, 35%)',
+                dark: 'hsl(201, 100%, 25%)',
+                contrastText: 'white'
+            },
         },
         components: {
             MuiButton: {
+                defaultProps: {
+                    disableElevation: true
+                },
                 styleOverrides: {
-                    root: ({ ownerState }) => ({
-                        ...(ownerState.variant === 'outlined' &&
-                        {
-                            borderRadius: 10,
-                            border: 'none !important',
-                            background: 'var(--brandLight50)',
-                            color: 'var(--brand)',
-                            ":hover": { background: 'var(--brandLight100)' },
-                            ".MuiTouchRipple-root .MuiTouchRipple-child": { background: 'white' }
-                        }),
-                        
-                    }),
+                    root: {
+                        borderRadius: 10,
+                        // ...( ownerState.variant === 'outlined' &&
+                        // {
+                        // border: 'none !important',
+                        // background: 'var(--brandLight50)',
+                        // color: 'var(--brand)',
+                        // ":hover": { background: 'var(--brandLight100)' },
+                        // ".MuiTouchRipple-root .MuiTouchRipple-child": { background: 'white' }
+                        // }),
+                    },
                 },
 
             },
+            MuiAccordion: {
+                defaultProps: {
+                    disableGutters: true,
+                    // TransitionProps: { unmountOnExit: true }
+                },
+                styleOverrides: {
+                    root: {
+                        ":before": {
+                            opacity: '1 !important',
+                        },
+                    },
+                }
+            },
+            MuiAccordionDetails: {
+                styleOverrides: {
+                    root: {
+                        marginInline: 20,
+                        marginBottom: 20
+                    }
+                }
+            },
         },
+
     });
 
     return (

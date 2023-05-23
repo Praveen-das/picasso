@@ -17,10 +17,9 @@
 
 #nav_links {
     display: grid;
-    justify-items: center;
-    gap: 3px;
-    font-weight: 600;
-    font-size: 13px;
+    place-items: center;
+    width: 20px;
+    height: 20px;
 }
 
 .nav_bottom {
@@ -76,7 +75,7 @@
 .navbar .right {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .navbar .left,

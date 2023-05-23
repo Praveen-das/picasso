@@ -27,8 +27,7 @@ function ManageAddress() {
           <Grid item xs={12} mb={2} ml={{ sm: 2 }}>
             <Button
               sx={{ justifyContent: "left", gap: 2 }}
-              fullWidth
-              size="large"
+              size="small"
               onClick={() => setOpen(!open)}
             >
               <AddIcon />

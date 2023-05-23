@@ -1,10 +1,10 @@
 import TField from '@mui/material/TextField';
 import styled from '@mui/material/styles/styled';
 
-export const TextField = styled(TField)({
+const TextField = styled(TField)({
     '& label': {
         fontWeight: 600,
-        fontSize: 16,
+        fontSize: 18,
         color: '#444',
     },
     '& .MuiFilledInput-root': {
@@ -19,3 +19,5 @@ export const TextField = styled(TField)({
         },
     },
 });
+
+export default TextField

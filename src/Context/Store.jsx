@@ -1,7 +1,6 @@
 import create from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
 import produce from "immer";
-import { createRoomId } from "../Utils/utils";
 
 const INITIAL_STATE = {
   model: {
@@ -128,6 +127,7 @@ const store = (set, get) => {
       return { messages: new Map(pre.messages) }
     }),
     blockRoom: (list) => set(pre => {
+      if (!list.length) return
       pre.blockedUsers.push(...list)
       return { blockedUsers: [...pre.blockedUsers] }
     }),

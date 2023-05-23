@@ -1,23 +1,22 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import './banner.css'
-import gsap from 'gsap'
 import Card from '../Card/Card'
 
 import { Swiper, SwiperSlide, Mousewheel } from '../../lib/Swiper'
+import gsap from 'gsap'
 
 import { useProducts } from '../../Hooks/useProducts'
-import axios from 'axios'
 import { Box, Grid, Typography } from '@mui/material'
-import useWishlist from '../../Hooks/useWishlist'
 
 const categories = [
     'oil paintings', 'murals', 'fabric painting', 'watercolor', 'digital'
 ]
 
 function Banner() {
+
+    const br = useRef()
     const { data } = useProducts()
     const [preIdx, setPreIdx] = useState(-1)
-    // const { wishlist } = useWishlist()
 
     const app = useRef();
 
@@ -25,7 +24,7 @@ function Banner() {
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({ defaults: { duration: 0.4 } })
             tl.from(br.current, {
-                delay: 0.5,
+                // delay: 0.1,
                 opacity: 0
             }).from('.brandName,.p1', {
                 'clipPath': 'polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)',
@@ -38,26 +37,17 @@ function Banner() {
         return () => ctx.revert();
     }, [])
 
-    const [dummy, setDummy] = useState([])
-
-    useEffect(() => {
-        axios.get('https://api.unsplash.com/photos/?client_id=pJ14-2J0Pm0IEgSKrw7-84Y1zhd8yss0l5f6ED6FgTE&per_page=9')
-            .then(({ data }) => setDummy(data))
-    }, [])
-
-    const br = useRef()
-
-
     return (
         <>
             <Grid ref={app} container spacing={4} p='2rem 5rem' overflow='hidden'>
-                <Grid item xs={6} >
+                <Grid item xs={6} minHeight={400}>
                     <Box
                         display='flex'
                         flexDirection='column'
                     >
-                        <label className='brandName' htmlFor="">BEAUTY IN STYLE</label>
+                        <label className='brandName' htmlFor="">BEAUTY IN  <br /> STYLE</label>
                         <label className='p1' htmlFor="">Find the latest collections that suit your needs and tastes</label>
+                        {/* <label className='p2' htmlFor="">Find the latest collections that suit your needs and tastes</label> */}
                     </Box>
                 </Grid>
                 <Grid ref={br} item xs={6}>
@@ -85,6 +75,18 @@ function Banner() {
                             )
                         }
                     </Swiper>
+                    {/* <swiper-container
+                        slides-per-view="auto" 
+                        space-between="20px"
+                        class="mySwiper">
+                        {
+                            data && data[0]?.map((product, index) =>
+                                <swiper-slide key={index}>
+                                    <Card sx={{ height: 260 }} product={product} />
+                                </swiper-slide>
+                            )
+                        }
+                    </swiper-container> */}
                 </Grid>
                 <Grid
                     item
@@ -99,10 +101,10 @@ function Banner() {
                             top: '-70px',
                             right: 0,
                             fontSize: '9rem',
-                            fontFamily: 'Bebas Neue',
+                            fontFamily: 'var(--Title)',
                             fontWeight: 100,
                             color: 'white',
-                            textShadow: `0 0 1px black,0 0 1px black,0 0 1px black`,
+                            textShadow: `0 0 1px black`,
                         },
                     }}
                 >
@@ -118,7 +120,7 @@ function Banner() {
                             lineHeight='30px'
                             mr={2}
                             variant='h3'
-                            fontFamily='Bebas Neue'
+                            fontFamily='var(--Title)'
                         >categories</Typography>
                         {
                             categories.map((category, key) => (
@@ -130,6 +132,7 @@ function Banner() {
                                     width='90px'
                                     height='90px'
                                     boxShadow='0px 4px 20px #d1d1d1'
+                                    borderRadius={5}
                                     bgcolor='white'
                                     zIndex={100}
                                     sx={{
@@ -143,7 +146,7 @@ function Banner() {
                                         }
                                     }}
                                 >
-                                    <Typography sx={{ pointerEvents: 'none' }} fontFamily='Bebas Neue' >{category}</Typography>
+                                    <Typography sx={{ pointerEvents: 'none' }} fontFamily='var(--Title)' fontSize={14} >{category}</Typography>
                                 </Box>
                             ))
                         }

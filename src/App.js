@@ -7,37 +7,47 @@ import {
   redirect,
 } from "react-router-dom";
 
-import React from "react";
-import HomePage from "./Pages/HomePage";
-import ShoppingPage from "./Pages/ShoppingPage";
-import ProfilePage from "./Pages/ProfilePage";
-import SellerPage from "./Pages/SellerPage";
-import ProductPage from "./Pages/ProductPage";
-import ShoppingCartPage from "./Pages/ShoppingCartPage";
-import CheckoutPage from './Pages/checkoutPage'
-
-import Alert from "./Components/Alert/Alert";
-import useCurrentUser from "./Hooks/useCurrentUser";
-import Login from "./Components/Login/Login";
-
+import React, { Suspense, lazy } from "react";
 import "./App.css";
-import Footer from "./Components/Footer/Footer";
-import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
-import StorePage from "./Pages/StorePage";
-import ChatPage from "./Pages/ChatPage";
-import ChatEngin from "./Components/ChatEngin/ChatEngin";
+
+import { MUIContext } from './Context/MUIContext';
+
+// import useCurrentUser from "./Hooks/useCurrentUser";
+
+// import Footer from "./Components/Footer/Footer";
+// import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
+
+import { getCurrentUser } from "./lib/user.api";
+
+import useCurrentUser from "./Hooks/useCurrentUser"
+import LoadingScreen from "./Components/MUIComponents/LoadingScreen"
 import Header from "./Components/Header/Header";
+import HomePage from "./Pages/HomePage";
+
+const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
+const ProfilePage = lazy(() => import("./Pages/ProfilePage"))
+const ShoppingPage = lazy(() => import("./Pages/ShoppingPage"))
+const SellerPage = lazy(() => import("./Pages/SellerPage"))
+const ProductPage = lazy(() => import("./Pages/ProductPage"))
+const ShoppingCartPage = lazy(() => import("./Pages/ShoppingCartPage"))
+const CheckoutPage = lazy(() => import('./Pages/checkoutPage'))
+const StorePage = lazy(() => import("./Pages/StorePage"))
+const ChatPage = lazy(() => import("./Pages/ChatPage"))
+const Login = lazy(() => import("./Components/Login/Login"))
+const Alert = lazy(() => import("./Components/Alert/Alert"))
 
 function App() {
   const { currentUser } = useCurrentUser()
 
-  if (currentUser.isLoading) return <LoadingScreen />
+  const privateRoute = async ({ request }) => {
+    const { pathname } = new URL(request.url)
 
-  const auth = () => currentUser.data !== null && redirect("/")
-  const privateRoute = () => currentUser.data === null && redirect("/login")
+    if (pathname === '/login' && currentUser.data !== null) return redirect("/")
+    if (currentUser.data === null && pathname !== '/login') return redirect("/login")
+  }
 
   const routes = createRoutesFromElements(
-    <Route path="/" element={<Global />}>
+    <Route path="/" element={<Layout />}>
       {/* //--------------------- public routes ---------------------*/}
       <Route index element={<HomePage />} />
       <Route path="/shop" element={<Outlet />}>
@@ -49,7 +59,7 @@ function App() {
       <Route path="/store/:id" element={<StorePage />} />
 
       {/* //--------------------- private routes ---------------------*/}
-      <Route path="/login" element={<Login />} loader={auth} />
+      <Route path="/login" element={<Login />} loader={privateRoute} />
 
       <Route path="/chat" element={<ChatPage />} loader={privateRoute} />
       <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
@@ -61,25 +71,24 @@ function App() {
 
   const router = createBrowserRouter(routes);
 
-  return (
 
-    <>
-      <Alert />
-      <div id='App'>
-        <RouterProvider router={router} />
-        <Footer />
-      </div>
-    </>
-  );
+  return <RouterProvider router={router} />
 }
 
-function Global() {
+function Layout() {
   const { currentUser } = useCurrentUser()
 
   return (
     <>
-      <ChatEngin currentUser={currentUser} />
-      <Outlet />
+      <MUIContext>
+        <Alert />
+        <ChatEngin currentUser={currentUser} />
+        <Header />
+        <Suspense fallback={<LoadingScreen />}>
+          <Outlet />
+        </Suspense>
+        {/* <Footer /> */}
+      </MUIContext>
     </>
   )
 }

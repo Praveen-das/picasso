@@ -1,10 +1,4 @@
 
-#statusAndCancel{
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-    order: 2;
-}
 .orderedDate{
     color: rgba(97, 97, 97, 0.959);
     font-size: 0.8rem;
