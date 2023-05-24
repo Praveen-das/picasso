@@ -25,7 +25,8 @@ const getCurrentUser = async () => {
   //   id = crypto.randomUUID()
   //   sessionStorage.setItem('user_id', id)
   // }
-  return await axiosClient.get("/user").then(({ data }) => data || null)
+  // return await axiosClient.get("/user").then(({ data }) => data || null)
+  return await axiosClient.get("/api/product").then(({ data }) => data || null)
 };
 
 const _getUserById = async (uid) => {
