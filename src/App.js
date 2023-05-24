@@ -77,7 +77,7 @@ function Layout() {
         <Header />
         <Suspense fallback={<LoadingScreen />}>
           <Alert />
-          <ChatEngin currentUser={currentUser} />
+          {/* <ChatEngin currentUser={currentUser} /> */}
           <Outlet />
         </Suspense>
         {/* <Footer /> */}
