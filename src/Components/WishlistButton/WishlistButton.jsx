@@ -7,24 +7,26 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useEffect } from 'react';
 
 function WishlistButton({ primaryText, secondaryText, button, iconButton, productId, color = 'primary', size = 'small' }) {
-    const [wishlist, setWishlist] = useState(null);
+    const [state, setState] = useState(null);
+    const { currentUser } = useCurrentUser()
 
-    const { currentUser } = useCurrentUser();
-    const wishlists = currentUser.data?.wishlist
-
-    const { addToWishlist, removeFromWishlist } = useWishlist();
+    const {
+        addToWishlist,
+        removeFromWishlist,
+        wishlist: { data: wishlist }
+    } = useWishlist();
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!wishlists) return;
-        setWishlist(wishlists?.find(p => p.product_id === productId));
-    }, [wishlists, productId]);
+        if (!wishlist) return;
+        setState(wishlist?.find(p => p.product_id === productId));
+    }, [wishlist, productId]);
 
     function handleWishlist(e) {
         e.preventDefault();
         if (currentUser.data === null) return navigate('/login')
-        if (wishlist) return removeFromWishlist.mutate(wishlist.id);
+        if (state) return removeFromWishlist.mutate(state.id);
         addToWishlist.mutate(productId);
     }
 
@@ -36,15 +38,15 @@ function WishlistButton({ primaryText, secondaryText, button, iconButton, produc
                         {
                             onClick: handleWishlist,
                             style: { color },
-                            startIcon: wishlist ?
+                            startIcon: state ?
                                 <FavoriteIcon fontSize={size} color='inherit' /> :
                                 <FavoriteBorderIcon fontSize={size} color='inherit' />,
-                            children: wishlist ? secondaryText : primaryText
+                            children: state ? secondaryText : primaryText
                         }) :
                     cloneElement(iconButton, {
                         onClick: handleWishlist,
                         style: { color },
-                        children: wishlist ?
+                        children: state ?
                             <FavoriteIcon fontSize={size} color='inherit' /> :
                             <FavoriteBorderIcon fontSize={size} color='inherit' />
                     })

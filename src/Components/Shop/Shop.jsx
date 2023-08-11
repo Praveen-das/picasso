@@ -1,18 +1,23 @@
-import { useLayoutEffect, useState } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
-import { Button, Menu, MenuItem,  Typography } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Box, Button, Menu, MenuItem, Pagination, Typography } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
 import Masonry from '@mui/lab/Masonry';
+import { useFilter } from '../Sidebar/useFilter';
+import noresultImg from '../../Assets/Images/noresult.png'
+import useFacets from '../../Hooks/useFacets';
 
 function Shop() {
-    const navigate = useNavigate()
-    const { state } = useLocation()
-    
-    const { data, isFetching, isLoading } = useProducts()
-    
-    const [productList, count] = data || []
+    const { filter, setFilter } = useFilter()
+    const { facets:{data} } = useFacets()
+    const total = data?.total || 0
+
+    const { pathname } = useLocation()
+    let pathName = pathname.slice(1)
+    const { data: products = [], isFetching, isLoading } = useProducts()
+
     const [anchorEl, setAnchorEl] = useState(null);
 
     const open = Boolean(anchorEl);
@@ -38,21 +43,49 @@ function Shop() {
     const [skeleton] = useState(new Array(20).fill())
 
     const handleSort = (item, data) => {
-        let res
-        res = { item, ...data }
+        setFilter('orderBy', { [item]: data.value }, true);
         handleClose()
-        navigate('/shop', { state: { ...state, orderBy: res } })
     }
 
+    const getSortTitle = useCallback(() => {
+        let item = filter.find(o => o.item === 'orderBy')
+        if (!item) return 'Most recent'
+
+        let [values] = Object.entries(item.value || null)
+        let key = values.join('_')
+
+        switch (key) {
+            case 'createdAt_desc':
+                return 'Most recent'
+            case 'price_asc':
+                return 'Price - low to high'
+            case 'price_desc':
+                return 'Price - high to low'
+            case 'discount_asc':
+                return 'Discount - low to high'
+            case 'discount_desc':
+                return 'Discount - high to low'
+            default:
+                break
+        }
+
+    }, [filter])
+
+    if (pathName === 'results' && !isLoading && !products?.length) return <NO_RESULTS />
     return (
         <>
             <div className="shop_products">
-                <div style={{ display: 'flex', justifyContent: state?.query && !isLoading ? 'space-between' : 'flex-end', alignItems: 'center', margin: '1rem 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0px 2rem 0' }} >
                     {
-                        state?.query && !isLoading &&
-                        <Typography color='GrayText' fontSize={14} fontWeight={600} variant='body2'>
-                            {`Found ${productList?.length} ${productList?.length === 1 ? 'result' : 'results for'} ${state?.query}`}
-                        </Typography>
+                        pathName === 'results' && !isLoading ?
+                            <Box display='flex' alignItems='baseline'>
+                                <Typography fontSize={18} >Showing results for</Typography>
+                                <Typography ml={1} fontSize={20} fontWeight={700}>
+                                    {filter?.find(({ item }) => item === 'q')?.value || ''}
+                                </Typography>
+                            </Box>
+                            :
+                            <span></span>
                     }
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Typography fontSize={12} fontWeight={500} variant='body2'>SORT BY :</Typography>
@@ -64,7 +97,7 @@ function Shop() {
                             onClick={handleClick}
                             size='small'
                         >
-                            <Typography noWrap fontSize={12} variant='subtitle2'>{state?.orderBy?.name || 'Most recent'}</Typography>
+                            <Typography noWrap fontSize={12} variant='subtitle2'>{getSortTitle()}</Typography>
                         </Button>
                         <Menu
                             id="basic-menu"
@@ -82,6 +115,7 @@ function Shop() {
                                 vertical: 'top',
                                 horizontal: 'right',
                             }}
+                        // defaultValue={}
                         >
                             <MenuItem dense onClick={() => handleSort('createdAt', { name: 'Most recent', value: 'desc' })}>Most recent</MenuItem>
                             <MenuItem dense onClick={() => handleSort('price', { name: 'Price - high to low', value: 'desc' })}>Price - high to low</MenuItem>
@@ -91,47 +125,42 @@ function Shop() {
                         </Menu>
                     </div>
                 </div>
-                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={10}>
+                <Masonry defaultColumns={3} columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={5}>
                     {
-                        data?.map((o) => (
-                            <Card sx={{ width: '100%' }} key={o.id} product={o} />
-                        ))
+                        products ? products.map((o, i) => (
+                            <Card sx={{ width: '100%' }} key={o?.id} product={o} />
+                        )) : <div />
                     }
                 </Masonry>
-                {/* <div >
-                    {
-                        productList ?
-                            productList.map((o) => (
-                                <Card key={o.id} product={o} height={280} />
-                            )) :
-                            skeleton.map((o, i) => (
-                                <Box key={i} height={280} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
-                                    <Skeleton />
-                                    <Skeleton sx={{ my: '4px' }} width="60%" />
-                                    <Skeleton variant='rectangular' height={'250px'} />
-                                </Box>
-                            ))
-                    }
-                </div> */}
-                {/* <div className="images_tray">
-                    {
-                        productList ?
-                            productList.map((o) => (
-                                <Card key={o.id} product={o} height={280} />
-                            )) :
-                            skeleton.map((o, i) => (
-                                <Box key={i} height={280} sx={{ mt: '20px', mb: '50px', flex: '1 auto' }}>
-                                    <Skeleton />
-                                    <Skeleton sx={{ my: '4px' }} width="60%" />
-                                    <Skeleton variant='rectangular' height={'250px'} />
-                                </Box>
-                            ))
-                    }
-                </div> */}
             </div>
-            {/* <Pagination page={page || 1} onChange={(_, value) => navigate(`/shop`, { state: { page: value } })} color="primary" count={Math.ceil((count?.id || 0) / 2)} /> */}
+            {
+                products > 10 &&
+                < Pagination page={filter.find(({ item }) => item === 'p')?.value || 1} color="primary" sx={{ alignSelf: 'center', mt: 'auto' }} onChange={(_, value) => setFilter('p', value, true)} count={Math.ceil(total / 10)} />
+            }
         </>
     )
 }
 
 export default Shop
+
+function NO_RESULTS() {
+    return (
+        <>
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    maxHeight: '500px',
+                    display: 'grid',
+                    justifyItems: 'center',
+                    alignContent: 'center',
+                    gap: 1
+                }}
+            >
+                <img height={200} src={noresultImg} alt="" />
+                <Typography variant='h5'>Sorry, no results found!</Typography>
+                <Typography>Please check the spelling or try searching for something else</Typography>
+            </Box>
+        </>
+    )
+}

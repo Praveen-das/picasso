@@ -1,37 +1,36 @@
-import React from "react";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useStore } from "../../Context/Store";
 import "./style.css";
 
+const AlertW = lazy(() => import("./AlertWrapper"))
+
 function AlertMessage() {
-  const { toggled, message, type, time } = useStore((state) => state.alert);
+  const [loaded, setLoaded] = useState(false)
+  const { toggled, message, type } = useStore((state) => state.alert);
+  const setAlert = useStore((state) => state.setAlert);
+
   const handleClose = (_, reason) => {
     if (reason === "clickaway") return;
-    useStore.setState((pre) => ({
-      alert: {
-        ...pre.alert,
-        toggled: false,
-      },
-    }));
+    setAlert({
+      toggled: false,
+    });
   };
 
+  useEffect(() => {
+    setLoaded(true);
+    return () => {
+      setLoaded(false);
+    }
+  }, [])
+
   return (
-    <Snackbar
-      sx={{ transform: "translateY(1.5rem)" }}
-      open={toggled}
-      autoHideDuration={3000}
-      onClose={handleClose}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-    >
-      <MuiAlert
-        severity={type || "success"}
-        sx={{ height: 50, alignItems: "center", ".MuiAlert-message:first-letter": { textTransform: 'capitalize' } }}
-        variant="filled"
-      >
-        {message}
-      </MuiAlert>
-    </Snackbar>
+    <Suspense >
+      {
+        loaded &&
+        <AlertW toggled={toggled} message={message} type={type} handleClose={handleClose} />
+      }
+    </Suspense>
   );
 }
+
 export default AlertMessage;

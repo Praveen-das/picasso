@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react'
-import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Rating from '@mui/material/Rating'
+import { Box, IconButton, Modal, Rating, TextField } from '@mui/material';
 import './newReview.css'
 import useReviews from '../../../Hooks/useReviews';
 import useCurrentUser from '../../../Hooks/useCurrentUser';
@@ -95,10 +91,10 @@ function NewReview({ product, open, setOpen, userReview }) {
                                     sx={{ position: 'absolute', top: 5, right: 5 }}>
                                     <CloseIcon />
                                 </IconButton>
-                                <label className='newReview_customer--name' htmlFor="">Hey {currentUser.data?.name}</label>
+                                <label className='newReview_customer--name' >Hey {currentUser.data?.name}</label>
                                 <p>Tell us about your experience</p>
-                                <img className='button_primary' src={product?.images?.find(o => o.fileId === product?.defaultImage).url} alt="" />
-                                <label className='rate_this_product' htmlFor="">Rate this product</label>
+                                <img className='button_primary' src={product?.images[0]?.url} alt="" />
+                                <label className='rate_this_product' >Rate this product</label>
                                 <Rating
                                     value={vote || userReview?.vote}
                                     aria-required

@@ -1,5 +1,4 @@
-import { Button, Chip } from '@mui/material';
-import Typography from '@mui/material/Typography';
+import { Button, Chip, Typography } from '@mui/material';
 import Status from '../Status/Status';
 import './productList.css'
 import confirmAction from '../ConfirmationDialog/ConfirmationDialog';
@@ -42,7 +41,7 @@ function ProductList({ order }) {
                     </FlexBox>
                 </div>
                 {/* <div className='orders_right'>
-                    <label className='orderedDate' htmlFor="">Delivery by : {order.delivery_date}</label>
+                    <label className='orderedDate' >Delivery by : {order.delivery_date}</label>
                     <br />
                 </div> */}
             </div>

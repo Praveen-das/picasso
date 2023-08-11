@@ -107,8 +107,8 @@ const Message = forwardRef((
                     </Box>
                 }
                 <p style={{ margin: 0, paddingInline: '0.35rem', fontWeight: 500, fontSize: '0.9rem', overflowWrap: 'anywhere' }} id='chat' >{chat.message}</p>
-                {
-                    chat.message !== 'message deleted' && hover &&
+                {/* {
+                    chat.message !== 'message deleted' && hover && */}
                     <>
                         <span className='menu_button' style={{ '--msgbg': self ? 'var(--brand)' : 'var(--msgbg2)', position: 'absolute', right: '5px', bottom: 0 }} onClick={handleClick} id='message_options'>
                             <Expand fontSize='medium' cursor='pointer' />
@@ -141,7 +141,7 @@ const Message = forwardRef((
                             }
                         </Menu>
                     </>
-                }
+                {/* } */}
             </div>
             <span className={self ? 'send_tag' : 'receive_tag'}>
                 {`${moment(chat.time).format('LT')}`}

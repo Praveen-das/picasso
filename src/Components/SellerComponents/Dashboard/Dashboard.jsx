@@ -7,7 +7,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { IconButton, Skeleton } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import AlertMessage from '../../Alert/Alert'
 import confirmAction from '../../ConfirmationDialog/ConfirmationDialog'
 import useSales from '../../../Hooks/Sales/useSales'
 import useSalesOrders from "../../../Hooks/Sales/useSalesOrders"
@@ -28,7 +27,6 @@ const options = [
 
 function Dashboard() {
     const [toggleEdit, setToggleEdit] = useState(false)
-    const [dialog, setDialog] = useState('')
     const [status, setStatus] = useState('')
 
     const { updateStatus } = useSales()
@@ -48,13 +46,12 @@ function Dashboard() {
 
     return (
         <>
-            <AlertMessage dialog={dialog} setDialog={setDialog} />
             <div className="dashboard-wrapper">
                 <div id="dashboard">
                     <div className="dashboard-items">
                         <div className='rows'>
                             <div className="total_orders" onClick={() => salesOrders.groupBy('')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[1]) ||
                                         0
@@ -63,7 +60,7 @@ function Dashboard() {
                                 <FormatListBulletedIcon fontSize='large' className='icon' />
                             </div>
                             <div className="order-pending" onClick={() => salesOrders.groupBy('pending')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2]?.find(o => o.status === "pending")?._count.status) ||
                                         0
@@ -74,7 +71,7 @@ function Dashboard() {
                         </div>
                         <div className='rows'>
                             <div className="order-shipped" onClick={() => salesOrders.groupBy('shipped')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2].find(o => o.status === 'shipped')?._count.status) ||
                                         0
@@ -83,7 +80,7 @@ function Dashboard() {
                                 <LocalShippingIcon fontSize='large' className='icon' />
                             </div>
                             <div className="order-completed" onClick={() => salesOrders.groupBy('completed')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2].find(o => o.status === 'completed')?._count.status) ||
                                         0
@@ -94,7 +91,7 @@ function Dashboard() {
                         </div>
                         <div className='rows'>
                             <div className="order-declined" onClick={() => salesOrders.groupBy('declined')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2].find(o => o.status === 'declined')?._count.status) ||
                                         0
@@ -103,7 +100,7 @@ function Dashboard() {
                                 <ThumbDownAltIcon fontSize='large' className='icon' />
                             </div>
                             <div className="order-cancelled" onClick={() => salesOrders.groupBy('cancelled')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2].find(o => o.status === 'cancelled')?._count.status) ||
                                         0
@@ -114,7 +111,7 @@ function Dashboard() {
                         </div>
                         <div className='rows'>
                             <div className="order-refunded" onClick={() => salesOrders.groupBy('refunded')}>
-                                <label htmlFor="">
+                                <label >
                                     {
                                         (salesOrders.data && salesOrders.data[2].find(o => o.status === 'refunded')?._count.status) ||
                                         0
@@ -123,7 +120,7 @@ function Dashboard() {
                                 <Icon className='icon' icon={faUndo}></Icon>
                             </div>
                             <div className="todays_income">
-                                <label htmlFor="">₹
+                                <label >₹
                                     {
                                         (salesOrders.data && salesOrders.data[3].dailyEarnings) || 0
                                     }
@@ -132,7 +129,7 @@ function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    {/* <label className='recentOrders' htmlFor="">Recent orders</label> */}
+                    {/* <label className='recentOrders' >Recent orders</label> */}
                     <table style={{ width: '100%' }}>
                         <thead>
                             <tr>

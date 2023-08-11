@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react'
 import { IconButton } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search';
+import { ReactComponent as SearchIcon } from '../../Assets/Icons/search.svg';
 import './search.css'
 
-function Search({ onKeyUp = () => null, onSearch = () => null }) {
-    const [focused, setFocused] = useState(null)
+function Search({ onKeyUp = () => null, onSearch }) {
     const [query, setQuery] = useState('')
     const input = useRef()
 
@@ -21,43 +20,32 @@ function Search({ onKeyUp = () => null, onSearch = () => null }) {
 
     const handleQuery = () => {
         if (query !== '') {
-            onSearch(query)
-            setFocused(false)
-            handleClose()
+            if (onSearch)
+                onSearch(query)
             return
         }
-        setFocused(!focused)
-    }
-
-    const handleClose = () => {
-        setFocused(!focused)
-        // setQuery('')
-        clearTimeout(timer.current)
-        // input.current.value = ''
     }
 
     return (
         <>
-            <div
-                className="searchbox_hitarea"
-                style={{ display: focused ? 'unset' : 'none' }}
-                onClick={handleClose}
-            />
-            <div className='searchbox_wrapper'>
-                <IconButton onClick={() => handleQuery()}>
-                    <SearchIcon id='search' sx={{ fontSize: 20 }} />
-                </IconButton>
-                <input
-                    id='searchbox'
-                    type="text"
-                    autoComplete='off'
-                    onKeyUp={(e) => handleSearch(e)}
-                    ref={input}
-                    className={
-                        focused === null ? '' :
-                            focused ? 'searchbox--expand' :
-                                'searchbox--shrink'}
-                />
+            <div id='search_wrapper'>
+                <div id='searchbox_wrapper'>
+                    {!onSearch && <SearchIcon style={{ opacity: 0.6 }} width={20} height={20} />}
+                    {
+                    onSearch &&
+                    <IconButton sx={{ p: '4px' }} onClick={() => handleQuery()}>
+                        <SearchIcon style={{ opacity: 0.6 }} width={21} height={21} />
+                    </IconButton>
+                }
+                    <input
+                        id="searchbox"
+                        type="text"
+                        autoComplete='off'
+                        onKeyUp={(e) => handleSearch(e)}
+                        ref={input}
+                        placeholder='Search for Paintings'
+                    />
+                </div>
                 
             </div>
         </>

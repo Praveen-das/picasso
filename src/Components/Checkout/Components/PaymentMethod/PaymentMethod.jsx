@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Radio from '@mui/material/Radio';
-import { Typography } from '@mui/material';
+import { Radio, Typography } from '@mui/material';
 import './paymentMethod.css'
 
 function PaymentMethod({ setMethod, method }) {

@@ -1,49 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
 import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../lib/product.api";
+import { useFilter } from "../Components/Sidebar/useFilter";
 
-Array.prototype.groupItems = function () {
-    return this.reduce((prev, cur) => {
-        const key = cur.item
-        for (let k in prev)
-            if (k === key) return prev[key].push(cur.value) && prev
-        prev[key] = [cur.value]
-        return prev
-    }, {})
-}
 
 export function useProducts() {
-    let { state } = useLocation()
-    const { id: seller_id } = useParams()
-
-    const facets = state?.filter?.groupItems() || {}
-    if (seller_id) Object.assign(facets, { seller_id })
+    const queryString = window.location.search.slice(1)
 
     return useQuery(
         [
             'products',
-            state?.page,
-            facets,
-            state?.orderBy,
-            state?.query,
-            state?.limit
+            queryString
         ],
         () => fetchProducts(
-            state?.page,
-            facets,
-            state?.orderBy,
-            state?.query,
-            state?.limit
+            queryString
         ),
         {
-            keepPreviousData: true,
+            keepPreviousData: true
         }
     )
 }
 
 export function useProductQuery(queryKey, url, state) {
-    // const facets = state?.filter?.groupItems()
     return useQuery([queryKey], () => productQuery(url), {
         keepPreviousData: true,
     })
@@ -53,19 +31,16 @@ export function useSellerProducts(id) {
 
 }
 
-export function useAdmin(id) {
+export function useAdmin() {
+    const queryString = window.location.search.slice(1)
     const queryClient = useQueryClient();
 
-    const [page, setPage] = useState(1)
-    const [filter, setFilter] = useState({ item: null, value: null })
-    const [query, setQuery] = useState('')
-
-    const products = useQuery(['admin_products', page], () => fetchAdminProducts(page, filter, query))
+    const products = useQuery(['admin_products', queryString], () => fetchAdminProducts(queryString), { keepPreviousData: true })
 
     const addProduct = useMutation(_addProduct, {
         onSuccess: () => {
             queryClient.invalidateQueries(["admin_products"]);
-        },
+        }
     });
 
     const updateProduct = useMutation(_updateProduct, {
@@ -82,13 +57,9 @@ export function useAdmin(id) {
 
     return {
         products,
-        setPage,
-        setFilter,
-        setQuery,
         addProduct,
         deleteProduct,
         updateProduct,
-
     }
 }
 

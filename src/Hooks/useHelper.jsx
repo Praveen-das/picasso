@@ -2,7 +2,7 @@ import { useStore } from "../Context/Store";
 
 export const useHelper = () => {
   const skeleton = () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const set = useStore((state) => state.set);
+  const setAlert = useStore((state) => state.setAlert);
 
   const getAverageRating = (array) => {
     if (array === null) return;
@@ -41,24 +41,9 @@ export const useHelper = () => {
     );
   };
 
-  const copyToClipboard = async (type, value) => {
-    await set(({ alert }) => {
-      alert.toggled = false;
-    });
-
-    await navigator.clipboard.writeText(value);
-    await set(({ alert }) => {
-      alert.toggled = true;
-      alert.message = `${type} copied to clipboard`;
-      alert.type = "info";
-      alert.time = 1000;
-    });
-  };
-
   return {
     getDeliveryDate,
     getAverageRating,
-    copyToClipboard,
     skeleton,
   };
 };

@@ -1,5 +1,6 @@
-import { Box, Chip, Divider, Grid, IconButton, Rating, Typography, styled } from '@mui/material';
+import { Box, Chip, Divider, Grid, IconButton, Rating, Typography } from '@mui/material';
 import React, { Fragment } from 'react'
+import '../../Checkout/Components/Products/products.css'
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
@@ -8,25 +9,27 @@ import useWishlist from '../../../Hooks/useWishlist'
 import StarEmptyIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import { Link } from 'react-router-dom';
-import useCurrentUser from '../../../Hooks/useCurrentUser';
+import styled from '@emotion/styled';
+import EmptyWishlist from './EmptyWishlist';
+import LoadingScreen from '../../MUIComponents/LoadingScreen';
 
 export const FlexBox = styled(Box)(({ alignItems = 'center' }) => ({ display: 'flex', alignItems }))
 
 function MyWishlist() {
-    const { removeFromWishlist } = useWishlist()
-    const currentUser = useCurrentUser().currentUser.data
-    const wishlists = currentUser?.wishlist
+    const { wishlist: { data: wishlist, isLoading, isFetching }, removeFromWishlist } = useWishlist()
 
+    if (isLoading || isFetching) return <LoadingScreen />
+    if (!wishlist?.length) return <EmptyWishlist />
     return (
         <>
             <Grid item xs={12} display='grid' pl={2} gap={3}>
                 <Grid item xs={12} ml={-2}>
-                    <Typography variant="h5" fontWeight={800} color="#333">
-                        My Wishlist({wishlists?.length})
+                    <Typography variant="tabTitle">
+                        My Wishlist - {wishlist?.length}
                     </Typography>
                 </Grid>
                 {
-                    wishlists?.map(({ id, product }, key) =>
+                    wishlist?.map(({ id, product }, key) =>
                         <Fragment key={product?.id}>
                             <Link className="checkout__product" key={id} to={`/shop/product/${product?.id}`}>
                                 <Box position='absolute' top={5} right={5} zIndex={100}>
@@ -65,7 +68,7 @@ function MyWishlist() {
                                 </div>
                             </Link >
                             {
-                                wishlists?.[key + 1] &&
+                                wishlist?.[key + 1] &&
                                 <Divider variant='fullWidth' />
                             }
                         </Fragment>

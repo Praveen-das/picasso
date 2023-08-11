@@ -1,9 +1,7 @@
-import Modal from '@mui/material/Modal';
-import Box from '@mui/system/Box';
 import './confirmationDialog.css'
-import Slide from '@mui/material/Slide';
 import ReactDom from 'react-dom';
 import { useState } from 'react';
+import { Box, Modal, Slide } from '@mui/material';
 
 export default function confirmAction(title, message, onConfirmation) {
     const portal = document.getElementById('portal')

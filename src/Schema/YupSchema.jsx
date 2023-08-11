@@ -1,30 +1,33 @@
 import * as yup from "yup";
 
+let minImages = process.env.NODE_ENV === "development" ? 1 : 2
+
 export const productValidation = yup.object({
-  name: yup.string().required("required"),
-  desc: yup.string().required("required"),
+  name: yup.string().required("This field is required."),
   category_id: yup.number(),
   material_id: yup.number(),
-  width: yup.mixed().required("required"),
-  height: yup.mixed().required("required"),
-  quantity: yup.mixed().required("required"),
-  price: yup.mixed().required("required"),
-  discount: yup.mixed(),
-  images: yup.mixed().required("required"),
-  defaultImage: yup.mixed(),
+  desc: yup.string().required("This field is required."),
+  price: yup.number().required("This field is required."),
+  discount: yup.number().max(100),
+  quantity: yup.number().required("This field is required."),
+  size: yup.array().of(yup.string()).min(1),
+  width: yup.string(),
+  height: yup.string(),
+  images: yup.array().of(yup.mixed()).min(minImages).max(5),
 });
 
 export const productUpdateValidation = yup.object({
   name: yup.string(),
-  desc: yup.string(),
   category_id: yup.number(),
   material_id: yup.number(),
-  width: yup.mixed(),
-  height: yup.mixed(),
-  quantity: yup.mixed(),
-  price: yup.mixed(),
-  discount: yup.mixed(),
-  images: yup.mixed(),
+  desc: yup.string(),
+  price: yup.number(),
+  discount: yup.number().max(100),
+  quantity: yup.number(),
+  size: yup.array().of(yup.string()).min(1),
+  width: yup.string(),
+  height: yup.string(),
+  images: yup.array().of(yup.mixed()).min(minImages).max(5),
 });
 
 export const loginValidation = yup.object({

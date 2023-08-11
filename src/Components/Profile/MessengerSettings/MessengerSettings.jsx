@@ -23,7 +23,7 @@ export default function MessengerSettings() {
     return (
         <Grid container>
             <Grid item xs={12} mb={2}>
-                <Typography variant="h5" fontWeight={800} color="#333">
+                <Typography variant="tabTitle">
                     Chat Settings
                 </Typography>
             </Grid>

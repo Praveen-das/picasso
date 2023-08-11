@@ -1,6 +1,5 @@
-import Rating from '@mui/material/Rating'
-import Avatar from '@mui/material/Avatar'
 import './style.css'
+import { Avatar, Rating } from '@mui/material'
 
 function Review({ review }) {
     const handleAvatar = () => {
@@ -15,7 +14,7 @@ function Review({ review }) {
                 <div className='customer-profile'>
                     <Avatar {...handleAvatar()} className='customer-profile--picture' alt="Remy Sharp" />
                     <div className='nameAndRating'>
-                        <label htmlFor="">{review.user?.displayName}</label>
+                        <label >{review.user?.displayName}</label>
                         <Rating
                             className='customer_rating'
                             name="read-only"
@@ -23,7 +22,7 @@ function Review({ review }) {
                             value={review.vote} readOnly />
                     </div>
                 </div>
-                <label className='review_title' htmlFor="">{review.review?.title}</label>
+                <label className='review_title' >{review.review?.title}</label>
                 <p className='review'>{review.review?.message}</p>
             </div>
         </>

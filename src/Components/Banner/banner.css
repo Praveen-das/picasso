@@ -1,20 +1,22 @@
 .brandName {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
-  font-size: 9rem;
+  font-size: 5rem;
+  white-space: nowrap;
   font-family: var(--Title);
-  line-height: 140px;
-  font-weight: 100;
+  line-height: 90px;
+  letter-spacing: 8px;
 }
 
 
 .p1,
 .p2 {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0 100%);
-  font-family: var(--Sub);
-  font-size: 1.4rem;
+  white-space: nowrap;
   font-weight: 600;
-  margin: 1rem 0;
-  color: #9f9f9f;
+  line-height: 1.6;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: hsl(0deg 0% 13.53%);
 }
 
 .p2{

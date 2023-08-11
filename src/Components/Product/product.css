@@ -23,23 +23,32 @@
 
 .alt_images {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 1.5rem;
 }
 
+#productImage--wrapper {
+    background: black;
+}
 #productImage {
+    display: block;
     width: 100%;
-    border-radius: 10px;
-    /* max-width: 350px;
-    max-height: 550px; */
+    max-height: 430px;
+    object-fit: contain;
 }
 
 .alt_image {
-    width: 70px;
+    width: 60px;
     aspect-ratio: 1;
-    border-radius: 25px;
+    border-radius: 20px;
     background: #000;
+    opacity: 0.75;
+    transition: 0.2s;
     cursor: pointer;
+}
+
+.alt_image--active{
+    opacity: 1;
 }
 
 .alt_image img {

@@ -4,14 +4,14 @@ import {
   TextField,
   Button,
   Checkbox,
+  IconButton,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
 import Google from "@mui/icons-material/Google";
 import Facebook from "@mui/icons-material/Facebook";
 import Twitter from "@mui/icons-material/Twitter";
 import { useFormik } from "formik";
 import { signupValidation } from "../../Schema/YupSchema";
-import { TF_Style } from "../SellerComponents/AddProduct/style";
+import { TF_Style } from "../SellerComponents/style";
 import useAuth from "../../Hooks/useAuth";
 import { useState } from "react";
 import Success from "./Success";

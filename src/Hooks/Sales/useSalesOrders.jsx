@@ -8,6 +8,7 @@ const useSalesOrders = () => {
         ['sales_orders',
             filter], () => _getSalesOrderByUserId(filter),
         { keepPreviousData: true })
+
     orders['groupBy'] = setFilter
 
     return orders

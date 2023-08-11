@@ -6,6 +6,7 @@
     box-sizing: border-box;
     width: 100%;
     height: var(--header);
+    height: 76px;
     display: flex;
     align-items: center;
     justify-content: space-between;

@@ -39,7 +39,7 @@ function Tray({ height, data, title, parent, from, to, more }) {
     return (
         <>
             <div className="productsTray-wrapper">
-                {title && <label className='categoryTitle brand_title' htmlFor="">{title}</label>}
+                {title && <label className='categoryTitle brand_title' >{title}</label>}
                 {/* {more && <span>
                     <Link to='/shop' className='more'>VIEW ALL</Link>
                 </span>} */}

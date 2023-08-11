@@ -2,12 +2,13 @@ import { Grid, Typography, TextField, Button, Checkbox } from "@mui/material";
 import "./login.css";
 import { useFormik } from "formik";
 import { loginValidation } from "../../Schema/YupSchema";
-import { TF_Style } from "../SellerComponents/AddProduct/style";
+import { TF_Style } from "../SellerComponents/style";
 import useAuth from "../../Hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 function Signin() {
   const { signin } = useAuth()
+  const navigate = useNavigate()
 
   const {
     values,
@@ -30,8 +31,6 @@ function Signin() {
     },
     validateOnChange: false
   })
-
-  const navigate = useNavigate()
 
   function handleLogin(values) {
     signin(values)

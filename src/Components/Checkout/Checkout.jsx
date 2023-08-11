@@ -1,15 +1,7 @@
 import React, { useState } from 'react'
 import './checkout.css'
 
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
+import { Box, Grid,Button, Typography, Step, StepLabel, StepContent, Paper, Stepper } from '@mui/material';
 import AddressList, { Address } from './Components/AddressList/AddressList';
 import PaymentMethod from './Components/PaymentMethod/PaymentMethod';
 import Products from './Components/Products/Products';
@@ -157,12 +149,12 @@ function Checkout() {
                             <div>
                                 <input defaultChecked={true} onChange={() => setPaymentMethod('card')} name='payment' type="radio" />
                                 <CreditCardIcon sx={{ fontSize: '18px' }} />
-                                <label htmlFor="">Credit card/Debit card</label>
+                                <label >Credit card/Debit card</label>
                             </div>
                             <div>
                                 <input onChange={() => setPaymentMethod('cod')} name='payment' type="radio" />
                                 <LocalShippingIcon sx={{ fontSize: '18px' }} />
-                                <label htmlFor="">COD</label>
+                                <label >COD</label>
                             </div>
                         </div> */}
     </Grid>

@@ -1,10 +1,7 @@
 import { useState } from "react";
-import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
 import Address from "./Address";
-import { Typography } from "@mui/material";
+import { Box, Typography,Button, Grid } from "@mui/material";
 import AddNewAddress from "./AddNewAddress";
 import useCurrentUser from "../../../Hooks/useCurrentUser";
 
@@ -19,7 +16,7 @@ function ManageAddress() {
       <Grid container>
         {open && <AddNewAddress open={open} close={() => setOpen(false)} />}
         <Grid item xs={12} mb={2}>
-          <Typography variant="h5" fontWeight={800} color="#333">
+          <Typography variant="tabTitle">
             Shipping Address
           </Typography>
         </Grid>

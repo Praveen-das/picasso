@@ -15,13 +15,13 @@
     padding: 2rem 1.5rem;
 }
 
-.swiper {
+/* .swiper {
     width: 100% !important;
 }
 
 .swiper-slide:last-child>* {
     width: 100%;
-}
+} */
 
 .checkout_swiper {
     box-sizing: border-box;
@@ -93,20 +93,13 @@
 }
 
 .emptyCart {
-    display: flex;
-    position: absolute;
-    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-block: 1rem;
+    box-sizing: border-box;
 }
 
 .emptyCart label {
     font-size: 2rem;
     font-weight: 800;
-}
-
-.emptyCart div {
-    margin: auto;
-    display: flex;
-    align-items: center;
-    gap: 5rem;
-    flex-direction: column;
 }

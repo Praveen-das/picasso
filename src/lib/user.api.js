@@ -6,7 +6,6 @@ const signupUser = async (credentials) => {
 
 const signinUser = async (credentials) => {
   const data = await axiosClient.post("/user/signin", credentials);
-  console.log(data);
   return data
 };
 

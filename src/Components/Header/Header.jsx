@@ -1,72 +1,75 @@
-import { useEffect, useMemo } from "react";
+import { lazy, useMemo, useState } from "react";
 import "./header.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
 import Avatar from "../Avatar/Avatar";
 import { useNavigate } from "react-router-dom";
 import Search from "../Search/Search";
-import AccountsIcon from "@mui/icons-material/ManageAccounts";
 import FavoriteIcon from "@mui/icons-material/FavoriteBorder";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { useStore } from "../../Context/Store";
 import useCurrentUser from "../../Hooks/useCurrentUser";
 import useAuth from "../../Hooks/useAuth";
-import { Badge, BottomNavigationAction, Box, Drawer, Menu } from "@mui/material";
+import { Badge, Box, Typography } from "@mui/material";
 import CartIcon from '@mui/icons-material/ShoppingBagOutlined';
 import LoginIcon from '@mui/icons-material/LoginOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
-import MenuIcon from '@mui/icons-material/DehazeRounded';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded';
 
 function Header() {
   const navigate = useNavigate();
-  const { state } = useLocation()
-  const { logout } = useAuth();
+  const { pathname } = useLocation()
+  let pathName = pathname.slice(1)
   const { currentUser } = useCurrentUser();
 
   return (
-    <nav id='navbar'>
-      <div className="navbar">
-        <div className="left">
-          <Link to="/">
-            <label className="header_brandName" htmlFor="logo">
-              ARTWORLD.
-            </label>
-          </Link>
-
-          {/* <Search onSearch={(query) => navigate(`/search`, { state: { ...state, query } })} /> */}
-        </div>
-        {/* <div className="navbar_middle">
-          
-        </div> */}
-        <div className="right">
-          {/* 
-          <Link to="/sell" className="marketplace" htmlFor="">
-            Sell
-          </Link> */}
-          {/* <MessagesLink /> */}
-          <Link id='nav_links' to="/profile" state={{ tab: 2 }}>
-            <FavoriteIcon fontSize='small' />
-            {/* Wishlist */}
-          </Link>
-          <Link id='nav_links' to='/cart' htmlFor="">
-            <CartIcon fontSize='small' />
-            {/* Cart */}
-          </Link>
-          {
-            currentUser.data !== null ?
-              <Link id='nav_links' to="/profile">
-                <PersonIcon />
-                {/* Account */}
-              </Link> :
-              <Link id='nav_links' to="/login" >
-                <LoginIcon fontSize='small' />
-                {/* Log in */}
-              </Link>
+    <>
+      <nav id='navbar'>
+        <div className="navbar">
+          <div className="left">
+            <Link to="/">
+              <label className="header_brandName">
+                ARTWORLD.
+              </label>
+            </Link>
+            {
+            pathName !== 'admin' &&
+            <Search onSearch={(query) => navigate(`/results?q=${query}`)} />
           }
-          {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
+          </div>
+          
+          <div className="right">
+            {/* <Link id='nav_links' to="/profile" state={{ tab: 2 }}>
+              <FavoriteIcon fontSize='small' />
+            </Link> */}
+            <Link id='nav_links' to='/cart' >
+              <CartIcon fontSize='small' />
+            </Link>
+            {
+              currentUser.data !== null ?
+                <Link to="/profile">
+                  {/* <PersonIcon /> */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}
+                  >
+                    <Avatar
+                      sx={{ width: 30, height: 30 }}
+                      displayName={currentUser.data?.displayName}
+                      profilePicture={currentUser.data?.photo}
+                    />
+                  </Box>
+                </Link> :
+                <Link id='nav_links'
+                  to="/login"
+                >
+                  <LoginIcon fontSize='small' />
+                </Link>
+            }
+            {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
           </Badge> */}
-          {/* {currentUser.data !== null ? (
+            {/* {currentUser.data !== null ? (
             <DropDown>
               <Avatar
                 displayName={currentUser.data?.displayName}
@@ -91,12 +94,12 @@ function Header() {
               LOG IN
             </Link>
           )} */}
-        </div>
-        {/* <IconButton sx={{ position: 'absolute', right: '8px' }}>
+          </div>
+          {/* <IconButton sx={{ position: 'absolute', right: '8px' }}>
                     <SearchIcon />
                 </IconButton> */}
-      </div>
-      {/* <Box
+        </div>
+        {/* <Box
         sx={{
           mx: 4,
           py: 1.5,
@@ -109,26 +112,27 @@ function Header() {
           top: 0
         }}
       >
-        <Link style={{ display: 'flex', alignItems: 'center', fontSize: 14, fontWeight: 700 }} to="/shop" htmlFor="">
+        <Link style={{ display: 'flex', alignItems: 'center', fontSize: 14, fontWeight: 700 }} to="/shop" >
           <MenuIcon fontSize="small" sx={{ mr: 2 }} />
           All Categories
         </Link>
         <Box display='flex' gap={3} textTransform='uppercase'>
-          <Link to="/shop" className='nav_bottom' htmlFor="">
+          <Link to="/shop" className='nav_bottom' >
             Latest
           </Link>
-          <Link to="/shop" className='nav_bottom' htmlFor="">
+          <Link to="/shop" className='nav_bottom' >
             Product
           </Link>
-          <Link to="/shop" className='nav_bottom' htmlFor="">
+          <Link to="/shop" className='nav_bottom' >
             Shop
           </Link>
         </Box>
-        <Link style={{ marginLeft: 'auto' }} to="/sell" htmlFor="">
+        <Link style={{ marginLeft: 'auto' }} to="/sell" >
           Sell on Artworld
         </Link>
       </Box> */}
-    </nav>
+      </nav>
+    </>
   );
 }
 
@@ -145,7 +149,7 @@ function MessagesLink() {
   }, [unreadMessages])
 
   return <Badge badgeContent={totalUnreadMessages} color="primary">
-    <Link to='/chat' className='create' htmlFor="">Messages</Link>
+    <Link to='/chat' className='create' >Messages</Link>
   </Badge>;
 }
 

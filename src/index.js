@@ -18,11 +18,11 @@ const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  <StrictMode>
+  // <StrictMode>
     <QueryClientProvider client={client}>
       <ReactQueryDevtools initialIsOpen={false} />
-        <App />
+      <App />
     </QueryClientProvider>
-  </StrictMode>
+  // </StrictMode>
 );
 

@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient"
 
-export const deleteImage = (fileId) => {
-    return axiosClient.delete(`/imagekit/${fileId}`)
+export const deleteImage = (ids) => {
+    return axiosClient.delete(`/imagekit/delete`, { data: ids })
 }
 
 export const _addProduct = async (product) => {
@@ -16,17 +16,25 @@ export const _updateProduct = async ({ id, updates }) => {
     return await axiosClient.put(`/products/${id}`, updates)
 }
 
-export const fetchProducts = async (page, facets, orderBy, query, limit) => {
-    return await axiosClient.request({
-        url: '/products',
-        params: {
-            facets,
-            o: orderBy,
-            q: query,
-            limit,
-            p: page,
-        }
-    }).then(res => res.data)
+export const fetchProducts = async (query) => {
+    return await axiosClient.get('/products?' + query).then(res => res.data)
+}
+
+export const fetchFilterParams = async (query) => {
+    return await axiosClient.get('/products/fetch?' + query).then(res => res.data)
+}
+
+export const fetchCategories = async (query) => {
+    return await axiosClient.get('/products/categories?' + query).then(res => res.data)
+}
+export const _addCategories = async (data) => {
+    return await axiosClient.post('/products/categories/add', data).then(res => res.data)
+}
+export const _removeCategories = async (id) => {
+    return await axiosClient.delete('/products/categories/' + id).then(res => res.data)
+}
+export const _updateCategories = async ({ id, updates }) => {
+    return await axiosClient.put('/products/categories/' + id, updates).then(res => res.data)
 }
 
 export const productQuery = async (url, page, facets, orderBy, query, limit) => {
@@ -42,14 +50,8 @@ export const productQuery = async (url, page, facets, orderBy, query, limit) => 
     }).then(res => res.data)
 }
 
-export const fetchAdminProducts = (page, filter, query) => {
-    const qPage = page && '&page=' + page
-    const facets =
-        filter.item !== null &&
-            filter.value !== null ?
-            `&facets[${filter.item}]=` + filter.value : ''
-
-    return axiosClient.get(`/user/products?limit=10${qPage, query}&query=${query}`,).then(res => res.data)
+export const fetchAdminProducts = (query) => {
+    return axiosClient.get(`/user/products?${query}`).then(res => res.data)
 }
 
 export const fetchProduct = async (id) => {

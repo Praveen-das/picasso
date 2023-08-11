@@ -1,13 +1,11 @@
 import { Box, Divider, Grid, Typography } from '@mui/material';
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment } from 'react'
 import { useCart } from '../../../../Hooks/useCart'
 import QuantityInput from '../../../QuantityInput/QuantityInput';
 import './products.css'
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import WishlistButton from '../../../WishlistButton/WishlistButton';
 import { calculateDiscount } from '../../../../Utils/utils';
 import { Link } from 'react-router-dom';

@@ -1,5 +1,4 @@
 import { ThemeProvider, createTheme } from "@mui/material";
-import { amber } from "@mui/material/colors";
 
 export function MUIContext({ children }) {
     var brand = getComputedStyle(document.body).getPropertyValue('--brand').replaceAll(/\s/g, '')
@@ -12,9 +11,17 @@ export function MUIContext({ children }) {
         },
         typography: {
             fontFamily: 'Montserrat',
-            // allVariants:{
-            //     color:'var(--brandMain)'
-            // },
+            heading: {
+                fontSize: 28,
+                color: 'black',
+                fontFamily: 'var(--Title)',
+                fontWeight: 100
+            },
+            desc: {
+                lineHeight: 2, 
+                fontSize: 18, 
+                fontWeight: 500
+            },
             'title.primary': {
                 fontSize: 16,
                 fontWeight: 700,
@@ -44,7 +51,11 @@ export function MUIContext({ children }) {
                 fontWeight: 400,
                 color: 'grey'
             },
-
+            tabTitle: {
+                fontSize: 35,
+                fontWeight: 500,
+                color: "black"
+            }
         },
         palette: {
             primary: {
@@ -101,7 +112,8 @@ export function MUIContext({ children }) {
             MuiAccordion: {
                 defaultProps: {
                     disableGutters: true,
-                    // TransitionProps: { unmountOnExit: true }
+                    elevation: 0,
+                    TransitionProps: { unmountOnExit: true }
                 },
                 styleOverrides: {
                     root: {
@@ -109,7 +121,19 @@ export function MUIContext({ children }) {
                             opacity: '1 !important',
                         },
                     },
-                }
+                },
+                variants: [{
+                    props: { className: 'noPadding' },
+                    style: {
+                        ".MuiAccordionDetails-root": {
+                            padding: 0,
+                            marginInline: 0
+                        },
+                        ".MuiAccordionSummary-root": {
+                            padding: 0
+                        },
+                    }
+                }]
             },
             MuiAccordionDetails: {
                 styleOverrides: {
@@ -118,6 +142,19 @@ export function MUIContext({ children }) {
                         marginBottom: 20
                     }
                 }
+            },
+            MuiTypography: {
+                variants: [{
+                    props: {
+                        className: 'noWrapLine',
+                    },
+                    style: {
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 5,
+                        WebkitBoxOrient: "vertical"
+                    }
+                }]
             },
         },
 

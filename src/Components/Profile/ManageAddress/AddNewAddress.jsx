@@ -194,7 +194,7 @@ function AddNewAddress({ open, close }) {
                 style={{ transform: "translateY(1.5px)", marginRight: 15 }}
                 type="checkbox"
               />
-              <label style={{ fontSize: "0.9rem" }} htmlFor="isDefault">
+              <label style={{ fontSize: "0.9rem" }} >
                 Set as default shipping address.
               </label>
             </Grid>

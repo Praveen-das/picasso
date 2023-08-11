@@ -39,7 +39,7 @@ export default function Store() {
                 <Grid item xs={12} p={3}>
                     <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                         {
-                            data && data[0]?.map((o) => (
+                            data?.map((o) => (
                                 <Card sx={{ width: '100%', borderRadius: 10 }} key={o.id} product={o} />
                             ))
                         }

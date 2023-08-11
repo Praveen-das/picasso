@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './product.css'
 import QuantityInput from '../QuantityInput/QuantityInput';
 import Reviews from '../Reviews/Reviews';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Divider, Grid, IconButton, Rating, Skeleton, Typography } from '@mui/material';
-import FloatingCart from '../FloatingCart/FloatingCart';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Divider, Grid, IconButton, Rating, Skeleton, Typography, makeStyles } from '@mui/material';
+// import makeStyles from '@mui/styles';
 import { useCart } from '../../Hooks/useCart';
 import useCurrentUser from '../../Hooks/useCurrentUser';
 import Tray from '../ProductsTray/Tray'
@@ -19,7 +19,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ShareIcon from '@mui/icons-material/Share';
 import WishlistButton from '../WishlistButton/WishlistButton'
 import { calculateDiscount } from '../../Utils/utils';
+import UnfoldMoreIcon from '@mui/icons-material/ExpandMore';
+import UnfoldLessIcon from '@mui/icons-material/ExpandLess';
+import LoadingScreen from '../MUIComponents/LoadingScreen'
 
+const IconButtonProps = {
+    fontSize: 'small',
+    color: 'primary'
+}
 
 function Product() {
     const [quantity, setQuantity] = useState(1)
@@ -31,11 +38,10 @@ function Product() {
 
     const navigate = useNavigate()
     const { currentUser, addToRecentlyViewed } = useCurrentUser()
-    const { addToCart, removeFromCart, cart: cart_items } = useCart()
-    const [cart] = cart_items.data || [[]]
+    const { addToCart, removeFromCart, cart: { data: [cart] = [] } } = useCart()
 
     const params = useParams()
-    const { data: product } = useProduct(params?.product_id)
+    const { data: product, isFetching, isLoading } = useProduct(params?.product_id)
 
     const sellerId = product?.sales_person?.id
 
@@ -73,7 +79,7 @@ function Product() {
                 const cartItem = {
                     product_id: product?.id,
                     quantity,
-                    // size: itemsSize,
+                    size: itemsSize,
                     price,
                     discount
                 }
@@ -111,125 +117,177 @@ function Product() {
             .catch((err) => console.log(err))
     }
 
-    const [itemsSize, setSize] = useState(sizes[0])
+    const [itemsSize, setSize] = useState([])
+    const [more, setMore] = useState(false)
 
-    const IconButtonProps = {
-        fontSize: 'small',
-        color: 'primary'
-    }
+    useEffect(() => {
+        if (product?.size) setSize(product.size[0])
+    }, [product])
+
+    let discountPrice = product ? product.price - ((product.price * product.discount) / 100) : 0
+    let save = (product?.price * product?.discount) / 100
 
     return (
         <>
-            {/* {currentUser.data && <FloatingCart />} */}
-            <Grid container columnSpacing={8} p='1rem 3rem'>
+            <Grid container columnSpacing={8} p='0 3rem'>
                 {/*--------------- LEFT ---------------*/}
                 <Grid
                     item
-                    xs={6}
-                    display='flex'
-                    flexDirection='column'
+                    xs={5}
+                    display='grid'
+                    gridTemplateRows='430px 1fr'
                     pt={2}
-                    alignItems='center'
+                    alignItems='start'
+                    justifyItems='center'
                     gap={2}
                     position='sticky'
                     alignSelf='start'
                     top='2rem'
                 >
-                    <img id='productImage' src={product?.images[defaultImg].url + '/tr:w-200'} alt="" />
+                    {/* <Masonry columns={1}> */}
+                    <div id='productImage--wrapper'>
+                        <img id='productImage'
+                            src={product?.images[defaultImg]?.url + '/tr:w-200'} alt=""
+                        />
+                    </div>
+                    {/* </Masonry> */}
                     <div className="alt_images">
                         {
                             product?.images?.map((image, index) => (
-                                <img key={index} onClick={() => setDefaultImg(index)} className={`alt_image ${defaultImg === index && 'active'}`} src={image.url + '/tr:w-100'} alt="" />
+                                <img key={index} onClick={() => setDefaultImg(index)} className={`alt_image ${defaultImg === index ? 'alt_image--active' : ''}`} src={image.url + '/tr:w-100'} alt="" />
                             ))
                         }
                     </div>
                 </Grid>
                 {/*--------------- MIDDLE ---------------*/}
-                <Grid item xs={6} display={'flex'} flexDirection='column' rowGap={3} >
+                <Grid item xs display={'flex'} flexDirection='column' rowGap={3} >
                     <Box display='flex' alignItems='center' gap={1}>
-                        <Typography textTransform='capitalize' variant='h3' fontWeight={700}>{product?.name || <Skeleton width='60%' />}</Typography>
-                        <Box ml='auto' display={'flex'} gap={1} width={100}>
-                            {
-                                sellerId !== currentUser.data?.id &&
-                                <IconButton onClick={() => handleChatWidget()}>
-                                    <ChatIcon {...IconButtonProps} />
-                                </IconButton>
-                            }
-                            <WishlistButton
-                                iconButton={<IconButton />}
-                                productId={product?.id}
-                                color='var(--brand)'
-                            />
-                            <IconButton
-                                onClick={handleSharing}
-                            >
-                                <ShareIcon {...IconButtonProps} />
-                            </IconButton>
-                        </Box>
+                        {
+                            isLoading || isFetching ?
+                                <Skeleton width='70%' height={55} /> :
+                                <>
+                                    <Typography textTransform='capitalize' variant='h3' fontWeight={700}>{product?.name || <Skeleton width='60%' />}</Typography>
+                                    <Box ml='auto' display={'flex'} gap={1} width={100}>
+                                        {
+                                            sellerId !== currentUser.data?.id &&
+                                            <IconButton onClick={() => handleChatWidget()}>
+                                                <ChatIcon {...IconButtonProps} />
+                                            </IconButton>
+                                        }
+                                        <WishlistButton
+                                            iconButton={<IconButton />}
+                                            productId={product?.id}
+                                            color='var(--brand)'
+                                        />
+                                        <IconButton
+                                            onClick={handleSharing}
+                                        >
+                                            <ShareIcon {...IconButtonProps} />
+                                        </IconButton>
+                                    </Box>
+                                </>
+                        }
                     </Box>
                     <Box display='flex' alignItems='center' gap={1} mt={-2.5} fontWeight={500} >
                         by
-                        <SellerProfile seller={product?.sales_person} />
+                        {
+                            isLoading || isFetching ?
+                                <>
+                                    <Skeleton variant="circular" width={28} height={28} />
+                                    <Skeleton width={100} />
+                                </> :
+                                <SellerProfile seller={product?.sales_person} />
+                        }
                     </Box>
                     <Box display='flex' alignItems='center' gap={1} >
                         <Rating readOnly icon={<StarIcon />} emptyIcon={<StarEmptyIcon />} name="read-only" value={product?.rating || 0} />
                         <Typography variant='text.grey'> {product?.rating || 0}&nbsp;</Typography>
-                        <label id='bull' htmlFor="">&bull;</label>
+                        <label id='bull'>&bull;</label>
                         <Typography variant='text.grey'> {product?.reviews.length || 0}&nbsp;Reviews</Typography>
                     </Box>
                     <Divider />
-                    <Typography variant='paragraph'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, doloribus perferendis ratione nisi rerum repellendus asperiores ab laboriosam. Rerum ratione maxime aut temporibus ex voluptas ut, ea quae iste nihil.
-                    </Typography>
+                    <Box position='relative'>
+                        {
+                            isLoading || isFetching ?
+                                <Box display='flex' flexDirection='column' gap={0.5} mb={0.5} >
+                                    <Skeleton width='100%' height={25} />
+                                    <Skeleton width='100%' height={25} />
+                                    <Skeleton width='100%' height={25} />
+                                    <Skeleton width='100%' height={25} />
+                                    <Skeleton width='70%' height={25} />
+                                </Box> :
+                                <>
+                                    <Typography className={!more && 'noWrapLine'} variant='paragraph'>
+                                        {product?.desc}
+                                    </Typography>
+                                    <IconButton
+                                        onClick={() => setMore(s => !s)}
+                                        size='small'
+                                        sx={{
+                                            position: 'absolute',
+                                            right: -25,
+                                            bottom: -3,
+                                        }}>
+                                        {more ? <UnfoldLessIcon fontSize='small' /> : <UnfoldMoreIcon fontSize='small' />}
+                                    </IconButton>
+                                </>
+                        }
+                    </Box>
                     <Box display='flex' alignItems='center' gap={2}>
                         Select size
                         {
-                            sizes.map((size, key) =>
+                            isLoading || isFetching ?
                                 <Chip
-                                    label={size}
-                                    onClick={() => setSize(size)}
-                                    color={itemsSize === size ? 'primary' : 'default'}
+                                    label='0 x 0'
                                     size='large'
-                                    key={key}
-                                />
-                            )
+                                /> :
+                                product?.size?.map((size, key) =>
+                                    <Chip
+                                        label={size}
+                                        onClick={() => setSize(size)}
+                                        color={itemsSize === size ? 'primary' : 'default'}
+                                        size='large'
+                                        key={key}
+                                    />
+                                )
                         }
                     </Box>
-                    <Box display='flex' gap={2} position='relative' alignItems='center'>
+                    <Box display='flex' height={50} gap={2} alignItems='center'>
                         <Typography
                             lineHeight={1}
                             variant='h4'
                             fontWeight={700}
                         >
-                            ₹{(product?.price - (product?.price * product?.discount) / 100 || 0) * quantity}
+                            ₹{discountPrice}
                         </Typography>
                         {
                             product?.discount > 0 &&
-                            <Typography
-                                lineHeight={1}
-                                sx={{
-                                    textDecoration: 'line-through',
-                                    fontSize: 16,
-                                    fontWeight: 600,
-                                    position: 'absolute',
-                                    bottom: -18,
-                                    mb: 3
-                                }}
-                            >₹{product?.price || 0 * quantity}</Typography>
-                        }
-                        {
-                            product?.discount > 0 &&
-                            <Typography
-                                fontWeight={800}
-                                color='var(--brand)'
-                                sx={{ bgcolor: '#5e47f921' }}
-                                borderRadius={2.5}
-                                px={1.5}
-                                py={1}
-                            >{product?.discount}% OFF</Typography>
+                            <Box display='flex' alignItems='center' gap={2}>
+                                <Typography
+                                    fontWeight={800}
+                                    color='var(--brand)'
+                                    sx={{ bgcolor: '#5e47f921' }}
+                                    borderRadius={2.5}
+                                    px={1.5}
+                                    py={1}
+                                >{product?.discount}% OFF</Typography>
+                                <Box display='flex' flexDirection='column' justifyContent='space-between'>
+                                    <Typography
+                                        lineHeight={1}
+                                        variant='h6'
+                                        sx={{ textDecoration: 'line-through', fontSize: 18, fontWeight: 700 }}
+                                    >₹{product?.price}</Typography>
+                                    <Typography
+                                        lineHeight={1}
+                                        variant='caption1'
+                                        color='var(--brand)'
+                                        sx={{ fontSize: 15, fontWeight: 600 }}
+                                    >You will save ₹{save}</Typography>
+                                </Box>
+                            </Box>
                         }
                     </Box>
-                    <Box display='flex' alignItems='center' gap={4} mt={1}>
+                    <Box display='flex' height={50} alignItems='center' gap={4} mt={1}>
                         <QuantityInput onChange={value => setQuantity(value)} />
                         <Box display='flex' alignItems='center' gap={4}>
                             <Button
@@ -240,9 +298,8 @@ function Product() {
                             />
                         </Box>
                     </Box>
-                    {/* <Divider sx={{ mt: 2 }} /> */}
                     <div>
-                        <Accordion >
+                        <Accordion className='noPadding'>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
@@ -250,7 +307,7 @@ function Product() {
                             >
                                 <Typography {...title}>SPECIFICATIONS</Typography>
                             </AccordionSummary>
-                            <AccordionDetails>
+                            <AccordionDetails sx={{ p: 0, mx: 1 }}>
                                 <table style={{ width: '100%' }}>
                                     <tbody>
                                         <tr>
@@ -272,8 +329,8 @@ function Product() {
                                     </tbody>
                                 </table>
                             </AccordionDetails>
-                        </Accordion>
-                        <Accordion >
+                        </Accordion >
+                        <Accordion className='noPadding'>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
@@ -313,7 +370,7 @@ function Product() {
             {/* {
                 currentUser.data !== null &&
                 <>
-                    <label className='recently_viewed' htmlFor="">Recently viewed</label>
+                    <label className='recently_viewed' >Recently viewed</label>
                     <Tray height={230} data={currentUser.data?.recently_viewed?.map(o => o.product)} from='110%' to='-50%' parent='productContainer_wrapper' />
                 </>
             } */}

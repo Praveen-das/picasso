@@ -1,4 +1,4 @@
-import { Avatar as _Avatar } from '@mui/material/'
+import { Avatar as _Avatar } from '@mui/material'
 
 function Avatar({ displayName, sx, profilePicture }) {
     function stringToColor(string) {

@@ -1,18 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import sockett from '../../lib/ws';
 import { useStore } from "../../Context/Store";
 import { createRoomId } from "../../Utils/utils";
-import { Badge, Box, Collapse, Fab, Grow, IconButton, List, Modal, Popover, Popper, Slide, Snackbar, SpeedDialIcon, Typography } from "@mui/material";
-import { ChatBox } from "../Messenger/ChatBox/ChatBox";
-import { OnlineBadge } from "../MUIComponents/OnlineBadge";
-import Avatar from "../Avatar/Avatar";
-import moment from "moment";
-import CloseIcon from '@mui/icons-material/Close';
-import MinimizeIcon from '@mui/icons-material/Remove';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import useCurrentUser from '../../Hooks/useCurrentUser'
 
-export default function ChatEngin({ currentUser }) {
+const ChatWidget = lazy(() => import("./ChatWidget"));
+
+export default function ChatEngin() {
   const setOnlineUsers = useStore(s => s.setOnlineUsers);
   const addUser = useStore(s => s.addOnlineUser);
   const removeUser = useStore(s => s.removeDisconnectedUser);
@@ -20,15 +14,17 @@ export default function ChatEngin({ currentUser }) {
   const deleteMessage = useStore(s => s.deleteMessage);
   const setUnreadMessages = useStore(s => s.setUnreadMessages);
   const changeStatus = useStore(s => s.changeStatus);
-  const setChatWidget = useStore(s => s.setChatWidget);
   const blockRoom = useStore(s => s.blockRoom);
   const unblockRoom = useStore(s => s.unblockRoom);
+  const { currentUser } = useCurrentUser()
+
   const [socket, setSocket] = useState(null);
 
-  const { open, expanded, user: chatUser } = useStore(s => s.chatWidget);
+  const { open, expanded } = useStore(s => s.chatWidget);
 
   useEffect(() => {
     if (!currentUser.data) return
+
     let user_id = currentUser.data?.id;
     let username = currentUser.data?.displayName || 'unknown user';
     let photo = currentUser.data?.photo || '';
@@ -44,8 +40,8 @@ export default function ChatEngin({ currentUser }) {
   }, [currentUser])
 
   useEffect(() => {
-    //-----------------get connected users-----------------//
     if (!socket) return
+    //-----------------get connected users-----------------//
     socket.on('users', ({ users, messages, requests, blockedUsers }) => {
       const onlineUsers = users.map((user) => {
         const id = createRoomId(user.user_id, socket.user_id);
@@ -78,7 +74,7 @@ export default function ChatEngin({ currentUser }) {
       if (otherUser === socket.user_id) {
         chat.self = true;
       }
-      if (chat.self || chat.active || open && expanded) {
+      if (chat.self || chat.active || (open && expanded)) {
         setMessage(chat, roomId);
       }
       else setUnreadMessages([[roomId, [chat]]]);
@@ -99,111 +95,16 @@ export default function ChatEngin({ currentUser }) {
       socket.off('unblock_room');
       socket.off('delete');
     };
+
+    // eslint-disable-next-line
   }, [open, expanded, socket]);
-
+  
   return (
-    <>
-      <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-        <List
-          sx={{
-            position: 'fixed',
-            bottom: 20,
-            right: 20,
-            display: 'grid',
-            gap: 1,
-            zIndex: 100
-          }}
-          component="div"
-          aria-labelledby="nested-list-subheader"
-          disablePadding
-        >
-          <Collapse sx={{ p: '25px 25px 0 25px', translate: '25px' }} in={expanded} >
-            <List
-              sx={{
-                borderRadius: '10px',
-                boxShadow: '-10px -10px 30px #0000002e',
-                bgcolor: 'white',
-                width: 300,
-                height: 400,
-                display: 'flex',
-                flexDirection: 'column',
-              }} component="div" disablePadding
-            >
-              <ChatBoxHeader user={chatUser} />
-              <ChatBox data={chatUser} />
-            </List>
-          </Collapse>
-          <ChatButton onClick={() => setChatWidget(true, !expanded)} roomId={chatUser?.room?.id} expanded={expanded} />
-        </List>
-      </Slide >
-    </>
+    <Suspense>
+      {
+        socket &&
+        <ChatWidget />
+      }
+    </Suspense>
   );
-}
-
-function ChatButton({ onClick, expanded, roomId }) {
-  const unreadMessages = useStore(s => s.unreadMessages);
-  const uum = useMemo(() => unreadMessages.get(roomId), [unreadMessages, roomId]) || []
-  const setMessages = useStore(s => s.setMessages);
-
-  function handleClick() {
-    setMessages(roomId, uum)
-    onClick()
-  }
-
-  return <Fab onClick={handleClick} sx={{ marginLeft: 'auto' }} color='default' size="medium">
-    <Badge badgeContent={expanded ? 0 : uum?.length} color={"primary"}>
-      <SpeedDialIcon
-        icon={<ChatBubbleIcon fontSize='medium' />}
-        openIcon={<ExpandMoreIcon />}
-        open={expanded} />
-    </Badge>
-  </Fab>;
-}
-
-function ChatBoxHeader() {
-  const setChatWidget = useStore(s => s.setChatWidget);
-  const { expanded, user } = useStore(s => s.chatWidget);
-
-  const handleClose = () => {
-    setChatWidget(false)
-  };
-
-  const handleExpand = () => {
-    setChatWidget(true, !expanded)
-  };
-
-  return (
-    <Box
-      boxSizing='border-box'
-      width='100%'
-      height='30px'
-      display='flex'
-      alignItems='center'
-      justifyContent='space-between'
-      borderRadius='9px 9px 0 0'
-      pl={2}
-      pr={1}
-      sx={{ background: 'var(--brand)' }}
-    >
-      <Box width='100%' display='flex' justifyContent='space-between' alignItems='center'>
-        <Box sx={{ translate: '0 -10px' }}>
-          <OnlineBadge online={user?.active} >
-            <Avatar displayName={user?.username} profilePicture={user?.photo} sx={{ width: 40, height: 40 }} />
-          </OnlineBadge>
-        </Box>
-        {/* <Box>
-          <Typography color='white' fontWeight={600} fontSize={14}>{user?.username}</Typography>
-        </Box> */}
-        <Typography color='#ffffff85' whiteSpace='nowrap' fontSize={12}>{!user?.active ? `Active ${moment(user?.lastActive).fromNow()}` : 'Online'}</Typography>
-        <div style={{ color: 'white', display: 'flex' }}>
-          <IconButton sx={{ width: 25, height: 25 }} onClick={handleExpand} color="inherit" variant="contained" size="small">
-            <MinimizeIcon color="inherit" fontSize="small" />
-          </IconButton>
-          <IconButton sx={{ width: 25, height: 25 }} onClick={handleClose} color="inherit" variant="contained" size="small">
-            <CloseIcon color="inherit" fontSize="small" />
-          </IconButton>
-        </div>
-      </Box>
-    </Box>
-  )
 }

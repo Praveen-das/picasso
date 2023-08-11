@@ -1,15 +1,11 @@
-.actionbar{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
+
 .actions{
     width: 100%;
     display: flex;
     gap: 10px;
-    justify-content: right;
+    justify-content: center;
     align-items: center;
+    margin-bottom: 1rem;
 }
 .addProduct,
 .editProducts{
@@ -53,15 +49,9 @@
 .MuiPagination-ul{
     justify-content: center;
 }
-.productTable td{
-    width: 100px;
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+
 .productTable td:nth-child(3){
-    width: 200px;
-    max-width: 200px;
+    max-width: 100px;
 }
 @media only screen and (max-width: 425px) {
     th:nth-child(2),

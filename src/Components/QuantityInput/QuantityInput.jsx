@@ -24,7 +24,7 @@ function QuantityInput({ onChange = () => null, defaultValue, size='large' }) {
             e.preventDefault()
             onChange(value);
         }}>
-            <div id='quantity' className={`qtyInput--${size}`}>
+            <div id='qtyInput' className={`qtyInput--${size}`}>
                 <IconButton sx={{ position, left: 4 }} type='submit' onClick={decrease}><RemoveIcon sx={{ color: 'black', fontSize: 16 }} /></IconButton>
                 <Typography sx={{ mx: 'auto' }} fontWeight={700}>{value}</Typography>
                 <IconButton sx={{ position, right: 4 }} type='submit' onClick={increase}><AddIcon sx={{ color: 'black', fontSize: 16 }} /></IconButton>
