@@ -1,8 +1,9 @@
-.admin_brandName--wrapper{
+.admin_brandName--wrapper {
     display: flex;
     justify-content: center;
 }
-.admin_brandName{
+
+.admin_brandName {
     font-size: 1.3rem;
     display: flex;
     margin: 1.3em 0 1em 0;

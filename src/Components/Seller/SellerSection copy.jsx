@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
 import React from 'react'
-import ArrowIcon from '@mui/icons-material/ArrowForward';
+import ArrowIcon from '@mui/icons-material/ArrowDownward';
 import { ReactComponent as RegisterIcon } from '../../Assets/svg/register.svg'
 import { ReactComponent as SellIcon } from '../../Assets/svg/sales.svg'
 import { ReactComponent as PurchaseIcon } from '../../Assets/svg/purchase.svg'
@@ -28,11 +28,9 @@ export default function SellerSection() {
 
     const seller_step_item = {
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
         gap: 4,
+        justifySelf: 'left'
     }
     const ts = {
         fontSize: 14,
@@ -94,23 +92,21 @@ export default function SellerSection() {
     }
 
     return (
-        <Grid container columnSpacing={6} px={4} mt='var(--vSpacing)' height={'100%'}>
-            <Grid item xs={6}>
+        <Grid container spacing={8} px={12} py={1} height={'100%'}>
+            <Grid item xs={6} lg={7} display='grid' alignItems='center' >
                 <Box sx={{
                     display: 'flex',
-                    boxSizing: 'border-box',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'flex-start',
-                    py: 2,
                     gap: 4,
                 }}>
-                    <Typography variant='heading' >Start selling now</Typography>
+                    <Typography fontWeight={800} variant='h3' >Start selling now</Typography>
                     <Typography lineHeight={2} fontWeight={600} variant='h6' >
                         Unlock Your Artistic Potential. Join as a Seller on our platform and showcase your paintings to art lovers worldwide.
                     </Typography>
                     <Button onClick={handleRegistration} sx={{ borderRadius: 4, px: 8, py: 2, textTransform: 'none', mt: 4 }} size='large' variant='contained'>Register Now</Button>
-                    {/* <Box
+                    <Box
                         sx={{
                             display: 'grid',
                             justifySelf: 'left',
@@ -119,41 +115,48 @@ export default function SellerSection() {
                     >
                         <Typography variant='subtitle2'>* Registration fee, Valid for 2 Years - ₹ 799 (Including Taxes)</Typography>
                         <Typography variant='subtitle2'>* Terms and conditions</Typography>
-                    </Box> */}
+                    </Box>
                 </Box>
             </Grid>
             <Grid item xs >
                 <Box
                     sx={{
-                        height: '100%',
                         boxSizing: 'border-box',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        px: 4,
-                        gap: 2,
+                        p: 6,
+                        px: 8,
                         bgcolor: 'var(--brandLight)',
-                        borderRadius: 10,
+                        borderRadius: 20,
                     }}
                 >
-                    <Box sx={seller_step_item}>
-                        <RegisterIcon {...iconSize} />
-                        <Typography {...ts} >Register Your Account</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <SellIcon {...iconSize} />
-                        <Typography {...ts} >Showcase Your Artwork</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <PurchaseIcon {...iconSize} />
-                        <Typography {...ts} >Buyer Purchase</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <PaymentIcon {...iconSize} />
-                        <Typography {...ts} >Receive Payment</Typography>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            mx: 'auto',
+                            width: 'max-content',
+                            gap: 2,
+                        }}
+                    >
+                        <Box sx={seller_step_item}>
+                            <RegisterIcon {...iconSize} />
+                            <Typography {...ts} >Register Your Account</Typography>
+                        </Box>
+                        <ArrowIcon sx={{ mx: 'auto' }} />
+                        <Box sx={seller_step_item}>
+                            <SellIcon {...iconSize} />
+                            <Typography {...ts} >Showcase Your Artwork</Typography>
+                        </Box>
+                        <ArrowIcon sx={{ mx: 'auto' }} />
+                        <Box sx={seller_step_item}>
+                            <PurchaseIcon {...iconSize} />
+                            <Typography {...ts} >Buyer Purchase</Typography>
+                        </Box>
+                        <ArrowIcon sx={{ mx: 'auto' }} />
+                        <Box sx={seller_step_item}>
+                            <PaymentIcon {...iconSize} />
+                            <Typography {...ts} >Receive Payment</Typography>
+                        </Box>
                     </Box>
                 </Box>
             </Grid>

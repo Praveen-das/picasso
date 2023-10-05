@@ -66,7 +66,8 @@ export function useAdmin() {
 export function useProduct(id) {
     const data = useQuery(['product', id], () => fetchProduct(id), {
         enabled: !!id,
+        // suspense: true
     })
-
+    
     return data
 }

@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react'
-import { List, ListItemButton, ListItemText, Collapse, ListItem, Slider, Checkbox, Fade, Grow, Slide, Chip, Grid } from '@mui/material'
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import React, { useState } from 'react'
+import { List, ListItemButton, ListItemText, Collapse, ListItem, Slider, Checkbox, Fade, Chip } from '@mui/material'
+import _ExpandLess from '@mui/icons-material/ExpandMore';
+import _ExpandMore from '@mui/icons-material/ExpandLess';
 import { Box } from '@mui/system';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -9,8 +9,11 @@ import { useFilter } from './useFilter';
 import useFacets from '../../Hooks/useFacets';
 import { useProducts } from '../../Hooks/useProducts';
 
+const ExpandMore = () => <_ExpandMore fontSize='small' />
+const ExpandLess = () => <_ExpandLess fontSize='small' />
+
 const ratinglist = [4, 3, 2, 1]
-const discountList = [10, 20, 30, 40]
+const discountList = [40, 30, 20, 10]
 
 const title = { variant: 'button', fontWeight: 700, fontSize: 14 }
 const primaryTypographyProps = { fontWeight: 600, textTransform: 'capitalize', fontSize: 12 }
@@ -19,11 +22,13 @@ function Sidebar() {
     const navigate = useNavigate()
     const { filter, setFilter, deleteFilter } = useFilter()
     const { data: products, isLoading } = useProducts()
-
     const { facets: { data } } = useFacets()
+    const mediums = data?.mediums || []
+    const subjects = data?.subjects || []
+    const styles = data?.styles || []
     const materials = data?.materials || []
     const priceRange = data?.priceRange || null
-
+    
     const { pathname } = useLocation()
     let pathName = pathname.slice(1)
     const [open, setOpen] = useState([]);
@@ -35,22 +40,22 @@ function Sidebar() {
     }
 
     const handlePriceRange = ([min, max]) => {
-        setFilter('priceRange', { min, max }, true)
+        setFilter('price_range', { min, max }, true)
     }
 
     const handleFilter = (item, value) => {
         setFilter(item, value)
     }
 
+    let timeOut = 100
+
     if (pathName === 'results' && !products?.length) return <></>
     return (
-        <Grid item xs={2.5}>
+        <>
             <Box
                 sx={{
                     width: '100%',
                     height: '100%',
-                    // bgcolor: 'var(--brandLight50)',
-                    // boxShadow: '2px 0px 10px -2px #d1d1d1',
                     borderRadius: 4
                 }}
             >
@@ -68,6 +73,9 @@ function Sidebar() {
                                 {
                                     filter.map(({ item, value, label }) => {
                                         if (item === 'orderBy') return null
+                                        if (item === 'collection') return null
+                                        if (item === 'category') return null
+                                        if (item === 'q') return null
 
                                         return <Chip
                                             key={value}
@@ -75,7 +83,7 @@ function Sidebar() {
                                             color='primary'
                                             label={label}
                                             onClick={() => {
-                                                if (item === 'priceRange') return deleteFilter(item)
+                                                if (item === 'price_range') return deleteFilter(item)
                                                 if (item === 'q') return navigate('/shop')
                                                 setFilter(item, value)
                                             }}
@@ -102,46 +110,139 @@ function Sidebar() {
                                 <PriceRange
                                     onChange={handlePriceRange}
                                     range={[priceRange?.min || 0, priceRange?.max || 99999]}
-
                                 />
                             </Box>
                         </ListItem>
                     </List>
 
-                    {/* ----------------------------Material---------------------------- */}
-                    <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('material')} >
-                        <ListItemText primary="Material" primaryTypographyProps={title} />
-                        {open.includes('material') ? <ExpandLess /> : <ExpandMore />}
+                    {/* ----------------------------Medium---------------------------- */}
+                    <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('medium')} >
+                        <ListItemText primary="Medium" primaryTypographyProps={title} />
+                        {open.includes('medium') ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
-                    <Collapse in={!open.includes('material')} timeout="auto" unmountOnExit>
-                        <List disablePadding dense sx={{ maxHeight: 200, overflow: 'auto' }}>
+                    <Collapse in={!open.includes('medium')} timeout="auto" unmountOnExit>
+                        <List disablePadding dense sx={{ maxHeight: 300, overflow: 'auto' }}>
                             {
-                                !!materials?.length && materials?.map((material, i) =>
+                                !!mediums?.length && mediums?.map(({ sub_category }, i) =>
                                     <Fade
-                                        key={material}
-                                        style={{ transitionDelay: `${i * 50}ms` }}
-                                        {...(Boolean(material) ? { timeout: 500 } : {})}
-                                        in={Boolean(material)}
+                                        key={sub_category?.id}
+                                        style={{ transitionDelay: `${i * timeOut}ms` }}
+                                        in={!open.includes('medium')}
                                         mountOnEnter
                                         unmountOnExit
                                     >
-                                        <ListItemButton onClick={() => handleFilter('material', material)} key={material} sx={{ pl: 4 }}>
+                                        <ListItemButton onClick={() => handleFilter('sub_category', sub_category?.name)} key={sub_category?.id} sx={{ pl: 4 }}>
                                             <Checkbox
-                                                checked={Boolean(filter?.find(({ value }) => value === material))}
+                                                checked={Boolean(filter?.find(({ value }) => value === sub_category?.name))}
                                                 edge="start"
                                                 tabIndex={-1}
                                                 size='small'
                                                 disableRipple
                                                 sx={{ py: '5px' }}
                                             />
-                                            <ListItemText primaryTypographyProps={primaryTypographyProps} primary={material} />
+                                            <ListItemText primaryTypographyProps={primaryTypographyProps} primary={sub_category?.name} />
                                         </ListItemButton>
                                     </Fade>
                                 )
                             }
                         </List>
                     </Collapse >
-
+                    {/* ----------------------------Style---------------------------- */}
+                    <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('style')} >
+                        <ListItemText primary="Style" primaryTypographyProps={title} />
+                        {open.includes('style') ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={!open.includes('style')} timeout="auto" unmountOnExit>
+                        <List disablePadding dense sx={{ maxHeight: 300, overflow: 'auto' }}>
+                            {
+                                !!styles?.length && styles?.map(({ style }, i) =>
+                                    <Fade
+                                        key={style?.id}
+                                        style={{ transitionDelay: `${i * timeOut}ms` }}
+                                        in={!open.includes('style')}
+                                        mountOnEnter
+                                        unmountOnExit
+                                    >
+                                        <ListItemButton onClick={() => handleFilter('style', style?.name)} key={style?.id} sx={{ pl: 4 }}>
+                                            <Checkbox
+                                                checked={Boolean(filter?.find(({ value }) => value === style?.name))}
+                                                edge="start"
+                                                tabIndex={-1}
+                                                size='small'
+                                                disableRipple
+                                                sx={{ py: '5px' }}
+                                            />
+                                            <ListItemText primaryTypographyProps={primaryTypographyProps} primary={style?.name} />
+                                        </ListItemButton>
+                                    </Fade>
+                                )
+                            }
+                        </List>
+                    </Collapse >
+                    {/* ----------------------------Subject---------------------------- */}
+                    <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('subject')} >
+                        <ListItemText primary="Subject" primaryTypographyProps={title} />
+                        {open.includes('subject') ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={!open.includes('subject')} timeout="auto" unmountOnExit>
+                        <List disablePadding dense sx={{ maxHeight: 300, overflow: 'auto' }}>
+                            {
+                                !!subjects?.length && subjects?.map(({ subject }, i) =>
+                                    <Fade
+                                        key={subject?.id}
+                                        style={{ transitionDelay: `${i * timeOut}ms` }}
+                                        in={!open.includes('subject')}
+                                        mountOnEnter
+                                        unmountOnExit
+                                    >
+                                        <ListItemButton onClick={() => handleFilter('subject', subject?.name)} key={subject?.id} sx={{ pl: 4 }}>
+                                            <Checkbox
+                                                checked={Boolean(filter?.find(({ value }) => value === subject?.name))}
+                                                edge="start"
+                                                tabIndex={-1}
+                                                size='small'
+                                                disableRipple
+                                                sx={{ py: '5px' }}
+                                            />
+                                            <ListItemText primaryTypographyProps={primaryTypographyProps} primary={subject?.name} />
+                                        </ListItemButton>
+                                    </Fade>
+                                )
+                            }
+                        </List>
+                    </Collapse >
+                    {/* ----------------------------Material---------------------------- */}
+                    <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('material')} >
+                        <ListItemText primary="Material" primaryTypographyProps={title} />
+                        {open.includes('material') ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={!open.includes('material')} timeout="auto" unmountOnExit>
+                        <List disablePadding dense sx={{ maxHeight: 300, overflow: 'auto' }}>
+                            {
+                                !!materials?.length && materials?.map(({ material }, i) =>
+                                    <Fade
+                                        key={material?.id}
+                                        style={{ transitionDelay: `${i * timeOut}ms` }}
+                                        in={!open.includes('material')}
+                                        mountOnEnter
+                                        unmountOnExit
+                                    >
+                                        <ListItemButton onClick={() => handleFilter('material', material?.name)} key={material?.id} sx={{ pl: 4 }}>
+                                            <Checkbox
+                                                checked={Boolean(filter?.find(({ value }) => value === material?.name))}
+                                                edge="start"
+                                                tabIndex={-1}
+                                                size='small'
+                                                disableRipple
+                                                sx={{ py: '5px' }}
+                                            />
+                                            <ListItemText primaryTypographyProps={primaryTypographyProps} primary={material?.name} />
+                                        </ListItemButton>
+                                    </Fade>
+                                )
+                            }
+                        </List>
+                    </Collapse >
                     {/* ----------------------------Rating---------------------------- */}
                     <ListItemButton sx={{ borderRadius: 50 }} onClick={() => handleList('ratings')} >
                         <ListItemText primary="Customer ratings" primaryTypographyProps={title} />
@@ -153,8 +254,7 @@ function Sidebar() {
                                 ratinglist.map((vote, i) => (
                                     <Fade
                                         key={i}
-                                        style={{ transitionDelay: `${i * 60}ms` }}
-                                        {...(open.includes('ratings') ? { timeout: 500 } : {})}
+                                        style={{ transitionDelay: `${i * timeOut}ms` }}
                                         in={!open.includes('ratings')}
                                         mountOnEnter
                                         unmountOnExit
@@ -181,7 +281,6 @@ function Sidebar() {
                                     <Fade
                                         key={i}
                                         style={{ transitionDelay: `${i * 60}ms` }}
-                                        {...(open.includes('discount') ? { timeout: 500 } : {})}
                                         in={!open.includes('discount')}
                                         mountOnEnter
                                         unmountOnExit
@@ -197,7 +296,7 @@ function Sidebar() {
                     </Collapse >
                 </List >
             </Box>
-        </Grid>
+        </>
     )
 }
 

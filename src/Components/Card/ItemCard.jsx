@@ -2,9 +2,9 @@ import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function ItemCard({ name }) {
+function ItemCard({ name,to }) {
     return (
-        <Box component={Link} to={`/shop?category=${name}`} sx={{
+        <Box component={Link} to={to} sx={{
             aspectRatio: '1.8',
             boxShadow: '0px 10px 30px var(--neu)',
             display: 'grid',

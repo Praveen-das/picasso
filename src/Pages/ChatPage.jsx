@@ -3,11 +3,10 @@ import Messenger from '../Components/Messenger/Messenger'
 import useCurrentUser from '../Hooks/useCurrentUser'
 
 function ChatPage() {
-    const { currentUser } = useCurrentUser()
 
     return (
         <>
-            <Messenger uid={currentUser.data?.id} />
+            <Messenger />
         </>
     )
 }

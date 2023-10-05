@@ -21,39 +21,14 @@
     gap: 1.5rem;
 }
 
-.alt_images {
-    display: flex;
-    /* flex-direction: column; */
-    gap: 1.5rem;
-}
 
-#productImage--wrapper {
-    background: black;
-}
+
 #productImage {
     display: block;
     width: 100%;
-    max-height: 430px;
+    max-width: 90vw;
+    max-height: 100vh;
     object-fit: contain;
-}
-
-.alt_image {
-    width: 60px;
-    aspect-ratio: 1;
-    border-radius: 20px;
-    background: #000;
-    opacity: 0.75;
-    transition: 0.2s;
-    cursor: pointer;
-}
-
-.alt_image--active{
-    opacity: 1;
-}
-
-.alt_image img {
-    width: 100%;
-    height: 100%;
 }
 
 .cartAndWishlist {

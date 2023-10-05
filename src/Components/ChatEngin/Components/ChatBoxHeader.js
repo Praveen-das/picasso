@@ -7,16 +7,15 @@ import moment from "moment";
 import CloseIcon from '@mui/icons-material/Close';
 import MinimizeIcon from '@mui/icons-material/Remove';
 
-export function ChatBoxHeader() {
+export function ChatBoxHeader({user}) {
   const setChatWidget = useStore(s => s.setChatWidget);
-  const { expanded, user } = useStore(s => s.chatWidget);
 
   const handleClose = () => {
     setChatWidget(false);
   };
 
   const handleExpand = () => {
-    setChatWidget(true, !expanded);
+    setChatWidget(true, false);
   };
 
   return (
@@ -38,10 +37,7 @@ export function ChatBoxHeader() {
             <Avatar displayName={user?.username} profilePicture={user?.photo} sx={{ width: 40, height: 40 }} />
           </OnlineBadge>
         </Box>
-        {/* <Box>
-              <Typography color='white' fontWeight={600} fontSize={14}>{user?.username}</Typography>
-            </Box> */}
-        <Typography color='#ffffff85' whiteSpace='nowrap' fontSize={12}>{!user?.active ? `Active ${moment(user?.lastActive).fromNow()}` : 'Online'}</Typography>
+        <Typography color='#ffffff85' whiteSpace='nowrap' fontSize={12}>{!user?.active ? `Active ${moment(user?.lastActive).fromNow()}` : user?.username}</Typography>
         <div style={{ color: 'white', display: 'flex' }}>
           <IconButton sx={{ width: 25, height: 25 }} onClick={handleExpand} color="inherit" variant="contained" size="small">
             <MinimizeIcon color="inherit" fontSize="small" />

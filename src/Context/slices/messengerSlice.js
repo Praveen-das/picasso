@@ -6,7 +6,7 @@ export default function messengerSlice(set) {
         blockedUsers: [],
         chatWidget: { open: false, expanded: true, user: null },
     };
-    
+
     return {
         ...INITIAL_STATE,
         setChatWidget: (open, expanded, user) => set(({ chatWidget }) => {
@@ -46,19 +46,18 @@ export default function messengerSlice(set) {
                 }
                 return { unreadMessages: new Map(unreadMessages), connectedUsers: [...connectedUsers] }
             }),
-        setMessage: (chat, roomId) => set(s => {
-            let messages = new Map(s.messages)
-            messages.get(roomId)?.push(chat) || messages.set(roomId, [chat])
-            return { messages }
-        }),
-        resetMessages: () => set(() => ({ unreadMessages: new Map(), messages: new Map() })),
-        setMessages: (roomId, offlinemessages) => set((s) => {
-            if (!offlinemessages.length) return
-            s.messages.get(roomId)?.push(...offlinemessages) ||
-                s.messages.set(roomId, offlinemessages)
+        setMessages: (roomId, arrayOfMessages) => set((s) => {
+            if (!arrayOfMessages.length) return
+
+            const user = s.connectedUsers.find(o => o?.room.id === roomId)
+            if (user) user.room.status = 'active'
+
+            s.messages.get(roomId)?.push(...arrayOfMessages) ||
+                s.messages.set(roomId, arrayOfMessages)
             s.unreadMessages.delete(roomId)
             return { messages: new Map(s.messages), unreadMessages: new Map(s.unreadMessages) }
         }),
+        resetMessages: () => set(() => ({ unreadMessages: new Map(), messages: new Map() })),
         deleteMessage: (requests) => set(({ messages, unreadMessages }) => {
             let mModified = false
             let umModified = false
@@ -100,7 +99,7 @@ export default function messengerSlice(set) {
             return { messages, connectedUsers: [...pre.connectedUsers] }
 
         }),
-        changeStatus: (roomId, status) => set(pre => {
+        changeChatStatus: (roomId, status) => set(pre => {
             const collections = new Map(pre.messages)
             const messages = collections.get(roomId)
             messages?.forEach(chat => { if (chat?.status !== ('seen' || status)) chat.status = status })

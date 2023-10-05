@@ -20,7 +20,7 @@ const StyledTextField = styled(_TextField)({
         color: 'grey',
     },
     "& .MuiInputBase-root": {
-        paddingTop: '5px',
+        paddingTop: 8,
         fontSize: 14,
         fontWeight: 500,
     },

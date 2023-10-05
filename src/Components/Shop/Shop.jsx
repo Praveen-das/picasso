@@ -1,17 +1,18 @@
 import { useCallback, useLayoutEffect, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
-import { Box, Button, Menu, MenuItem, Pagination, Typography } from '@mui/material';
+import { Box, Button, IconButton, Menu, MenuItem, Pagination, Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
 import Masonry from '@mui/lab/Masonry';
 import { useFilter } from '../Sidebar/useFilter';
 import noresultImg from '../../Assets/Images/noresult.png'
 import useFacets from '../../Hooks/useFacets';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
-function Shop() {
+function Shop({ toggleFilter, setToggleFilter }) {
     const { filter, setFilter } = useFilter()
-    const { facets:{data} } = useFacets()
+    const { facets: { data } } = useFacets()
     const total = data?.total || 0
 
     const { pathname } = useLocation()
@@ -75,7 +76,7 @@ function Shop() {
     return (
         <>
             <div className="shop_products">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0px 2rem 0' }} >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0px 1rem 0' }} >
                     {
                         pathName === 'results' && !isLoading ?
                             <Box display='flex' alignItems='baseline'>
@@ -85,7 +86,7 @@ function Shop() {
                                 </Typography>
                             </Box>
                             :
-                            <span></span>
+                            <Button onClick={() => setToggleFilter(s => !s)} startIcon={<FilterListIcon fontSize='small' />} size='small'>{toggleFilter ? 'Hide' : 'show'} Filter</Button>
                     }
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Typography fontSize={12} fontWeight={500} variant='body2'>SORT BY :</Typography>
@@ -125,7 +126,7 @@ function Shop() {
                         </Menu>
                     </div>
                 </div>
-                <Masonry defaultColumns={3} columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={5}>
+                <Masonry defaultColumns={3} columns={{ xs: 1, sm: 2, md: 3, lg: 3 }} spacing={5} sx={{ m: 0 }}>
                     {
                         products ? products.map((o, i) => (
                             <Card sx={{ width: '100%' }} key={o?.id} product={o} />

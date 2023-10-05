@@ -13,13 +13,13 @@ export function MUIContext({ children }) {
             fontFamily: 'Montserrat',
             heading: {
                 fontSize: 28,
-                color: 'black',
                 fontFamily: 'var(--Title)',
-                fontWeight: 100
+                fontWeight: 100,
+                position: 'relative',
             },
             desc: {
-                lineHeight: 2, 
-                fontSize: 18, 
+                lineHeight: 2,
+                fontSize: 18,
                 fontWeight: 500
             },
             'title.primary': {
@@ -44,6 +44,7 @@ export function MUIContext({ children }) {
                 fontWeight: 500
             },
             h10: {
+                fontSize: 15,
                 fontWeight: 500,
             },
             caption2: {

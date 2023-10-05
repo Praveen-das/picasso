@@ -9,7 +9,7 @@ import DashboardIcon from '@mui/icons-material/LineAxis';
 import ProductsIcon from '@mui/icons-material/LocalMallOutlined';
 
 export default function Seller() {
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(1);
     const lg = useMediaQuery((theme) => theme.breakpoints.up('lg'))
 
     const handleChange = (event, newValue) => {

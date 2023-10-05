@@ -28,8 +28,8 @@ const Message = forwardRef((
     const open = Boolean(anchorEl);
 
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const handleClick = (e) => {
+        setAnchorEl(e.currentTarget);
     };
 
     const handleClose = () => {
@@ -41,16 +41,18 @@ const Message = forwardRef((
         handleClose()
     }
 
-    const handleScrollIntoView = (index) => {
-        const elm = document.querySelectorAll('#message_wrapper')[index]
-        elm.scrollIntoView(false)
+    const handleScrollIntoView = (key) => {
+        const elm = document.querySelector(`[data-pointer="${key}"]`)
+        // elm.scrollIntoView({block:'nearest',inline:'start'})
+        elm.parentNode.scrollTop = elm.offsetTop;
         elm.classList.add('message_focus')
     }
 
     const removeClass = (e) => e.target.classList.remove('message_focus')
-    
+
     return (
         <div
+            data-pointer={chat.receivedOn}
             id='message_wrapper'
             onAnimationEnd={removeClass}
             onPointerEnter={() => setHover(true)}
@@ -72,19 +74,20 @@ const Message = forwardRef((
                             <Typography gutterBottom variant="h6" component="div">
                                 {product.data?.name}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography noWrap variant="body2" color="text.secondary">
                                 {product.data?.desc}
                             </Typography>
                         </CardContent>
                     </CardActionArea>
                 </Card>
             }
-            <div
+            < div
                 id='message'
                 className={
                     self ?
                         chat.message === 'message deleted' ? 'send_deleted' : 'send' :
-                        chat.message === 'message deleted' ? 'receive_deleted' : 'receive'}
+                        chat.message === 'message deleted' ? 'receive_deleted' : 'receive'
+                }
             >
                 {
                     chat?.mainMessage &&
@@ -96,7 +99,7 @@ const Message = forwardRef((
                         boxSizing='border-box'
                         p={1.5}
                         sx={{ cursor: 'pointer' }}
-                        onClick={() => handleScrollIntoView(chat?.index)}
+                        onClick={() => handleScrollIntoView(chat?.pointer)}
 
                     >
                         <Typography
@@ -107,10 +110,10 @@ const Message = forwardRef((
                     </Box>
                 }
                 <p style={{ margin: 0, paddingInline: '0.35rem', fontWeight: 500, fontSize: '0.9rem', overflowWrap: 'anywhere' }} id='chat' >{chat.message}</p>
-                {/* {
-                    chat.message !== 'message deleted' && hover && */}
+                {
+                    chat.message !== 'message deleted' &&
                     <>
-                        <span className='menu_button' style={{ '--msgbg': self ? 'var(--brand)' : 'var(--msgbg2)', position: 'absolute', right: '5px', bottom: 0 }} onClick={handleClick} id='message_options'>
+                        <span id='message_options' className='menu_button' style={{ '--msgbg': self ? 'var(--brand)' : 'var(--msgbg2)', position: 'absolute', right: '5px', bottom: 0 }} onClick={handleClick} >
                             <Expand fontSize='medium' cursor='pointer' />
                         </span>
                         <Menu
@@ -130,9 +133,11 @@ const Message = forwardRef((
                                 vertical: 'top',
                                 horizontal: 'right',
                             }}
+                            disablePortal
+                            disableScrollLock
                         >
                             <MenuItem dense onClick={() => {
-                                setReply({ mainMessage: chat.message, index })
+                                setReply({ mainMessage: chat.message, pointer: chat.receivedOn })
                                 handleClose()
                             }}>Reply</MenuItem>
                             {
@@ -141,8 +146,8 @@ const Message = forwardRef((
                             }
                         </Menu>
                     </>
-                {/* } */}
-            </div>
+                }
+            </div >
             <span className={self ? 'send_tag' : 'receive_tag'}>
                 {`${moment(chat.time).format('LT')}`}
                 {self && <Status status={chat.status || 'sent'} fontSize={16} />}

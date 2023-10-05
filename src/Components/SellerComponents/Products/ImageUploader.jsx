@@ -126,7 +126,7 @@ export function ImageUploader(
                         autoCapitalize: "",
                         sx: ({ palette }) => ({
                             width: '100%',
-                            height: 200,
+                            height: 245,
                             border: `2px dashed ${fieldError ? palette.error.main : 'hsl(253deg 100% 81.16%)'}`,
                             borderRadius: 2,
                             textTransform: 'none',
@@ -192,7 +192,7 @@ export function ImageUploader(
                                                                     boxShadow: '0 1px 5px #b7cff9',
                                                                     borderRadius: 1,
                                                                     bgcolor: 'white',
-                                                                    mb: 0.5,
+                                                                    mt: 0.5,
                                                                 }}
                                                             >
                                                                 <ListItem

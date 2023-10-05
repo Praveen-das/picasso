@@ -9,6 +9,8 @@ function parseJSON(json) {
     return parsed
 }
 
+const searchOptions = { replace: true }
+
 export function useFilter() {
     const [searchParams, setSearchParams] = useSearchParams();
     const queryString = searchParams.toString()
@@ -18,9 +20,17 @@ export function useFilter() {
         for (let [key, value] of searchParams.entries()) {
             key = key.replace('[]', '')
             value = parseJSON(value)
+            
+            if (key === 'price_range') {
+                let label
+                if (value?.min && value?.max)
+                    label = `₹ ${value?.min} - ₹ ${value?.max}`
+                if (!value?.min)
+                    label = `Under ₹ ${value?.max}`
+                if (!value?.max)
+                    label = `Above ₹ ${value?.min}`
 
-            if (key === 'priceRange') {
-                facets.unshift({ item: key, value, label: `₹${value?.min} - ₹${value?.max}` })
+                facets.unshift({ item: key, value, label })
                 continue
             }
             if (key === 'rating') {
@@ -37,40 +47,46 @@ export function useFilter() {
     }, [searchParams]);
 
 
-    const setFilter = (key, value, merge) => {
+    const setFilter = (key, value, replace) => {
+        //serialize objects
         if (typeof value == 'object')
             value = JSON.stringify(value)
 
+        //remove value if already exists
         if (filter?.some((item) => item.value === value)) {
             let newSearchParams = new URLSearchParams()
+
             for (let [k, v] of searchParams.entries()) {
-                v = parseJSON(v)
-                if (value === v) continue
+                let parsed = parseJSON(v)
+                if (value === parsed) continue
 
                 newSearchParams.append(k, v)
             }
-            setSearchParams(newSearchParams)
+            setSearchParams(newSearchParams, searchOptions)
             return
         }
 
-        if (merge) {
+        //replace value if true
+        if (replace) {
             setSearchParams(q => {
                 q.set(key, value)
                 return q
-            });
+            }, searchOptions);
             return
         }
+
+        //stack values
         setSearchParams(pre => {
             pre.append(key + '[]', value)
             return pre
-        });
+        }, searchOptions);
     };
 
     const deleteFilter = (key) => {
         setSearchParams(p => {
             p.delete(key)
             return p
-        })
+        }, searchOptions)
     }
 
     return {

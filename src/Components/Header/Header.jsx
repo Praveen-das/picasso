@@ -1,4 +1,4 @@
-import { lazy, useMemo, useState } from "react";
+import {  useMemo } from "react";
 import "./header.css";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
@@ -30,16 +30,16 @@ function Header() {
                 ARTWORLD.
               </label>
             </Link>
-            {
-            pathName !== 'admin' &&
-            <Search onSearch={(query) => navigate(`/results?q=${query}`)} />
-          }
+            {/* {
+              pathName !== 'admin' &&
+              <Search onSearch={(query) => navigate(`/results?q=${query}`)} />
+            } */}
           </div>
-          
+
           <div className="right">
-            {/* <Link id='nav_links' to="/profile" state={{ tab: 2 }}>
-              <FavoriteIcon fontSize='small' />
-            </Link> */}
+            <Link to="/sell" >
+              <Typography fontSize={14} fontWeight={700}>SELL NOW</Typography>
+            </Link>
             <Link id='nav_links' to='/cart' >
               <CartIcon fontSize='small' />
             </Link>

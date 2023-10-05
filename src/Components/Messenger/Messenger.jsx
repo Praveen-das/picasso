@@ -16,6 +16,7 @@ import styled from '@emotion/styled';
 export default function Messenger() {
     const [selectedUser, setSelectedUser] = useState(null)
     const messages = useStore(s => s.messages)
+    const uMs = useStore(s => s.unreadMessages)
 
     useEffect(() => {
         return () => {
@@ -24,10 +25,10 @@ export default function Messenger() {
         }
     }, [])
 
-    if (!messages.size) return <NoMessages />
+    // if (!uMs.size && !messages.size) return <NoMessages />
 
     return (
-        <Grid container columnSpacing={2} p={2} height='calc(100% - var(--header))'>
+        <Grid container columnSpacing={2} p={2} height='var(--fullHeight)'>
             <Grid item xs={4} width='100%' height='100%'>
                 <ChatList selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
             </Grid>
@@ -99,6 +100,11 @@ function ChatList({ selectedUser, setSelectedUser }) {
         setFilter(res)
     }
 
+    function handleChat(user) {
+        setSelectedUser(user)
+        socket.selectedUser = user.user_id
+    }
+
     return (
         <>
             <List
@@ -135,10 +141,11 @@ function ChatList({ selectedUser, setSelectedUser }) {
                 {
                     !!connectedUsers.length &&
                     (
-                        !!filter.length && filter ||
+                        (!!filter.length && filter) ||
                         connectedUsers
                     ).map((user) => (
                         user?.room.status !== 'inactive' &&
+                        // !user?.self &&
                         <Person
                             setSelectedUser={setSelectedUser}
                             key={user?.user_id}
@@ -153,10 +160,7 @@ function ChatList({ selectedUser, setSelectedUser }) {
                                 py: 2,
                                 color: selectedUser?.user_id === user.user_id ? 'white' : 'initial'
                             }}
-                            onClick={() => {
-                                setSelectedUser(user)
-                                socket.selectedUser = user.user_id
-                            }}
+                            onClick={() => handleChat(user)}
                             user={user}
                             active={selectedUser?.user_id === user.user_id}
                             blocked={user?.room.status === 'blocked'}

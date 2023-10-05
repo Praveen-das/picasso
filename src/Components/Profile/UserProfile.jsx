@@ -15,6 +15,7 @@ import MyWishlist from './MyWishlist/MyWishlist'
 import MessengerSettings from './MessengerSettings/MessengerSettings'
 import { useEffect, useState } from 'react';
 import { Item, StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
+import Messenger from '../Messenger/Messenger';
 
 function UserProfile() {
     const location = useLocation()
@@ -45,11 +46,36 @@ function UserProfile() {
                         height: { lg: '100%' },
                     }}
                 >
-                    <StyledTab {...tabStyling} icon={<PersonIcon fontSize='small' />} label="Personal Details" />
-                    <StyledTab {...tabStyling} icon={<LocalMallIcon fontSize='small' />} label="My Orders" />
-                    <StyledTab {...tabStyling} icon={<FavoriteBorderIcon fontSize='small' />} label="My Wishlist" />
-                    <StyledTab {...tabStyling} icon={<HomeIcon fontSize='small' />} label="Manage Address" />
-                    <StyledTab {...tabStyling} icon={<ChatBubbleIcon fontSize='small' />} label="Chat Settings" />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<PersonIcon fontSize='small' />}
+                        label="Personal Details"
+                    />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<ChatBubbleIcon fontSize='small' />}
+                        label="Chats"
+                    />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<LocalMallIcon fontSize='small' />}
+                        label="My Orders"
+                    />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<FavoriteBorderIcon fontSize='small' />}
+                        label="My Wishlist"
+                    />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<HomeIcon fontSize='small' />}
+                        label="Manage Address"
+                    />
+                    <StyledTab
+                        {...tabStyling}
+                        icon={<ChatBubbleIcon fontSize='small' />}
+                        label="Chat Settings"
+                    />
                 </StyledTabs>
             </Box>
             <TabPanel value={tab} index={0}>
@@ -59,20 +85,25 @@ function UserProfile() {
             </TabPanel>
             <TabPanel value={tab} index={1}>
                 <Item>
-                    <MyOrders />
+                    <Messenger />
                 </Item>
             </TabPanel>
             <TabPanel value={tab} index={2}>
                 <Item>
-                    <MyWishlist />
+                    <MyOrders />
                 </Item>
             </TabPanel>
             <TabPanel value={tab} index={3}>
                 <Item>
-                    <ManageAddress />
+                    <MyWishlist />
                 </Item>
             </TabPanel>
             <TabPanel value={tab} index={4}>
+                <Item>
+                    <ManageAddress />
+                </Item>
+            </TabPanel>
+            <TabPanel value={tab} index={5}>
                 <Item>
                     <MessengerSettings />
                 </Item>

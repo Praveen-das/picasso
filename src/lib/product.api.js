@@ -54,8 +54,8 @@ export const fetchAdminProducts = (query) => {
     return axiosClient.get(`/user/products?${query}`).then(res => res.data)
 }
 
-export const fetchProduct = async (id) => {
-    return await axiosClient.get(`/products/${id}`).then(res => res.data)
+export const fetchProduct = (id) => {
+    return axiosClient.get(`/products/${id}`).then(res => res.data)
 }
 
 export const _getUserWishlist = async () => {

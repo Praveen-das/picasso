@@ -30,11 +30,12 @@ export const Item = styled(Box)
         height: '100%',
         position: 'relative',
         color: theme.palette.text.primary,
-        padding: '0.3rem 2rem',
+        padding: '0.3rem 1rem',
     }));
 
 
 export const StyledTabs = styled(Tabs)({
+    minHeight: 0,
     '& .MuiTabs-indicator': {
         display: 'flex',
         justifyContent: 'center',
@@ -44,12 +45,18 @@ export const StyledTabs = styled(Tabs)({
         width: '100%',
         backgroundColor: 'var(--brand)',
         borderRadius: 20,
+    },
+    ".MuiTabs-flexContainer": {
+        gap: 8
     }
 });
 
 export const StyledTab = styled(Tab)(
     () => ({
         borderRadius: 20,
+        fontSize: 13,
+        fontWeight: 600,
+        minHeight: 40,
         height: 40,
         transition: 'color 0.5s',
         '&.Mui-selected': {
@@ -58,11 +65,14 @@ export const StyledTab = styled(Tab)(
         '&.Mui-focusVisible': {
             background: 'red'
         },
+        '.MuiButtonBase-root': {
+            minWidth: 0
+        }
     }),
 );
 
 export const tabStyling = {
-    sx: { minHeight: 50, justifyContent: 'left', gap: 0.5,px:4 }, iconPosition: 'start'
+    sx: { justifyContent: 'left'}, iconPosition: 'start'
 }
 
 

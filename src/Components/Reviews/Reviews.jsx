@@ -18,7 +18,7 @@ function Reviews({ product }) {
 
   useEffect(() => {
     setUserReview(reviews?.find(o => o.user_id === currentUser.data?.id))
-  }, [reviews, currentUser])
+  }, [reviews, currentUser.data])
 
   return (
     <>

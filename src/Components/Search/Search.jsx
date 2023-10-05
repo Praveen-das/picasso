@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material'
 import { ReactComponent as SearchIcon } from '../../Assets/Icons/search.svg';
 import './search.css'
 
-function Search({ onKeyUp = () => null, onSearch }) {
+function Search({ onKeyUp = () => null, onSearch, placeholder = 'Search for Paintings' }) {
     const [query, setQuery] = useState('')
     const input = useRef()
 
@@ -32,21 +32,21 @@ function Search({ onKeyUp = () => null, onSearch }) {
                 <div id='searchbox_wrapper'>
                     {!onSearch && <SearchIcon style={{ opacity: 0.6 }} width={20} height={20} />}
                     {
-                    onSearch &&
-                    <IconButton sx={{ p: '4px' }} onClick={() => handleQuery()}>
-                        <SearchIcon style={{ opacity: 0.6 }} width={21} height={21} />
-                    </IconButton>
-                }
+                        onSearch &&
+                        <IconButton sx={{ p: '4px' }} onClick={() => handleQuery()}>
+                            <SearchIcon style={{ opacity: 0.6 }} width={21} height={21} />
+                        </IconButton>
+                    }
                     <input
                         id="searchbox"
                         type="text"
                         autoComplete='off'
                         onKeyUp={(e) => handleSearch(e)}
                         ref={input}
-                        placeholder='Search for Paintings'
+                        placeholder={placeholder}
                     />
                 </div>
-                
+
             </div>
         </>
     )

@@ -1,33 +1,39 @@
 import './card.css'
 import { Link } from 'react-router-dom'
 import WishlistButton from '../WishlistButton/WishlistButton'
-import { Box, IconButton } from '@mui/material'
+import { Box, IconButton, Typography } from '@mui/material'
+import { forwardRef } from 'react'
 
-function Card({ product, sx: { borderRadius, height, ...sx } }) {
+const Card = forwardRef(({ product }, ref) => {
     const images = product?.images
     // const defaultImage = images?.find((o) => o.fileId === product.defaultImage)
 
     return (
         <Link to={`/shop/product/${product?.id}`}>
             <div
+                ref={ref}
                 className='product_card'
-                style={{ borderRadius, height }}
             >
-                <img className="product_image" style={{ height: '100%', minWidth: 150 }} src={images[0]?.url + '/tr:w-200'} alt="" />
-                <div className="product_card--actions" style={{ borderRadius }}>
-                    <Box position='absolute' top='5px' right='5px' color='white'>
-                        <WishlistButton
-                            iconButton={<IconButton />}
-                            productId={product?.id}
-                            color='white'
-                        />
-                    </Box>
-                    <label style={{ pointerEvents: 'none' }} >VIEW ARTWORK</label>
+                <img className="product_image" src={images?.[0]?.url} alt="" />
+                <div className='card_overlay' >
+                    <WishlistButton
+                        iconButton={
+                            <IconButton
+                                size='small'
+                                sx={{ color: 'white' }}
+                            />
+                        }
+                        productId={product?.id}
+                    />
+                    <div className='card_overlay--items'>
+                        <Typography className='card_overlay_text' >{product?.name}</Typography>
+                        <Typography className='card_overlay_text--secondry'>by {product?.sales_person?.displayName}</Typography>
+                    </div>
                 </div>
             </div>
         </Link>
     )
 
-}
+})
 
 export default Card

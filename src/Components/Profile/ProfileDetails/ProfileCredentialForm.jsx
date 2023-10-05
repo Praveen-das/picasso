@@ -428,7 +428,7 @@ function ProfileCredentialForm({ user }) {
               <>
                 <Box display='flex' gap={1}>
                   {
-                    Object.values(user?.social).map(({ id, name, url }) =>
+                    Object.values(user?.social || '').map(({ id, name, url }) =>
                       <IconButton
                         key={id}
                         onClick={() => window.open(url, '_blank')}

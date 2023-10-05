@@ -9,7 +9,6 @@ import { OnlineBadge } from '../../MUIComponents/OnlineBadge'
 import { useStore } from '../../../Context/Store'
 import { Status } from '../../MicroComponents/Status'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fontSize } from '@mui/system'
 import socket from '../../../lib/ws'
 
 
@@ -25,17 +24,24 @@ function Person(
     const [anchorEl, setAnchorEl] = useState(null);
 
     const { currentUser } = useCurrentUser()
-    let messages = useStore(s => s.messages);
+    let messagesStore = useStore(s => s.messages);
     let deleteChat = useStore(s => s.deleteChat);
-    const [lastMsg, setLastMsg] = useState(null)
+    const [lastChat, setLastChat] = useState(null)
     const setRerenderer = useState(0)[1]
-    const unreadMessages = useStore(s => s.unreadMessages)
+    const unreadMessagesStore = useStore(s => s.unreadMessages)
 
-    const size = unreadMessages.get(user.room.id)?.length
+    const size = unreadMessagesStore.get(user.room.id)?.length
 
     useEffect(() => {
-        setLastMsg(messages.get(user?.user_id)?.at(-1));
-    }, [messages, user])
+        let messages = messagesStore.get(user?.room.id),
+            unreadMessages = unreadMessagesStore.get(user.room.id),
+            latestChat
+
+        if (!!unreadMessages?.length) latestChat = unreadMessages?.at(-1)
+        else latestChat = messages?.at(-1)
+
+        setLastChat(latestChat);
+    }, [messagesStore, unreadMessagesStore, user])
 
     useEffect(() => {
         let interval
@@ -67,87 +73,86 @@ function Person(
 
     return (
         <>
-            {currentUser.data?.id !== user.user_id &&
-                <ListItem {...rest} sx={{
-                    ...sx, ":hover #long-button": {
-                        opacity: '1 !important',
-                        translate: '0px 0 !important',
-                        width: 'unset'
-                    },
-                    ":hover #msg_unread": {
-                        opacity: '0 !important',
-                        translate: '-10px 0 !important',
-                    },
-                    gap: 2
-                }} >
-                    <ListItemAvatar sx={{ minWidth: 'unset' }}>
-                        <OnlineBadge online={user?.active}>
-                            <Avatar displayName={user?.username} profilePicture={user.photo} />
-                        </OnlineBadge>
-                    </ListItemAvatar>
-                    <Box
-                        width='100%'
-                        display='grid'
-                        alignItems='center'
-                        gap={.5}
-                        color='inherit'
-                    >
-                        <Box display='flex' width='100%'>
-                            <Box display={'grid'}>
-                                <Typography variant='h10' noWrap >{user?.username}</Typography>
-                            </Box>
-                            <Typography variant='h10' whiteSpace='nowrap' sx={{ marginLeft: 'auto' }}>{lastMsg && moment(lastMsg.receivedOn).format('LT')}</Typography>
+            <ListItem {...rest} sx={{
+                ...sx, ":hover #long-button": {
+                    opacity: '1 !important',
+                    translate: '0px 0 !important',
+                    width: 'unset'
+                },
+                ":hover #msg_unread": {
+                    opacity: '0 !important',
+                    translate: '-10px 0 !important',
+                },
+                gap: 2
+            }} >
+                <ListItemAvatar sx={{ minWidth: 'unset' }}>
+                    <OnlineBadge online={user?.active}>
+                        <Avatar displayName={user?.username} profilePicture={user.photo} />
+                    </OnlineBadge>
+                </ListItemAvatar>
+                <Box
+                    width='100%'
+                    display='grid'
+                    alignItems='center'
+                    gap={.5}
+                    color='inherit'
+                >
+                    <Box display='flex' width='100%'>
+                        <Box display={'grid'}>
+                            <Typography variant='h10' noWrap >{user?.username}</Typography>
                         </Box>
-                        <div style={{ display: 'flex', gap: 10, alignItems: 'center', color: 'inherit' }}>
-                            {
-                                true &&
-                                <Status color={active ? 'inherit' : null} status={'seen'} fontSize={18} />
-                            }
-                            <Box display={'grid'}>
-                                <Typography variant='caption2' color={active && 'inherit'} noWrap >adadasdasd</Typography>
-                            </Box>
-                            <div id='menu_wrapper'>
-                                <IconButton
-                                    aria-label="more"
-                                    id="long-button"
-                                    aria-controls={Boolean(anchorEl) ? 'long-menu' : undefined}
-                                    aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-                                    aria-haspopup="true"
-                                    onClick={handleClick}
-                                    size='small'
-                                    color='inherit'
-                                    sx={{ translate: '10px 0', opacity: 0, transition: 'translate 0.1s  ease-in-out, opacity 0.1s  ease-in-out', marginLeft: 'auto', position: 'absolute' }}
-                                >
-                                    <ExpandMoreIcon fontSize='small' />
-                                </IconButton>
-                                <span id='msg_unread'>
-                                    <Badge badgeContent={size} color='primary' sx={{ "& .MuiBadge-badge": { fontSize: 9 } }} />
-                                </span>
-                            </div>
-                            <Menu
-                                sx={{ borderRadius: '10px', translate: '0 10px' }}
-                                id="basic-menu"
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                                MenuListProps={{
-                                    'aria-labelledby': 'message_options',
-                                }}
-                                anchorOrigin={{
-                                    vertical: 'center',
-                                    horizontal: 'right',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                disablePortal
-                            >
-                                <MenuItem dense onClick={(e) => handleAction(e, 'delete')}>Delete chat</MenuItem>
-                            </Menu>
-                        </div>
+                        <Typography variant='h10' whiteSpace='nowrap' sx={{ marginLeft: 'auto' }}>{lastChat && moment(lastChat.receivedOn).format('LT')}</Typography>
                     </Box>
-                    {/* <ListItemText sx={{ textTransform: 'capitalize' }} >{user?.username}</ListItemText>
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'center', color: 'inherit' }}>
+                        {
+                            lastChat?.self &&
+                            <Status color={active ? 'inherit' : null} status={lastChat?.status} fontSize={18} />
+                        }
+                        <Box display={'grid'}>
+                            <Typography variant='caption2' color={active && 'inherit'} noWrap >{lastChat?.message}</Typography>
+                        </Box>
+                        <div id='menu_wrapper'>
+                            <IconButton
+                                aria-label="more"
+                                id="long-button"
+                                aria-controls={Boolean(anchorEl) ? 'long-menu' : undefined}
+                                aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                                size='small'
+                                color='inherit'
+                                sx={{ translate: '10px 0', opacity: 0, transition: 'translate 0.1s  ease-in-out, opacity 0.1s  ease-in-out', marginLeft: 'auto', position: 'absolute' }}
+                            >
+                                <ExpandMoreIcon fontSize='small' />
+                            </IconButton>
+                            <span id='msg_unread'>
+                                <Badge badgeContent={size} color='primary' sx={{ "& .MuiBadge-badge": { fontSize: 9 } }} />
+                            </span>
+                        </div>
+                        <Menu
+                            sx={{ borderRadius: '10px', translate: '0 10px' }}
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'message_options',
+                            }}
+                            anchorOrigin={{
+                                vertical: 'center',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            disablePortal
+                        >
+                            <MenuItem dense onClick={(e) => handleAction(e, 'delete')}>Delete chat</MenuItem>
+                        </Menu>
+                    </div>
+                </Box>
+                {/* <ListItemText sx={{ textTransform: 'capitalize' }} >{user?.username}</ListItemText>
                     <ListItemText sx={{ fontSize: '8px !important' }}>
                         {
                             user?.active ?
@@ -155,8 +160,7 @@ function Person(
                                 moment(user?.lastActive).fromNow()
                         }
                     </ListItemText> */}
-                </ListItem>
-            }
+            </ListItem>
         </>
     )
 }

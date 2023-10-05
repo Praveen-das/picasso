@@ -1,26 +1,53 @@
 #navbar {
-    background: rgb(255, 255, 255);
+    /* background: rgb(255, 255, 255); */
+    /* position: sticky;
+    top: 0; */
+    z-index: 10000000;
 }
 
 .navbar {
     box-sizing: border-box;
     width: 100%;
     height: var(--header);
-    height: 76px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
     transition: 0.18s;
-    /* box-shadow: 0 -10px 15px 5px var(--shadow); */
-    font-size: 0.85em;
 }
 
 #nav_links {
     display: grid;
     place-items: center;
-    width: 20px;
-    height: 20px;
+}
+
+.sellerPage_link {
+    position: relative;
+    width: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white !important;
+    margin-right: -10px;
+}
+
+.sellerPage_link:hover {
+    color: white !important;
+}
+
+.sellerPage_link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: block;
+    background: var(--brand);
+    mask-image: url(../../Assets/Images/brushstroke.png);
+    mask-position: center;
+    mask-size: 90% 80%;
+    mask-repeat: no-repeat;
+    translate: 0 -2px;
+    z-index: -1;
 }
 
 .nav_bottom {

@@ -1,11 +1,11 @@
 import { Box, Container, Grid, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import React from 'react'
 import useFacets from '../../Hooks/useFacets'
 import ItemCard from '../Card/ItemCard';
 
-export default function Categories() {
+export default function Collections() {
     const { facets: { data }, isFetching, isLoading } = useFacets()
-    const categories = data?.categories || []
+    const categories = data?.collections || []
 
     return (
         <Container>
@@ -21,8 +21,8 @@ export default function Categories() {
                     }}
                 >
                     {
-                        categories?.map((name) =>
-                            <ItemCard key={name} name={name}></ItemCard>
+                        categories?.map(({ name, id }) =>
+                            <ItemCard to={`/shop?collection=${id}`} key={id} name={name}></ItemCard>
                         )
                     }
                 </Box>

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Avatar from "../../Avatar/Avatar";
 import { Suspense, lazy, useRef, useState } from "react";
 import { uploadImages } from "../../../Utils/uploadImages";
+import socket from "../../../lib/ws";
 
 const Editor = lazy(() => import("../../ImageEditor/Editor"));
 
@@ -23,6 +24,14 @@ function ProfileDetails() {
     title: { fontSize: 14, fontWeight: 600, color: "primary" },
     summery: { variant: "subtitle2", lineHeight: "30px", color: "#111" },
   };
+
+  function handleLogout() {
+    logout.mutateAsync()
+      .then(() => {
+        socket.disconnect()
+        navigate('/')
+      })
+  }
 
   return (
     <>
@@ -66,7 +75,7 @@ function ProfileDetails() {
                 Log out of your account.
               </Typography>
             </div>
-            <LoadingButton loading={logout.isLoading} onClick={() => logout.mutateAsync().then(() => navigate('/'))} variant="contained">Log out</LoadingButton>
+            <LoadingButton loading={logout.isLoading} onClick={handleLogout} variant="contained">Log out</LoadingButton>
           </Grid>
         </Grid>
       </Box>

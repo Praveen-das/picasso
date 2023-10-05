@@ -9,7 +9,8 @@ export const client = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 30000
+      staleTime: 30000,
+      // suspense:true
     }
   },
 });
@@ -18,11 +19,11 @@ const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  // <StrictMode>
+  <StrictMode>
     <QueryClientProvider client={client}>
       <ReactQueryDevtools initialIsOpen={false} />
       <App />
     </QueryClientProvider>
-  // </StrictMode>
+  </StrictMode>
 );
 

@@ -23,7 +23,7 @@ export function formatObject(obj) {
         //   formattedObj[key] = nestedObj;
         // }
         formattedObj[key] = value;
-      } 
+      }
     }
   }
 
@@ -33,13 +33,13 @@ export function findChangedValues(oldObj, newObj) {
   const changedValues = {};
 
   for (let key in newObj) {
-      if (newObj.hasOwnProperty(key)) {
-          let newValue = newObj[key]
-          let oldValue = oldObj[key]
-          if (oldObj.hasOwnProperty(key) && JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
-              changedValues[key] = newValue
-          }
+    if (newObj.hasOwnProperty(key)) {
+      let newValue = newObj[key]
+      let oldValue = oldObj[key]
+      if (oldObj.hasOwnProperty(key) && JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+        changedValues[key] = newValue
       }
+    }
   }
 
   return changedValues;

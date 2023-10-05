@@ -1,9 +1,10 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination, Mousewheel } from "swiper";
+import { EffectCoverflow, Pagination, Mousewheel, Navigation } from "swiper";
 
 // Import Swiper styles
 import 'swiper/css';
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+import 'swiper/css/navigation';
 
-export { Swiper, SwiperSlide, EffectCoverflow, Pagination, Mousewheel }
+export { Swiper, SwiperSlide, EffectCoverflow, Pagination, Mousewheel, Navigation }

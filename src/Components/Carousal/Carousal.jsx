@@ -1,41 +1,74 @@
-import { useState } from 'react';
 import Card from '../Card/Card';
-import { Swiper, SwiperSlide, Mousewheel } from '../../lib/Swiper';
-import { Box } from '@mui/material';
+import { Swiper, SwiperSlide, Mousewheel, Navigation } from '../../lib/Swiper';
+
+import './carousal.css'
+import { Box, IconButton } from '@mui/material';
+import BackwardIcon from '@mui/icons-material/ArrowBackIosRounded';
+import ForwardIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import styled from '@emotion/styled';
+import { useRef } from 'react';
 
 export function Carousal({ data }) {
-    const [preIdx, setPreIdx] = useState(0);
+    let prevElm = useRef(null)
+    let nextElm = useRef(null)
+
+    let navbtn_sx = {
+        position: 'absolute',
+        bottom: 20,
+        zIndex: 100,
+        background: '#e2e2e2',
+        "&.Mui-disabled": {
+            opacity: 0,
+            transition: '0.5s'
+        },
+        ":hover": {
+            background: '#e2e2e2',
+        }
+    }
 
     return (
-        <Box sx={{
-            width: '100%',
-            height: '100%',
-            position: 'relative'
-        }}>
+        <Box
+            sx={{
+                height: '100%',
+                position: 'relative'
+            }}
+        >
+            <IconButton
+                id='prevEl'
+                ref={prevElm}
+                size='small'
+                sx={{ ...navbtn_sx, left: -15 }}
+            >
+                <BackwardIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+            <IconButton
+                id='nextEl'
+                ref={nextElm}
+                size='small'
+                sx={{ ...navbtn_sx, right: -15 }}
+            >
+                <ForwardIcon sx={{ fontSize: 16 }} />
+            </IconButton>
             <Swiper
-                onActiveIndexChange={e => setPreIdx(e.activeIndex)}
                 slidesPerView={'auto'}
                 spaceBetween={20}
                 mousewheel={true}
-                modules={[Mousewheel]} 
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0
-                }}>
-                {data?.map((product, index) => <SwiperSlide key={index} style={{
-                    opacity: index <= preIdx - 1 ? 0 : 1,
-                    transition: 'opacity 0.2s',
-                    width: 'auto'
-                }}>
-                    <Card
-                        sx={{
-                            borderRadius: 20,
-                            height: '100%'
-                        }} product={product} />
-                </SwiperSlide>)}
+                navigation={{
+                    nextEl: nextElm.current,
+                    prevEl: prevElm.current,
+                    disabledClass: 'Mui-disabled'
+                }}
+                modules={[Mousewheel, Navigation]}
+                className="carousal"
+            >
+                {
+                    data?.map((product) =>
+                        <SwiperSlide key={product?.id}>
+                            <Card product={product} />
+                        </SwiperSlide>
+                    )
+                }
             </Swiper>
-        </Box>);
+        </Box>
+    );
 }

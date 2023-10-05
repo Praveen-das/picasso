@@ -5,99 +5,111 @@ import { Link } from 'react-router-dom'
 import natureImg from '../../Assets/Images/collections_section/nature.webp'
 import muralImg from '../../Assets/Images/collections_section/murals.webp'
 import homeDecorImg from '../../Assets/Images/collections_section/home_decor.webp'
-import paintingsImg from '../../Assets/Images/collections_section/paintings.webp'
-import drawingsImg from '../../Assets/Images/collections_section/drawings.webp'
+
 import ethnicImg from '../../Assets/Images/collections_section/ethnic.webp'
+import lineart from '../../Assets/Images/collections_section/lineart.webp'
+import expressions_of_love from '../../Assets/Images/collections_section/expressions_of_love.jpg'
+
+import useFacets from '../../Hooks/useFacets';
 
 const Card = styled(props => <Box component={Link} {...props} />)({
-    minHeight: 200,
-    boxSizing: 'border-box',
+    height: '100%',
     borderRadius: 20,
-    display: 'flex',
-    justifyContent: 'end',
-    alignItems: 'end',
-    backgroundColor: 'var(--brand)',
-    color: 'white',
-    padding: "1.5rem",
-    backgroundPosition: "center",
-    backgroundSize: "100%",
-    transition: "0.2s",
-    overflow: 'hidden',
-    ":hover": {
-        backgroundSize: "110%",
-        "#card_title": {
-            translate: '0 -10px',
-        }
+    display: 'grid',
+    gridTemplateColumns: '80px 1fr',
+    alignItems: 'center',
+    gap: 10,
+    ":hover #card_title::before": {
+        width: '100%',
+        left: 0
     }
 });
 
+
 const CardTitle = styled(props => <Typography id='card_title' color='white' {...props} />)({
-    fontSize: 20,
+    position: 'relative',
+    width: 'max-content',
+    fontSize: 16,
     fontWeight: 600,
-    textShadow: '0 0 4px black',
-    transition: "0.2s",
+    transition: "0.5s",
+    zIndex: 100,
+    color: 'black',
+    '::before': {
+        content: "''",
+        position: 'absolute',
+        bottom: -2,
+        right: 0,
+        width: '0%',
+        height: 2,
+        background: 'var(--brand)',
+        transition: '0.2s',
+    },
 });
 
+let collections = [
+    { label: `Nature\'s Beauty`, img: natureImg },
+    { label: `Ethnic Dress Artistry`, img: ethnicImg },
+    // { label: `Paintings`, url: '/shop?category=Painting', img: paintingsImg },
+    { label: `Artful Home Decor`, img: homeDecorImg },
+    { label: `Mural Magic`, img: muralImg },
+    { label: `Line Art Creations`, img: lineart },
+    { label: `Expressions of Love`, img: expressions_of_love },
+    // { label: `Drawings`, url: '/shop?category=Drawing', img: drawingsImg },
+]
+
 export default function Explore() {
+    const { facets: { data } } = useFacets()
+    let collections_from_data = data?.collections || []
 
     return (
         <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4,1fr)',
-            gap: 2.5,
+            display: 'flex',
+            gap: 6,
             px: 6,
             pt: 'var(--vSpacing)',
         }}>
             <Box
-                gridColumn='span 2'
                 sx={{
-                    p: '0 !important',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    gap: 4,
+                    // justifyContent: 'space-around',
+                    pr: 1,
+                    width: 350
+                }}
+            >
+                <Typography variant='heading'>OUR COLLECTIONS</Typography>
+                <Typography variant='desc'>
+                    Explore Curated Gems<br />from Diverse Genres
+                </Typography>
+                {/* <Button component={Link} to='/collections' size='large' sx={{ px: 4, borderRadius: 4, mt: 2 }} variant='contained'>View All</Button> */}
+            </Box>
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3,1fr)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 3,
                     bgcolor: 'white !important'
                 }}
             >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        width: '100%',
-                        height: '100%',
-                        gap: 2,
-                    }}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'start',
-                            justifyContent: 'space-around',
-                            pr: 1,
-                            width: 350
-                        }}
-                    >
-                        <Typography variant='heading'>OUR COLLECTIONS</Typography>
-                        <Typography variant='desc'>
-                            Explore Curated Gems<br />from Diverse Genres
-                        </Typography>
-                        <Button size='large' sx={{ px: 4, borderRadius: 4, mt: 2 }} variant='contained'>View All</Button>
-                    </Box>
-                    <Card sx={{ backgroundImage: `url(${natureImg})` }} width='100%' height='100%' >
-                        <CardTitle>Nature's Beauty</CardTitle>
-                    </Card>
-                </Box>
+                {
+                    collections.map(({ label, img }) => {
+                        let item = collections_from_data.find(({ name }) => name === label)
+                        let url = `/shop?collection=${item?.id}`
+                        let total_pieces = item?._count.product || 0
+
+                        return <Card to={url} key={label} >
+                            <img style={{ borderRadius: 20, objectFit: 'cover', gridRow: 'span 2' }} width={80} height={80} src={img} alt="" />
+                            <CardTitle>{label + item?.id}</CardTitle>
+                            <Typography >{total_pieces} pieces</Typography>
+                        </Card>
+                    })
+                }
             </Box>
-            <Card sx={{ backgroundImage: `url(${ethnicImg})` }} gridRow='span 2'>
-                <CardTitle>Ethnic Dress Artistry</CardTitle>
-            </Card>
-            <Card sx={{ backgroundImage: `url(${paintingsImg})` }} >
-                <CardTitle>Paintings</CardTitle>
-            </Card>
-            <Card sx={{ backgroundImage: `url(${homeDecorImg})` }} >
-                <CardTitle>Artful Home Decor</CardTitle>
-            </Card>
-            <Card sx={{ backgroundImage: `url(${muralImg})` }} >
-                <CardTitle>Mural Magic</CardTitle>
-            </Card>
-            <Card sx={{ backgroundImage: `url(${drawingsImg})` }} >
-                <CardTitle>Drawings</CardTitle>
-            </Card>
-        </Box>
+        </Box >
     );
 }
