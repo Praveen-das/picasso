@@ -21,8 +21,8 @@ export function useProducts() {
     )
 }
 
-export function useProductQuery(queryKey, url, state) {
-    return useQuery([queryKey], () => productQuery(url), {
+export function useProductQuery(queryKey, url) {
+    return useQuery([queryKey,url], () => productQuery(url), {
         keepPreviousData: true,
     })
 }

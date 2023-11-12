@@ -94,23 +94,23 @@ export default function SellerSection() {
     }
 
     return (
-        <Grid container columnSpacing={6} px={4} mt='var(--vSpacing)' height={'100%'}>
-            <Grid item xs={6}>
+        <Grid container columnSpacing={6} px={4} height={'100%'}>
+            <Grid item xs={8}>
                 <Box sx={{
                     display: 'flex',
                     boxSizing: 'border-box',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'flex-start',
                     py: 2,
                     gap: 4,
                 }}>
-                    <Typography variant='heading' >Start selling now</Typography>
-                    <Typography lineHeight={2} fontWeight={600} variant='h6' >
+                    <Typography variant='heading' >START SELLING</Typography>
+                    <Typography fontWeight={600} fontSize={18} >
                         Unlock Your Artistic Potential. Join as a Seller on our platform and showcase your paintings to art lovers worldwide.
                     </Typography>
-                    <Button onClick={handleRegistration} sx={{ borderRadius: 4, px: 8, py: 2, textTransform: 'none', mt: 4 }} size='large' variant='contained'>Register Now</Button>
-                    {/* <Box
+                    <Button onClick={handleRegistration} sx={{ borderRadius: 4, px: 4, py: 1, textTransform: 'none' }} size='large' variant='contained'>Register Now</Button>
+                    <Box
                         sx={{
                             display: 'grid',
                             justifySelf: 'left',
@@ -119,7 +119,7 @@ export default function SellerSection() {
                     >
                         <Typography variant='subtitle2'>* Registration fee, Valid for 2 Years - ₹ 799 (Including Taxes)</Typography>
                         <Typography variant='subtitle2'>* Terms and conditions</Typography>
-                    </Box> */}
+                    </Box>
                 </Box>
             </Grid>
             <Grid item xs >
@@ -136,7 +136,7 @@ export default function SellerSection() {
                         borderRadius: 10,
                     }}
                 >
-                    <Box sx={seller_step_item}>
+                    {/* <Box sx={seller_step_item}>
                         <RegisterIcon {...iconSize} />
                         <Typography {...ts} >Register Your Account</Typography>
                     </Box>
@@ -154,7 +154,7 @@ export default function SellerSection() {
                     <Box sx={seller_step_item}>
                         <PaymentIcon {...iconSize} />
                         <Typography {...ts} >Receive Payment</Typography>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Grid>
         </Grid>

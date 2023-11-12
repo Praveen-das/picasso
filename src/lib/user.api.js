@@ -24,7 +24,7 @@ const getCurrentUser = async () => {
   //   id = crypto.randomUUID()
   //   sessionStorage.setItem('user_id', id)
   // }
-  
+
   return axiosClient.get("/user").then(({ data }) => data || null)
   // return await axiosClient.get("/api/product").then(({ data }) => data || null)
 };
@@ -60,6 +60,20 @@ const _removeSocialMediaLink = async (id) => {
   return await axiosClient.delete(`/user/social/${id}`).then(res => res.data);
 };
 
+const getArtists = async () => {
+  return axiosClient.get("/user/artists").then(({ data }) => data || null)
+};
+
+const _addFollower = async ({ id }) => {
+  return axiosClient.post(`/user/artists/follow/${id}`).then(({ data }) => data || null)
+};
+
+const _removeFollower = async ({ id }) => {
+  return axiosClient.delete(`/user/artists/unfollow/${id}`).then(({ data }) => data || null)
+};
+
+
+
 export {
   signupUser,
   signinUser,
@@ -76,5 +90,9 @@ export {
   _addToRecentlyViewed,
 
   _addSocialMediaLink,
-  _removeSocialMediaLink
+  _removeSocialMediaLink,
+
+  getArtists,
+  _addFollower,
+  _removeFollower
 };

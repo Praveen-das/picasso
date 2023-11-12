@@ -12,10 +12,16 @@ export function MUIContext({ children }) {
         typography: {
             fontFamily: 'Montserrat',
             heading: {
-                fontSize: 28,
-                fontFamily: 'var(--Title)',
-                fontWeight: 100,
+                fontSize: 36,
+                // fontFamily: 'Montserrat',
                 position: 'relative',
+                fontWeight: 800,
+                textTransform:'capitalize'
+            },
+            heading2: {
+                // fontFamily: 'Montserrat',
+                fontSize: 24,
+                fontWeight: 600
             },
             desc: {
                 lineHeight: 2,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './product.css'
 import Reviews from '../Reviews/Reviews';
@@ -15,27 +15,18 @@ import { useStore } from '../../Context/Store';
 import StarEmptyIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ShareIcon from '@mui/icons-material/Share';
 import WishlistButton from '../WishlistButton/WishlistButton'
 import { calculateDiscount } from '../../Utils/utils';
 import UnfoldMoreIcon from '@mui/icons-material/ExpandMore';
 import UnfoldLessIcon from '@mui/icons-material/ExpandLess';
 import LoadingScreen from '../MUIComponents/LoadingScreen'
 import ShoppingIcon from '@mui/icons-material/ShoppingBagOutlined';
+import { ShareButton } from '../ShareButton/ShareButton';
 
-const IconButtonProps = {
+const IconProps = {
     fontSize: 'small',
     color: 'primary'
 }
-
-const fetchData = () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve('Data fetched successfully!');
-        }, 5000); // Simulating a delay
-    });
-};
-
 
 const Product = () => {
     const [quantity, setQuantity] = useState(1)
@@ -101,14 +92,6 @@ const Product = () => {
         setChatWidget(true, true, { ...user, product_id: product?.id })
     }
 
-    const handleSharing = () => {
-        navigator.share({
-            url: window.location.href
-        })
-            .then(() => console.log('link shared'))
-            .catch((err) => console.log(err))
-    }
-
     const [more, setMore] = useState(false)
 
     let discountPrice = product ? product.price - ((product.price * product.discount) / 100) : 0
@@ -118,8 +101,10 @@ const Product = () => {
             <Grid container spacing={8} p='0 3rem'>
                 {/*--------------- LEFT ---------------*/}
                 <Grid item xs={12} mt={2}>
-                    <img id='productImage'
-                        src={product?.images[defaultImg]?.url + '/tr:w-200'} alt=""
+                    <img
+                        id='productImage'
+                        src={process.env.REACT_APP_IMAGEKIT_BASEURL + product?.images[defaultImg]?.filePath}
+                        alt={product?.name}
                     />
                 </Grid>
                 {/*--------------- RIGHT ---------------*/}
@@ -153,7 +138,7 @@ const Product = () => {
                                     {
                                         sellerId !== currentUser.data?.id &&
                                         <IconButton onClick={() => handleChatWidget()}>
-                                            <ChatIcon {...IconButtonProps} />
+                                            <ChatIcon {...IconProps} />
                                         </IconButton>
                                     }
                                     <WishlistButton
@@ -161,11 +146,7 @@ const Product = () => {
                                         productId={product?.id}
                                         color='var(--brand)'
                                     />
-                                    <IconButton
-                                        onClick={handleSharing}
-                                    >
-                                        <ShareIcon {...IconButtonProps} />
-                                    </IconButton>
+                                    <ShareButton props={IconProps} />
                                 </Box>
                             </Box>
                         </Grid>
@@ -321,3 +302,4 @@ const Product = () => {
 }
 
 export default Product
+

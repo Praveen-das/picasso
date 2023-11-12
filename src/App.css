@@ -49,7 +49,8 @@ body,
     --BS: 87%;
 
     /* -----brand----- */
-    --brand: hsl(var(--BH), var(--BS), 57%);
+    /* --brand: hsl(var(--BH), var(--BS), 57%); */
+    --brand: rgb(91, 49, 255);
     --brandLight: #e1d9ff;
     --brandDark: hsl(var(--BH), var(--BS), 55%);
     --brandLight50: hsl(var(--BH), var(--BS), 95%);
@@ -67,7 +68,8 @@ body,
     --shade: #eff3f8;
 
     --fullHeight: calc(100vh - var(--header));
-    --vSpacing: 4rem;
+    --vSpacing: 6rem;
+    --vGap: 1.5rem;
 
     --Title: Bebas Neue;
     --Sub: League Gothic;
@@ -213,4 +215,8 @@ a:hover {
 .item-exit-active {
     opacity: 0;
     transition: 0.5s;
+}
+
+.noScroll::-webkit-scrollbar {
+    display: none;
 }

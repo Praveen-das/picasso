@@ -6,6 +6,7 @@ import {
   RouterProvider,
   redirect,
   ScrollRestoration,
+  useParams,
 } from "react-router-dom";
 
 import { Suspense, lazy, useEffect } from "react";
@@ -19,7 +20,6 @@ import Footer from './Components/Footer/Footer'
 import { getCurrentUser } from "./lib/user.api";
 import { Test } from "./Test";
 import SellerRegistrationPage from "./Pages/SellerRegistrationPage";
-import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 
 // import Test from "./Test/Test";
 const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
@@ -59,7 +59,7 @@ const routes = createRoutesFromElements(
     <Route path="/collections" element={<Outlet />} >
       <Route index element={<CollectionsPage />} />
     </Route>
-    <Route path="/store/:id" element={<StorePage />} />
+    <Route path="/artists/profile/:id" element={<StorePage />} />
 
     {/* //--------------------- private routes ---------------------*/}
     <Route path="/login" element={<LoginPage />} loader={privateRoute} />
@@ -69,6 +69,7 @@ const routes = createRoutesFromElements(
     />
     <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
     <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
+    {/* <Route path="/sell" element={<SellerPage />} loader={privateRoute} /> */}
     <Route path="/sell" element={<SellerRegistrationPage />} loader={privateRoute} />
     <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
     <Route path="/test" element={<Test />} />
@@ -78,15 +79,6 @@ const routes = createRoutesFromElements(
 const router = createBrowserRouter(routes);
 
 function App() {
-
-  useEffect(() => {
-    // window.onscroll = () => {
-    //   let scrollPos = window.scrollY
-
-    //   console.log(scrollPos);
-    // }
-
-  }, [])
 
   return (
     <MUIContext>
@@ -98,25 +90,18 @@ function App() {
 function Layout() {
 
   return (
-    // <ReactLenis
-    //   options={{
-    //     duration: 2,
-    //   }}
-    //   root
-    // >
     <div id='App'>
       <Header />
-      <div id='asdasdads'>
+      <div>
         <ScrollRestoration />
         <Suspense fallback={<LoadingScreen />}>
-          {/* <Alert /> */}
-          {/* <ChatEngin /> */}
+          <Alert />
+          <ChatEngin />
           <Outlet />
         </Suspense >
       </div>
       <Footer />
     </div >
-    // </ReactLenis>
   )
 }
 

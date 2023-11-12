@@ -45,8 +45,8 @@ function Banner() {
         <Grid
             ref={app}
             container
-            px='3rem'
-            py={1}
+            // px='3rem'
+            // py={1}
             overflow='hidden'
         >
             <Grid item xs width='0px'>
@@ -58,20 +58,10 @@ function Banner() {
                         display: 'flex',
                         alignItems: 'center',
                         width: '100%',
-                        height: 430,
-                        py: 6,
-                        px: 10,
+                        height: 500,
+                        py: 2,
+                        px: 6,
                         gap: 8,
-                        '::before': {
-                            content: "''",
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width:'100%',
-                            height:'100%',
-                            bgcolor: 'var(--brandLight)',
-                            borderRadius: 5,
-                        }
                     }}
                 >
                     <Box
@@ -107,7 +97,7 @@ function Banner() {
                     </Box>
                     <Box
                         width={'58%'}
-                        height={'80%'}
+                        height='100%'
                         sx={{
                             position: 'absolute',
                             right: 0,

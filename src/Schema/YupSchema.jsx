@@ -17,6 +17,7 @@ export const productValidation = yup.object({
   material_id: yup.number(),
   widthInInches: yup.string().required("This field is required."),
   heightInInches: yup.string().required("This field is required."),
+  sellingOption: yup.string().required("This field is required."),
 });
 
 export const productUpdateValidation = yup.object({

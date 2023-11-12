@@ -1,12 +1,11 @@
 import './card.css'
 import { Link } from 'react-router-dom'
 import WishlistButton from '../WishlistButton/WishlistButton'
-import { Box, IconButton, Typography } from '@mui/material'
+import { IconButton, Typography } from '@mui/material'
 import { forwardRef } from 'react'
 
 const Card = forwardRef(({ product }, ref) => {
     const images = product?.images
-    // const defaultImage = images?.find((o) => o.fileId === product.defaultImage)
 
     return (
         <Link to={`/shop/product/${product?.id}`}>
@@ -14,7 +13,7 @@ const Card = forwardRef(({ product }, ref) => {
                 ref={ref}
                 className='product_card'
             >
-                <img className="product_image" src={images?.[0]?.url} alt="" />
+                <img className="product_image" src={process.env.REACT_APP_IMAGEKIT_BASEURL + '/tr:w-400' + product?.images[0]?.filePath} alt={product?.name} />
                 <div className='card_overlay' >
                     <WishlistButton
                         iconButton={

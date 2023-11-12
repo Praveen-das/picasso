@@ -5,7 +5,6 @@ import './carousal.css'
 import { Box, IconButton } from '@mui/material';
 import BackwardIcon from '@mui/icons-material/ArrowBackIosRounded';
 import ForwardIcon from '@mui/icons-material/ArrowForwardIosRounded';
-import styled from '@emotion/styled';
 import { useRef } from 'react';
 
 export function Carousal({ data }) {
@@ -29,15 +28,17 @@ export function Carousal({ data }) {
     return (
         <Box
             sx={{
+                width: '100%',
                 height: '100%',
-                position: 'relative'
+                position: 'relative',
+                overflow:'hidden'
             }}
         >
             <IconButton
                 id='prevEl'
                 ref={prevElm}
                 size='small'
-                sx={{ ...navbtn_sx, left: -15 }}
+                sx={{ ...navbtn_sx, left: 15 }}
             >
                 <BackwardIcon sx={{ fontSize: 16 }} />
             </IconButton>
@@ -45,7 +46,7 @@ export function Carousal({ data }) {
                 id='nextEl'
                 ref={nextElm}
                 size='small'
-                sx={{ ...navbtn_sx, right: -15 }}
+                sx={{ ...navbtn_sx, right: 15 }}
             >
                 <ForwardIcon sx={{ fontSize: 16 }} />
             </IconButton>

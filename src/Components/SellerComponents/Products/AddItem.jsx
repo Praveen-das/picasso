@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { deleteImage } from '../../../lib/product.api';
 import { useAdmin } from '../../../Hooks/useProducts';
-import { Alert, Box, Button, Chip, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Slide, Snackbar, Typography } from '@mui/material';
-import DoneIcon from '@mui/icons-material/Done';
+import { Alert, Box, Button, Grid, LinearProgress, MenuItem, Snackbar, Typography } from '@mui/material';
 import TextField from '../../MUIComponents/TextField';
 import { FastField, Field, FieldArray, Form, Formik } from 'formik';
 import { productUpdateValidation, productValidation } from '../../../Schema/YupSchema';
@@ -19,18 +18,16 @@ export function AddItem({ onClose, payload }) {
 
     const { facets: { data, isLoading }, } = useFacets();
     const categories = data?.allCategories || [];
-    const subCategory = data?.subCategory || [];
-    const subject = data?.subject || [];
-    const style = data?.style || [];
+    const subCategory = data?.allMediums || [];
+    const subject = data?.allSubjects || [];
+    const style = data?.allStyles || [];
     const materials = data?.allMaterials || [];
     const collections = data?.collections || [];
-
-    console.log(collections);
 
     const inititalValuesForUpdates = useMemo(() => payload, [payload]);
 
     function handleSubmit({ deletedImages, ...productData }, { setSubmitting, resetForm }) {
-        
+
         if (productData.collections_id === '')
             productData.collections_id = null
 
@@ -104,7 +101,7 @@ export function AddItem({ onClose, payload }) {
         desc: "",
         quantity: "",
         price: "",
-        discount: "",
+        discount: 0,
         images: [],
         category_id: categories?.[0]?.id,
         subCategory_id: subCategory?.[0]?.id,
@@ -114,8 +111,9 @@ export function AddItem({ onClose, payload }) {
         material_id: materials?.[0]?.id,
         widthInInches: "",
         heightInInches: "",
+        sellingOption: 'ORIGINAL'
     };
-    
+
     if (isLoading) return <LoadingScreen />
     return (
         <>
@@ -285,7 +283,7 @@ export function AddItem({ onClose, payload }) {
                                         </TextField>}</Field>
                                     </Grid>
                                     {/* -----------Size----------- */}
-                                    <Grid item xs={8}>
+                                    <Grid item xs={12}>
                                         <Box
                                             sx={{
                                                 width: '100%',
@@ -307,14 +305,6 @@ export function AddItem({ onClose, payload }) {
                                                 {...field} />}</Field>
                                         </Box>
                                     </Grid>
-                                    {/* -----------stock----------- */}
-                                    <Grid item xs={4}>
-                                        <FastField name="quantity">{({ field, form }) => <TextField
-                                            label="In Stock"
-                                            type='number'
-                                            error={form.touched.quantity && form.errors.quantity}
-                                            {...field} />}</FastField>
-                                    </Grid>
                                     {/* -----------Price----------- */}
                                     <Grid item xs={6}>
                                         <FastField name="price">{({ field, form }) => <TextField
@@ -330,6 +320,25 @@ export function AddItem({ onClose, payload }) {
                                             type='number'
                                             error={form.touched.discount && form.errors.discount && `${form.errors.discount}%`}
                                             startAdornment={<Typography fontWeight={600} sx={{ pr: 0.5 }}>%</Typography>}
+                                            {...field} />}</FastField>
+                                    </Grid>
+                                    {/* -----------selling option----------- */}
+                                    <Grid item xs={6}>
+                                        <Field name="sellingOption">{({ field }) => <TextField
+                                            label="Selling options"
+                                            select
+                                            {...field}
+                                        >
+                                            <MenuItem value='ORIGINAL'>Original</MenuItem>
+                                            <MenuItem value='PRINT'>Print</MenuItem>
+                                        </TextField>}</Field>
+                                    </Grid>
+                                    {/* -----------stock----------- */}
+                                    <Grid item xs={6}>
+                                        <FastField name="quantity">{({ field, form }) => <TextField
+                                            label="In Stock"
+                                            type='number'
+                                            error={form.touched.quantity && form.errors.quantity}
                                             {...field} />}</FastField>
                                     </Grid>
                                     {/* -----------Add to collection----------- */}

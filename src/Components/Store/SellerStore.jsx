@@ -1,133 +1,138 @@
-import { Box, Button, Grid, IconButton, Tab, Tabs, Typography } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import { Box, Button, Divider, Grid, IconButton, Tab, Tabs, Typography } from '@mui/material'
+import React, { useEffect } from 'react'
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
 import Masonry from '@mui/lab/Masonry';
 import { useProducts } from '../../Hooks/useProducts';
 import Card from '../Card/Card'
 
-function initializeCropper(elm) {
-    return new Cropper(elm, {
-        viewMode: 3,
-        dragMode: 'move',
-        autoCropArea: 1,
-        restore: false,
-        modal: false,
-        cropBoxMovable: false,
-        cropBoxResizable: false,
-        toggleDragModeOnDblclick: false,
-    });
-}
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { useParams } from 'react-router-dom';
+import useUserData from '../../Hooks/useUserData';
+import axiosClient from '../../lib/axiosClient';
+import useCurrentUser from '../../Hooks/useCurrentUser';
+import { ShareButton } from '../ShareButton/ShareButton';
 
 export default function Store() {
-    const { data } = useProducts()
+    const { id } = useParams()
+    const { user: { data: person, isLoading, isFetching }, addFollower, removeFollower } = useUserData(id)
+    const { currentUser: { data: currentUser } } = useCurrentUser()
 
-    return (
-        <>
-            <Grid container>
-                <Grid item xs={12} >
-                    <CoverPhoto />
-                </Grid>
-                <Grid item xs={12} >
-                    <Box
-                        sx={{ height: 90, bgcolor: 'tan' }}
-                    >
-
-                    </Box>
-                </Grid>
-                <Grid item xs={12} p={3}>
-                    <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-                        {
-                            data?.map((o) => (
-                                <Card sx={{ width: '100%', borderRadius: 10 }} key={o.id} product={o} />
-                            ))
-                        }
-                    </Masonry>
-                </Grid>
-            </Grid>
-        </>
-    )
-}
-
-
-function CoverPhoto() {
-    const [coverPhoto, setCoverPhoto] = useState()
-    const coverPhotoRef = useRef(null);
-    const cropperRef = useRef(null);
-
-    function addCoverPhoto(e) {
-        const file = e.target.files[0]
-        if (file && file.type.startsWith('image/'))
-            setCoverPhoto(URL.createObjectURL(file));
-        else console.log('wrong file type');
+    let icons = {
+        facebook: <FacebookIcon />,
+        instagram: <InstagramIcon />,
+        twitter: <TwitterIcon />,
+        linkedIn: <LinkedInIcon />,
     }
 
     useEffect(() => {
-        coverPhotoRef.current.onload = () => {
-            if (cropperRef.current) return cropperRef.current = null
-            cropperRef.current = initializeCropper(coverPhotoRef.current)
-        }
-        return () => cropperRef.current?.destroy()
-    }, [])
+        console.log(person);
+    }, [person])
 
-    const getCropData = () => {
-        if (typeof cropperRef.current?.cropper !== "undefined") {
-            const cropper = cropperRef.current
-            setCoverPhoto(cropper.getCroppedCanvas().toDataURL('image/webp'));
-            cropper.destroy()
-        }
-    };
+    function handleFollowing() {
+        let user = person?.followers.find(o => o?.userId === currentUser?.id)
+
+        if (!user)
+            return addFollower
+                .mutateAsync({ id: person?.id })
+                .then(res => console.log(res))
+        removeFollower
+            .mutateAsync({ id: user?.id })
+            .then(res => console.log(res))
+    }
 
     return (
         <>
-            <Box sx={{
-                position: 'relative',
-                bgcolor: 'grey',
-            }}>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        bottom: 20,
-                        right: 20,
-                        display: 'flex',
-                        gap: 2,
-                        zIndex: 200
-                    }}
-                >
-                    <IconButton
-                        color="default"
-                        aria-label="upload picture"
-                        component="label"
+            <Grid container px={4} py={2} spacing={6}>
+                <Grid item xs={12} >
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: '30% 1fr',
+                            gap: 4,
+                            justifyItems: 'center',
+                            alignItems: 'center'
+                        }}
                     >
-                        <input onChange={addCoverPhoto} hidden accept="image/*" type="file" />
-                        <PhotoCamera
-                            sx={{
-                                color: 'white',
-                                // mixBlendMode: 'color'
+                        <img
+                            style={{
+                                width: 180,
+                                height: 180,
+                                objectFit: 'contain',
+                                borderRadius: '50%',
                             }}
+                            src={person?.photo}
+                            alt=""
                         />
-                    </IconButton>
-                    <Button variant='contained' color='primary' onClick={getCropData}>Apply</Button>
-                </Box>
-                <div
-                    style={{
-                        width: '100%',
-                        height: '400px',
-                    }}
-                >
-                    <img
-                        ref={coverPhotoRef}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            maxWidth: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                        }} src={coverPhoto} alt=""
-                    />
-                </div>
-            </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 4
+                                }}
+                            >
+
+                                <Typography variant='heading' fontSize={26}>{person?.displayName}</Typography>
+                                <Button
+                                    disabled={isLoading || isFetching || addFollower.isLoading || removeFollower.isLoading}
+                                    onClick={handleFollowing}
+                                    sx={{ textTransform: 'unset', justifySelf: 'right', px: 4 }}
+                                    variant='contained'
+                                    size='small'
+
+                                >
+                                    {
+                                        person?.isFollowedByCurrentUser ?
+                                            'Unfollow' : 'Follow'
+                                    }
+                                </Button>
+                                <ShareButton />
+                            </Box>
+                            <Typography variant='subtitle1'>{person?.product?.length} Artworks - {person?.followers?.length} Followers</Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    // justifyContent: 'center',
+                                    gap: 2,
+                                    ml: -1
+                                }}
+                            >
+                                {
+                                    Object.values(person?.social || {}).map(({ name, url }) => (
+                                        <IconButton onClick={() => window.open(url, '_blank')} key={name} color={name}>
+                                            {icons[name]}
+                                        </IconButton>
+                                    ))
+                                }
+                            </Box>
+                            <Typography sx={{ gridColumn: 'span 2' }} my={1} variant='body1'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus, tempore sunt fuga vel facere aspernatur quis animi quasi exercitationem dolorem nulla architecto dicta excepturi earum ex sapiente vero, illum soluta laboriosam quisquam suscipit voluptates distinctio. Repellendus aliquam.</Typography>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}><Divider /></Grid>
+                <Grid item xs={12}>
+                    <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                        <>
+                            {
+                                person?.product?.map((o) => (
+                                    <Card sx={{ width: '100%', borderRadius: 10 }} key={o.id} product={o} />
+                                ))
+                            }
+                        </>
+                    </Masonry>
+                </Grid>
+            </Grid >
         </>
     )
 }
+
