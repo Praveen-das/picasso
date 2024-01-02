@@ -66,12 +66,7 @@ export default function SellerSection() {
             "description": "2 Year Subscription Plan",
             "image": "/your_logo.jpg",
             "handler": (response) => {
-                axiosClient.post('/rzp/subscriptions/verify', {
-                    payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                }).then(() => {
-                    queryClient.invalidateQueries(["currentUser"])
-                }).catch((err) => console.log(err))
+                
             },
             "prefill": {
                 "name": "Gaurav Kumar",

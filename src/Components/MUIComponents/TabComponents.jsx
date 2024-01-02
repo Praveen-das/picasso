@@ -16,7 +16,9 @@ export function TabPanel(props) {
                     }}
                     {...other}
                 >
-                    {children}
+                    <Item>
+                        {children}
+                    </Item>
                 </Box>
             )}
         </>
@@ -47,12 +49,13 @@ export const StyledTabs = styled(Tabs)({
         borderRadius: 20,
     },
     ".MuiTabs-flexContainer": {
-        gap: 8
+        gap: 8,
     }
 });
 
 export const StyledTab = styled(Tab)(
     () => ({
+        margin: 5,
         borderRadius: 20,
         fontSize: 13,
         fontWeight: 600,
@@ -72,7 +75,7 @@ export const StyledTab = styled(Tab)(
 );
 
 export const tabStyling = {
-    sx: { justifyContent: 'left'}, iconPosition: 'start'
+    sx: { justifyContent: 'left' }, iconPosition: 'start'
 }
 
 

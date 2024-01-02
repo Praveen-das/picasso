@@ -290,13 +290,6 @@ const Product = () => {
                     <Reviews product={product} />
                 </Grid> */}
             </Grid >
-            {/* {
-                currentUser.data !== null &&
-                <>
-                    <label className='recently_viewed' >Recently viewed</label>
-                    <Tray height={230} data={currentUser.data?.recently_viewed?.map(o => o.product)} from='110%' to='-50%' parent='productContainer_wrapper' />
-                </>
-            } */}
         </>
     )
 }

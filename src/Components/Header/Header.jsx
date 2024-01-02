@@ -1,4 +1,4 @@
-import {  useMemo } from "react";
+import { useMemo, useState } from "react";
 import "./header.css";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import DropDown from "../DropDown/DropDown";
@@ -9,7 +9,7 @@ import FavoriteIcon from "@mui/icons-material/FavoriteBorder";
 import { useStore } from "../../Context/Store";
 import useCurrentUser from "../../Hooks/useCurrentUser";
 import useAuth from "../../Hooks/useAuth";
-import { Badge, Box, Typography } from "@mui/material";
+import { Badge, Box, IconButton, Typography } from "@mui/material";
 import CartIcon from '@mui/icons-material/ShoppingBagOutlined';
 import LoginIcon from '@mui/icons-material/LoginOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
@@ -19,7 +19,8 @@ function Header() {
   const { pathname } = useLocation()
   let pathName = pathname.slice(1)
   const { currentUser } = useCurrentUser();
-
+  const { handleLogout } = useAuth()
+  
   return (
     <>
       <nav id='navbar'>
@@ -37,30 +38,27 @@ function Header() {
           </div>
 
           <div className="right">
-            <Link to="/sell" >
-              <Typography fontSize={14} fontWeight={700}>SELL NOW</Typography>
-            </Link>
             <Link id='nav_links' to='/cart' >
               <CartIcon fontSize='small' />
             </Link>
             {
               currentUser.data !== null ?
-                <Link to="/profile">
-                  {/* <PersonIcon /> */}
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1
-                    }}
-                  >
-                    <Avatar
-                      sx={{ width: 30, height: 30 }}
-                      displayName={currentUser.data?.displayName}
-                      profilePicture={currentUser.data?.photo}
-                    />
-                  </Box>
-                </Link> :
+                <Select
+                  mainElement={
+                    <IconButton size='small'>
+                      <Avatar
+                        sx={{ width: 30, height: 30 }}
+                        displayName={currentUser.data?.displayName}
+                        profilePicture={currentUser.data?.photo}
+                      />
+                    </IconButton>
+                  }
+                >
+                  <Menu to='/seller'>Dashboard</Menu>
+                  <Menu to='/profile'>Profile</Menu>
+                  <Menu onClick={handleLogout}>Logout</Menu>
+                </Select>
+                :
                 <Link id='nav_links'
                   to="/login"
                 >
@@ -127,13 +125,80 @@ function Header() {
             Shop
           </Link>
         </Box>
-        <Link style={{ marginLeft: 'auto' }} to="/sell" >
+        <Link style={{ marginLeft: 'auto' }} to="/seller" >
           Sell on Artworld
         </Link>
       </Box> */}
       </nav>
     </>
   );
+}
+
+function Select({ mainElement, children }) {
+
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        ":hover": {
+          ".select_options": {
+            opacity: 1,
+            translate: '10px 0',
+            pointerEvents: 'all',
+            transition: '0.2s',
+          }
+        }
+      }}
+    >
+      {mainElement}
+      <Box
+        className='select_options'
+        sx={{
+          position: 'absolute',
+          right: 0,
+          bgcolor: 'white',
+          opacity: 0,
+          translate: '10px 20px',
+          pointerEvents: 'none',
+          borderRadius: '5px',
+          overflow: 'hidden',
+          transition: '0.1s',
+          boxShadow: "0 5px 10px rgb(0 0 0 / 17%)",
+          p:'2px'
+        }}
+      >
+        {children}
+      </Box>
+    </Box>
+  )
+}
+
+function Menu({ children, to, onClick }) {
+
+  return (
+    <Link to={to} onClick={onClick}>
+      <Box
+        sx={{
+          pl: 3,
+          pr: 5,
+          py: 1,
+          bgcolor: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          borderRadius:'5px',
+          transition:'0.2s',
+          ":hover": {
+            bgcolor: 'var(--brand)',
+            color: 'white !important',
+          }
+        }}
+      >
+        <Typography fontSize={14} fontWeight={600}>
+          {children}
+        </Typography>
+      </Box>
+    </Link>
+  )
 }
 
 export default Header;

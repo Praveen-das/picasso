@@ -1,13 +1,12 @@
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
-import TextField  from "../../MUIComponents/TextField";
+import TextField from "../../MUIComponents/TextField";
 import "../styles.css";
 import { userAddressSchema } from "../../../Schema/YupSchema";
 import { useFormik } from "formik";
 import useCurrentUser from "../../../Hooks/useCurrentUser";
 
-function AddNewAddress({ open, close }) {
-  const isMounted = useRef(false);
+function AddNewAddress({ close }) {
   const { addUserAddress } = useCurrentUser();
 
   const style = {
@@ -21,23 +20,6 @@ function AddNewAddress({ open, close }) {
     xs: 12,
     md: 6,
   };
-
-  useEffect(() => {
-    const addNewAddress = document.querySelector("#AddNewAddress");
-    if (open) {
-      addNewAddress.classList.add("expand");
-      isMounted.current = true;
-      return;
-    }
-    if (!isMounted.current) return;
-    addNewAddress.classList.add("shrink");
-    isMounted.current = false;
-
-    return () => {
-      addNewAddress.classList.remove("expand");
-      addNewAddress.classList.remove("shrink");
-    };
-  }, [open]);
 
   const {
     errors,
@@ -56,8 +38,6 @@ function AddNewAddress({ open, close }) {
       state: "",
       pincode: "",
       mobile: "",
-      alternate_phone: null,
-      email: "",
       isDefault: true,
     },
     validationSchema: userAddressSchema,
@@ -72,8 +52,8 @@ function AddNewAddress({ open, close }) {
   });
 
   return (
-    <div id="AddNewAddress">
-      <Grid container pl={{ md: 2 }}>
+    <div id="AddNewAddress" >
+      <Grid container px={{ md: 2 }}>
         <Grid item xs={12} ml={{ md: -2 }}>
           <Typography variant="h5" fontWeight={800} color="#333">
             Add Shipping Address
@@ -138,37 +118,8 @@ function AddNewAddress({ open, close }) {
                 label="PHONE NUMBER"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                type="number"
                 error={touched.mobile && Boolean(errors.mobile)}
                 helperText={touched.mobile && errors.mobile}
-                {...style}
-              />
-            </Grid>
-            <Grid item {...mq_2rows}>
-              <TextField
-                id="alternate_phone"
-                name="alternate_phone"
-                label="ALTERNATE NUMBER"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="number"
-                error={
-                  touched.alternate_phone && Boolean(errors.alternate_phone)
-                }
-                helperText={touched.alternate_phone && errors.alternate_phone}
-                {...style}
-              />
-            </Grid>
-            <Grid item {...mq_2rows}>
-              <TextField
-                id="email"
-                name="email"
-                label="EMAIL ADDRESS"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="email"
-                error={touched.email && Boolean(errors.email)}
-                helperText={touched.email && errors.email}
                 {...style}
               />
             </Grid>
@@ -179,7 +130,6 @@ function AddNewAddress({ open, close }) {
                 name="pincode"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                type="number"
                 error={touched.pincode && Boolean(errors.pincode)}
                 helperText={touched.pincode && errors.pincode}
                 {...style}

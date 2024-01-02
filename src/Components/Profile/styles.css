@@ -50,20 +50,5 @@
 }
 
 #AddNewAddress {
-    height: 0;
-    opacity: 0;
-    pointer-events: none;
-    padding-bottom: 1rem;
-}
-
-.expand {
-    height: 100% !important;
-    opacity: 1 !important;
-    pointer-events: all !important;
-}
-
-.shrink {
-    height: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+    padding-bottom: 2rem;
 }

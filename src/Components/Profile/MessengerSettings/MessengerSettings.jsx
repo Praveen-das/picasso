@@ -27,7 +27,7 @@ export default function MessengerSettings() {
                     Chat Settings
                 </Typography>
             </Grid>
-            <Grid container px={2}>
+            <Grid container>
                 <Grid item xs={12} mb={2}>
                     <Typography {...style.title}>
                         Blocked users

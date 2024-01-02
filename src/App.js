@@ -7,6 +7,8 @@ import {
   redirect,
   ScrollRestoration,
   useParams,
+  Navigate,
+  useLocation,
 } from "react-router-dom";
 
 import { Suspense, lazy, useEffect } from "react";
@@ -17,9 +19,11 @@ import { MUIContext } from './Context/MUIContext';
 import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
 import Header from "./Components/Header/Header"
 import Footer from './Components/Footer/Footer'
-import { getCurrentUser } from "./lib/user.api";
 import { Test } from "./Test";
 import SellerRegistrationPage from "./Pages/SellerRegistrationPage";
+import useCurrentUser from "./Hooks/useCurrentUser";
+import SellerRegistrationSuccess from "./Components/Seller/SellerRegistrationSuccess";
+import AuthContext, { useAuthContext } from "./Context/AuthContext";
 
 // import Test from "./Test/Test";
 const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
@@ -37,53 +41,84 @@ const StorePage = lazy(() => import("./Pages/StorePage"))
 const ChatPage = lazy(() => import("./Pages/ChatPage"))
 const Alert = lazy(() => import("./Components/Alert/Alert"))
 
-const privateRoute = async ({ request }) => {
-  const currentUser = await getCurrentUser()
-  // const { pathname } = new URL(request.url)
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />}>
+      {/* //--------------------- public routes ---------------------*/}
+      <Route index element={<HomePage />} />
+      <Route path="/shop" element={<Outlet />}>
+        <Route index element={<ShoppingPage />} />
+        <Route path="/shop/product/:product_id" element={<ProductPage />} />
+      </Route>
+      <Route path="/results" element={<ShoppingPage />} />
+      <Route path="/collections" element={<Outlet />} >
+        <Route index element={<CollectionsPage />} />
+      </Route>
+      <Route path="/artists/profile/:id" element={<StorePage />} />
 
-  // if (pathname === '/login' && currentUser) return redirect("/")
-  // if (!currentUser && pathname !== '/login') {
-  //   // return redirect("/login")
-  // }
-}
-
-const routes = createRoutesFromElements(
-  <Route path="/" element={<Layout />}>
-    {/* //--------------------- public routes ---------------------*/}
-    <Route index element={<HomePage />} />
-    <Route path="/shop" element={<Outlet />}>
-      <Route index element={<ShoppingPage />} />
-      <Route path="/shop/product/:product_id" element={<ProductPage />} />
+      {/* //--------------------- private routes ---------------------*/}
+      <Route element={<RequireAuth />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/cart" element={<ShoppingCartPage />} />
+        <Route element={<AdminRoutes />}>
+          <Route path="/seller" element={<Outlet />}>
+            <Route index element={<SellerPage />} />
+            <Route path="/seller/onboarding" element={<SellerRegistrationSuccess />} />
+            <Route path="/seller/registration" element={<SellerRegistrationPage />} />
+          </Route>
+        </Route>
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/test" element={<Test />} />
+      </Route>
     </Route>
-    <Route path="/results" element={<ShoppingPage />} />
-    <Route path="/collections" element={<Outlet />} >
-      <Route index element={<CollectionsPage />} />
-    </Route>
-    <Route path="/artists/profile/:id" element={<StorePage />} />
-
-    {/* //--------------------- private routes ---------------------*/}
-    <Route path="/login" element={<LoginPage />} loader={privateRoute} />
-
-    <Route path="/chat" element={<ChatPage />}
-      loader={privateRoute}
-    />
-    <Route path="/checkout" element={<CheckoutPage />} loader={privateRoute} />
-    <Route path="/cart" element={<ShoppingCartPage />} loader={privateRoute} />
-    {/* <Route path="/sell" element={<SellerPage />} loader={privateRoute} /> */}
-    <Route path="/sell" element={<SellerRegistrationPage />} loader={privateRoute} />
-    <Route path="/profile" element={<ProfilePage />} loader={privateRoute} />
-    <Route path="/test" element={<Test />} />
-  </Route>
-)
-
-const router = createBrowserRouter(routes);
+  ));
 
 function App() {
-
   return (
     <MUIContext>
-      <RouterProvider router={router} />
+      <AuthContext>
+        <RouterProvider router={router} />
+      </AuthContext>
     </MUIContext >
+  )
+}
+
+function AdminRoutes() {
+  const { data: user } = useAuthContext()
+  const location = useLocation()
+  const currentPath = location.pathname
+  const from = location.state?.from.pathname || '/'
+  const needRedirect = currentPath !== from
+
+  const isAdmin = Boolean(user?.role === 'seller')
+  const isConnected = Boolean(user?.linked_account?.status === 'active')
+
+  if (!isAdmin && needRedirect)
+    return <Navigate to='/seller/registration' replace state={{ from: location }} />
+
+  if (!isConnected && isAdmin && needRedirect)
+    return <Navigate to='/seller/onboarding' replace state={{ from: location }} />
+
+  return <Outlet />
+}
+
+function RequireAuth() {
+  const { data: user } = useAuthContext()
+  const path = window.location.pathname
+  const isAuthenticated = Boolean(user)
+
+  const paths = ['/login']
+
+  return (
+    <>
+      {
+        !isAuthenticated ? <Navigate to='/login' replace /> :
+          paths.includes(path) ? <Navigate to='/' replace /> :
+            <Outlet />
+      }
+    </>
   )
 }
 

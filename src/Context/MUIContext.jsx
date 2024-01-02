@@ -16,7 +16,7 @@ export function MUIContext({ children }) {
                 // fontFamily: 'Montserrat',
                 position: 'relative',
                 fontWeight: 800,
-                textTransform:'capitalize'
+                textTransform: 'capitalize'
             },
             heading2: {
                 // fontFamily: 'Montserrat',
@@ -28,6 +28,8 @@ export function MUIContext({ children }) {
                 fontSize: 18,
                 fontWeight: 500
             },
+
+            'title.colored': { fontSize: 16, fontWeight: 700, color: "var(--brand)" },
             'title.primary': {
                 fontSize: 16,
                 fontWeight: 700,
@@ -59,10 +61,10 @@ export function MUIContext({ children }) {
                 color: 'grey'
             },
             tabTitle: {
-                fontSize: 35,
+                fontSize: 26,
                 fontWeight: 500,
-                color: "black"
-            }
+                color: "black",
+            },
         },
         palette: {
             primary: {

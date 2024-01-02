@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import './test.css'
 
@@ -50,18 +50,6 @@ const StyledBox = styled(({ className, ...props }) => (<Box  {...props} classNam
 })
 
 export function Test() {
-  let [clickCount, setClickCount] = useState(0)
-
-  // useEffect(() => {
-  //   window.onmousemove = e => {
-  //     let
-  //       X = e.clientX,
-  //       Y = e.clientY
-
-  //     document.body.style.setProperty('--X', X + 'px')
-  //     document.body.style.setProperty('--Y', Y + 'px')
-  //   }
-  // }, [])
 
   return (
     <>
@@ -73,37 +61,37 @@ export function Test() {
           justifyContent: 'center',
           alignItems: 'center',
           bgcolor: '#222',
+          color: '#fff',
           gap: 2
         }}
       >
-        <Button onClick={() => setClickCount(s => ++s)}>click here</Button>
-        <Typography
-          sx={{
-            color: 'white',
-          }}
-          variant='h1'
-        >{clickCount}</Typography>
+        <Parent>
+          {(data) => (
+            <label>{data?.name}</label>
+          )}
+        </Parent>
       </Box>
-      {/* <Box
-        sx={{
-          width: '100%',
-          height: '100vh',
-          bgcolor: '#1e1e1e',
-          display: 'grid',
-          gridTemplateColumns: 'auto auto',
-          placeContent: 'center',
-          gap: 1
-        }}
-      >
-        <StyledBox >
-          <Button onClick={() => setClickCount(s => s++)}>click</Button>
-        </StyledBox>
-        <StyledBox sx={{ width: '500px !important' }} >
-          <label>{clickCount}</label>
-        </StyledBox>
-        <StyledBox />
-        <StyledBox sx={{ width: '500px !important' }} />
-      </Box> */}
     </>
   );
 }
+
+function Parent({ children }) {
+
+  return (
+    <Formik>
+      {children}
+    </Formik>
+  )
+}
+
+function Formik({ children }) {
+
+  let data = {
+    name: 'praveen'
+  }
+
+  return children(data)
+}
+
+
+

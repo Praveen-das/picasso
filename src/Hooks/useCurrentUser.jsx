@@ -14,7 +14,7 @@ function useCurrentUser() {
   const queryClient = useQueryClient();
   const currentUser = useQuery(["currentUser"], () => getCurrentUser());
 
-  const { mutateAsync: updateUser, isLoading } = useMutation(_updateUser, {
+  const updateUser = useMutation(_updateUser, {
     onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
@@ -26,7 +26,7 @@ function useCurrentUser() {
     },
   });
 
-  const { mutateAsync: updateUserAddress } = useMutation(_updateUserAddress, {
+  const updateUserAddress = useMutation(_updateUserAddress, {
     onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },
@@ -62,7 +62,6 @@ function useCurrentUser() {
     addUserAddress,
     updateUserAddress,
     deleteUserAddress,
-    isLoading,
     addToRecentlyViewed,
     addSocialMediaLink,
     removeSocialMediaLink

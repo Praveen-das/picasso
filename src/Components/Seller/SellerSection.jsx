@@ -1,12 +1,11 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
-import ArrowIcon from '@mui/icons-material/ArrowForward';
-import { ReactComponent as RegisterIcon } from '../../Assets/svg/register.svg'
-import { ReactComponent as SellIcon } from '../../Assets/svg/sales.svg'
-import { ReactComponent as PurchaseIcon } from '../../Assets/svg/purchase.svg'
-import { ReactComponent as PaymentIcon } from '../../Assets/svg/payment.svg'
 import axiosClient from '../../lib/axiosClient';
-import { useQueryClient } from '@tanstack/react-query';
+import useCurrentUser from '../../Hooks/useCurrentUser';
+
+import './style.css'
+import { _updateUser } from '../../lib/user.api';
+import useRzp from '../../Hooks/useRzp';
 
 function loadScript(src) {
     if (window.Razorpay) return true
@@ -23,24 +22,32 @@ function loadScript(src) {
     });
 }
 
-export default function SellerSection() {
-    const queryClient = useQueryClient();
+const faqs = [
+    {
+        question: 'Lorem adipisicing elit. Non, quos?',
+        answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas sit ducimus fugit sed, omnis enim corporis nam neque libero ipsam eligendi temporibus minus cumque assumenda non incidunt! Nesciunt, quos minima!'
+    },
+    {
+        question: 'Lorem ipsum doloonsectetur adipisicing elit. Non, quos?',
+        answer: 'Lorem ipsum  enim corporis nam neque libero ipsam eligendi temporibus minus cumque assumenda non incidunt! Nesciunt, quos minima!'
+    },
+    {
+        question: 'Loreor sit amet consectetur ading elit. Non, quos?',
+        answer: 'Lorem ipsum dolor sit amet consecit. Voluptas sit ducimus fugit sed, omnis enim corporis nam neque libero ipsam eligendi temporibus minus cumque assumenda non incidunt! Nesciunt, quos minima!'
+    },
+    {
+        question: 'Lorem ipsum dolor sit amet consectetuit. Non, quos?',
+        answer: 'Lorem ipsum dolor sitt sed, omnis enim corporis nam neque libero ipsam eligendi temporibus minus cumque assumenda non incidunt! Nesciunt, quos minima!'
+    },
+    {
+        question: 'Lorem ipsum dolor sur adipisicing elit. Non, quos?',
+        answer: 'Lorem ipsum dolor sit amet consecteturuptas sit ducimus fugit sed,s nam neque libero ipsam eligendi temporibus minus cumque assumenda non incidunt! Nesciunt, quos minima!'
+    },
+]
 
-    const seller_step_item = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        gap: 4,
-    }
-    const ts = {
-        fontSize: 14,
-        fontWeight: 700
-    }
-    const iconSize = {
-        height: 60, width: 60,
-    }
+export default function SellerSection() {
+    const { currentUser: { data: user, isLoading, isFetching }, updateUser } = useCurrentUser()
+    const { verifyPayment } = useRzp()
 
     async function handleRegistration() {
         const res = await loadScript(
@@ -52,111 +59,123 @@ export default function SellerSection() {
             return;
         }
 
-        const result = await axiosClient.post("/rzp/subscriptions/create");
+        const { data } = await axiosClient.post("/rzp/orders");
 
-        if (!result) {
+        if (!data) {
             alert("Server error. Are you online?");
             return;
         }
 
-        const { id: subscription_id } = result.data;
-
         const options = {
-            "key": process.env.RAZORPAY_KEY_ID,
-            "subscription_id": subscription_id,
-            "name": "Acme Corp.",
-            "description": "2 Year Subscription Plan",
-            "image": "/your_logo.jpg",
-            "handler": (response) => {
-                axiosClient.post('/rzp/subscriptions/verify', {
-                    payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                }).then(() => {
-                    queryClient.invalidateQueries(["currentUser"])
-                }).catch((err) => console.log(err))
-            },
-            "prefill": {
-                "name": "Gaurav Kumar",
-                "email": "gaurav.kumar@example.com",
-                "contact": "+919876543210"
-            },
-            "notes": {
-                "note_key_1": "Tea. Earl Grey. Hot",
-                "note_key_2": "Make it so."
-            },
-            "theme": {
-                "color": "#6e32f1"
+            key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+            currency: data.currency,
+            amount: data.amount.toString(),
+            order_id: data.id,
+            name: 'Artworld',
+            description: 'Artist registration',
+            image: 'http://localhost:1337/logo.svg',
+            callback_url: 'http://localhost:3001/rzp/verify',
+            prefill: {
+                name: 'praveen das',
+                email: 'sdfdsjfh2@ndsfdf.com',
+                phone_number: '8848990353'
             }
-        };
+        }
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
     }
 
     return (
-        <Grid container columnSpacing={6} px={4} height={'100%'}>
-            <Grid item xs={8}>
-                <Box sx={{
-                    display: 'flex',
-                    boxSizing: 'border-box',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'flex-start',
-                    py: 2,
-                    gap: 4,
-                }}>
-                    <Typography variant='heading' >START SELLING</Typography>
-                    <Typography fontWeight={600} fontSize={18} >
-                        Unlock Your Artistic Potential. Join as a Seller on our platform and showcase your paintings to art lovers worldwide.
-                    </Typography>
-                    <Button onClick={handleRegistration} sx={{ borderRadius: 4, px: 4, py: 1, textTransform: 'none' }} size='large' variant='contained'>Register Now</Button>
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            justifySelf: 'left',
-                            gap: 1
-                        }}
-                    >
-                        <Typography variant='subtitle2'>* Registration fee, Valid for 2 Years - ₹ 799 (Including Taxes)</Typography>
-                        <Typography variant='subtitle2'>* Terms and conditions</Typography>
-                    </Box>
-                </Box>
-            </Grid>
-            <Grid item xs >
-                <Box
-                    sx={{
-                        height: '100%',
-                        boxSizing: 'border-box',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        px: 4,
-                        gap: 2,
-                        bgcolor: 'var(--brandLight)',
-                        borderRadius: 10,
-                    }}
-                >
-                    {/* <Box sx={seller_step_item}>
-                        <RegisterIcon {...iconSize} />
-                        <Typography {...ts} >Register Your Account</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <SellIcon {...iconSize} />
-                        <Typography {...ts} >Showcase Your Artwork</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <PurchaseIcon {...iconSize} />
-                        <Typography {...ts} >Buyer Purchase</Typography>
-                    </Box>
-                    <ArrowIcon sx={{ mx: 'auto' }} />
-                    <Box sx={seller_step_item}>
-                        <PaymentIcon {...iconSize} />
-                        <Typography {...ts} >Receive Payment</Typography>
-                    </Box> */}
-                </Box>
-            </Grid>
-        </Grid>
+        <>
+            {
+                isLoading ||
+                    isFetching ?
+                    <Typography variant='h5'>loading....</Typography> :
+                    <Grid container columnSpacing={8} height='100%' px={10} pt={4} pb={6} >
+                        <Grid item xs={7} height='100%' >
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                boxSizing: 'border-box',
+                                gap: 4,
+                                height: '100%',
+                            }}>
+                                <Typography variant='heading' >Start Selling</Typography>
+                                <Typography variant='paragraph' >
+                                    Unlock Your Artistic Potential. Join as a Seller on our platform and showcase your paintings to art lovers worldwide. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo esse eligendi aliquid aut atque fuga est, consequuntur impedit rem at!
+                                </Typography>
+                                {/* <Button onClick={handleRegistration} sx={{ borderRadius: 4, px: 4, py: 1, textTransform: 'none' }} size='large' variant='contained'>Register Now</Button> */}
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 2,
+                                        mt: 4
+                                    }}
+                                >
+                                    <Typography variant='heading' fontSize={20}>Artist FAQ</Typography>
+                                    <Divider />
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 4
+                                        }}
+                                    >
+                                        {
+                                            faqs.map(({ question, answer }, key) => (
+                                                <Box
+                                                    key={key}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        gap: 1
+                                                    }}
+                                                >
+                                                    <Typography fontWeight={600}>{question}</Typography>
+                                                    <Typography>{answer}</Typography>
+                                                </Box>
+                                            ))
+                                        }
+                                    </Box>
+                                </Box>
+
+                            </Box>
+                        </Grid>
+                        <Grid item xs >
+                            <Box
+                                className='subscriptionBox'
+                                sx={{
+                                    position: 'sticky',
+                                    alignSelf: 'start',
+                                    top: 'var(--header)',
+                                    boxSizing: "border-box",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: "350px",
+                                    boxShadow: '0 20px 20px #00000045',
+                                    borderRadius: '10px',
+                                    ml: 'auto',
+                                    px: 3,
+                                    py: 3,
+                                    gap: 2
+                                }}
+                            >
+                                <Typography sx={{ mt: 3, mb: -1 }} fontSize={36} fontWeight={700}>₹ 799</Typography>
+                                <Typography variant='subtitle2'>You will get</Typography>
+                                <ul>
+                                    <li>Lorem ipsum dolor sit amet.</li>
+                                    <li>Lorem ipsum dolor sit amet.</li>
+                                    <li>Lorem ipsum dolor sit amet.</li>
+                                    <li>Lorem ipsum dolor sit amet.</li>
+                                </ul>
+                                <Button onClick={handleRegistration} sx={{ mt: 2 }} size='large' variant='contained' >Register Now</Button>
+                                <Typography variant='subtitle2'>* Terms and conditions</Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+            }
+        </>
     )
 }

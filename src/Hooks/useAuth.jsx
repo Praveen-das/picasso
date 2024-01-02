@@ -4,8 +4,12 @@ import {
   signinUser,
   signupUser,
 } from "../lib/user.api";
+import socket from "../lib/ws";
+import { useNavigate } from "react-router-dom";
 
 function useAuth() {
+  const navigate = useNavigate()
+
   const queryClient = useQueryClient();
 
   const { mutateAsync: signin } = useMutation(signinUser, {
@@ -26,10 +30,22 @@ function useAuth() {
     },
   });
 
+  function handleLogout() {
+    logout.mutateAsync()
+      .then(() => {
+        socket.disconnect()
+      })
+      .finally(() => {
+        navigate('/')
+      })
+
+  }
+
   return {
     signin,
     signup,
     logout,
+    handleLogout
   };
 }
 

@@ -35,7 +35,7 @@ function Address({ data, onClick, defaultAddress }) {
     const handleDeletion = async () => {
         const list = await deleteUserAddress(data.id)
         if (defaultAddress) {
-            await updateUser({ default_address: list[0].id })
+            await updateUser.mutateAsync({ default_address_id: list[0].id })
         }
         setPopover(false)
     }
@@ -69,11 +69,11 @@ function Address({ data, onClick, defaultAddress }) {
                 }}
             >
                 <MenuList dense sx={{ padding: 0 }}>
-                    {!defaultAddress && <MenuItem onClick={() => updateUser({ default_address: data.id }).then(() => setPopover(false))}>Make default</MenuItem>}
+                    {!defaultAddress && <MenuItem onClick={() => updateUser.mutateAsync({ default_address_id: data.id }).then(() => setPopover(false))}>Make default</MenuItem>}
                     <MenuItem onClick={handleDeletion}>Delete</MenuItem>
                 </MenuList>
             </Menu>
-            <Grid item xs={12} display='flex' justifyContent='center' pb={2} ml={{ sm: 2 }}>
+            <Grid item xs={12} display='flex' justifyContent='center' pb={2} >
                 <Box {...addressStyling()}>
                     <Typography variant='h6' fontSize={15} fontWeight={600} lineHeight={1.5}>{data.name}</Typography>
                     <Typography variant='body2' >{data.address}</Typography>

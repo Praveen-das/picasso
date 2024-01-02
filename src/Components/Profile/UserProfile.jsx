@@ -14,7 +14,7 @@ import MyOrders from './MyOrders/MyOrders'
 import MyWishlist from './MyWishlist/MyWishlist'
 import MessengerSettings from './MessengerSettings/MessengerSettings'
 import { useEffect, useState } from 'react';
-import { Item, StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
 import Messenger from '../Messenger/Messenger';
 
 function UserProfile() {
@@ -33,80 +33,62 @@ function UserProfile() {
     };
 
     return (
-        <Box display='flex' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={4} >
-            <Box pt='0.5rem' >
-                <StyledTabs
-                    textColor='primary'
-                    orientation={lg ? 'vertical' : 'horizontal'}
-                    value={tab}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                    sx={{
-                        pl: 2,
-                        height: { lg: '100%' },
-                    }}
-                >
-                    <StyledTab
-                        {...tabStyling}
-                        icon={<PersonIcon fontSize='small' />}
-                        label="Personal Details"
-                    />
-                    <StyledTab
-                        {...tabStyling}
-                        icon={<ChatBubbleIcon fontSize='small' />}
-                        label="Chats"
-                    />
-                    <StyledTab
-                        {...tabStyling}
-                        icon={<LocalMallIcon fontSize='small' />}
-                        label="My Orders"
-                    />
-                    <StyledTab
-                        {...tabStyling}
-                        icon={<FavoriteBorderIcon fontSize='small' />}
-                        label="My Wishlist"
-                    />
-                    <StyledTab
+        <Box display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={14} pl={4} >
+            <StyledTabs
+                textColor='primary'
+                orientation={lg ? 'vertical' : 'horizontal'}
+                value={tab}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+            >
+                <StyledTab
+                    {...tabStyling}
+                    icon={<PersonIcon fontSize='small' />}
+                    label="My Profile"
+                />
+                <StyledTab
+                    {...tabStyling}
+                    icon={<ChatBubbleIcon fontSize='small' />}
+                    label="Chats"
+                />
+                <StyledTab
+                    {...tabStyling}
+                    icon={<LocalMallIcon fontSize='small' />}
+                    label="My Orders"
+                />
+                <StyledTab
+                    {...tabStyling}
+                    icon={<FavoriteBorderIcon fontSize='small' />}
+                    label="My Wishlist"
+                />
+                {/* <StyledTab
                         {...tabStyling}
                         icon={<HomeIcon fontSize='small' />}
                         label="Manage Address"
-                    />
-                    <StyledTab
-                        {...tabStyling}
-                        icon={<ChatBubbleIcon fontSize='small' />}
-                        label="Chat Settings"
-                    />
-                </StyledTabs>
-            </Box>
+                    /> */}
+                <StyledTab
+                    {...tabStyling}
+                    icon={<ChatBubbleIcon fontSize='small' />}
+                    label="Chat Settings"
+                />
+            </StyledTabs>
             <TabPanel value={tab} index={0}>
-                <Item >
-                    <ProfileDetails />
-                </Item>
+                <ProfileDetails />
             </TabPanel>
             <TabPanel value={tab} index={1}>
-                <Item>
-                    <Messenger />
-                </Item>
+                <Messenger />
             </TabPanel>
             <TabPanel value={tab} index={2}>
-                <Item>
-                    <MyOrders />
-                </Item>
+                <MyOrders />
             </TabPanel>
             <TabPanel value={tab} index={3}>
-                <Item>
-                    <MyWishlist />
-                </Item>
+                <MyWishlist />
             </TabPanel>
+            {/* <TabPanel value={tab} index={4}>
+                <ManageAddress />
+            </TabPanel> */}
             <TabPanel value={tab} index={4}>
-                <Item>
-                    <ManageAddress />
-                </Item>
-            </TabPanel>
-            <TabPanel value={tab} index={5}>
-                <Item>
-                    <MessengerSettings />
-                </Item>
+                <MessengerSettings />
             </TabPanel>
         </Box>
     )

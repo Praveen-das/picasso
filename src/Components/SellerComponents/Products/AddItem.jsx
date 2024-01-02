@@ -24,8 +24,6 @@ export function AddItem({ onClose, payload }) {
     const materials = data?.allMaterials || [];
     const collections = data?.collections || [];
 
-    const inititalValuesForUpdates = useMemo(() => payload, [payload]);
-
     function handleSubmit({ deletedImages, ...productData }, { setSubmitting, resetForm }) {
 
         if (productData.collections_id === '')
@@ -119,7 +117,7 @@ export function AddItem({ onClose, payload }) {
         <>
             <Formik
                 initialValues={payload ?
-                    inititalValuesForUpdates :
+                    payload :
                     initialValues}
                 enableReinitialize
                 validationSchema={payload ? productUpdateValidation : productValidation}

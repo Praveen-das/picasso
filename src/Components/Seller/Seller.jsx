@@ -1,6 +1,6 @@
-import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import { Item, StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
 import Dashboard from '../SellerComponents/Dashboard/Dashboard';
 import Products from '../SellerComponents/Products/Products';
 import './style.css'
@@ -35,14 +35,10 @@ export default function Seller() {
                 </StyledTabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <Item >
-                    <Dashboard />
-                </Item>
+                <Dashboard />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Item >
-                    <Products />
-                </Item>
+                <Products />
             </TabPanel>
         </Box>
     );

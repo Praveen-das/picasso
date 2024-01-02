@@ -9,3 +9,77 @@
     margin: 1.3em 0 1em 0;
     text-align: center;
 }
+
+.subscriptionBox ul {
+    margin-block: -0.5rem;
+}
+
+.subscriptionBox li {
+    margin-block: 1.5rem;
+    color: rgb(49, 49, 49);
+    list-style-type: square;
+}
+
+.onboarding,
+.onboardingConfirmation {
+    position: relative;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 3rem 4rem;
+}
+
+.onboarding {
+    display: none;
+    align-items: center;
+}
+
+.onboarding .emailid {
+    color: var(--brand);
+    font-weight: 500;
+}
+
+/* //////////////////////////// */
+
+.onboarding.enter,
+.onboardingConfirmation.enter,
+.onboarding.exit-active,
+.onboardingConfirmation.exit-active {
+    opacity: 0 !important;
+    transition: 0.2s;
+}
+
+.onboarding.enter-active,
+.onboardingConfirmation.enter-active {
+    opacity: 1 !important;
+    transition: 1s;
+}
+
+.onboarding.enter,
+.onboarding.enter-done,
+.onboardingConfirmation.enter,
+.onboardingConfirmation.enter-done {
+    display: flex !important;
+    position: relative !important;
+}
+
+.onboarding.exit,
+.onboardingConfirmation.exit {
+    position: absolute;
+    opacity: 1;
+}
+
+.onboarding.exit-done,
+.onboardingConfirmation.exit-done {
+    display: none;
+}
+
+.razorpay_logo {
+    /* position: absolute;
+    top: 0;
+    right: 0; */
+}

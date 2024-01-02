@@ -26,7 +26,7 @@ const StyledTextField = styled(_TextField)({
     },
 });
 
-const TextField = forwardRef(({ error, onClick, initialValue, startAdornment, endAdornment, children, ...rest }, ref) => {
+const TextField = forwardRef(({ error, onClick, initialValue, startAdornment, inputProps, endAdornment, children, ...rest }, ref) => {
     return (
         <StyledTextField
             inputRef={ref}
@@ -35,7 +35,6 @@ const TextField = forwardRef(({ error, onClick, initialValue, startAdornment, en
             InputLabelProps={{ shrink: true }}
             error={!!error}
             placeholder={initialValue}
-            // size='small'
             InputProps={{
                 startAdornment,
                 endAdornment:
@@ -51,23 +50,9 @@ const TextField = forwardRef(({ error, onClick, initialValue, startAdornment, en
                                 onClick={onClick}
                                 size='small'>
                                 <LinkOffIcon fontSize='small' />
-                            </IconButton>
+                            </IconButton>,
+                ...inputProps
             }}
-            // InputProps={{
-            //     endAdornment:
-            // error &&
-            // <Tooltip title={error} >
-            //     <InputAdornment position="end">
-            //         <ErrorOutlineIcon color="error" />
-            //     </InputAdornment>
-            // </Tooltip> ||
-            // initialValue &&
-            // <IconButton
-            //     onClick={onClick}
-            //     size='small'>
-            //     <LinkOffIcon fontSize='small' />
-            // </IconButton>
-            // }}
             {...rest}
         >{children}</StyledTextField>
     )

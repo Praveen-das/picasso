@@ -14,33 +14,6 @@ function Banner() {
 
     const app = useRef();
 
-    // useLayoutEffect(() => {
-    //     const ctx = gsap.context(() => {
-    //         if (data) {
-    //             const tl = gsap.timeline({ defaults: { duration: 0.5 } })
-    //             tl
-    //                 .to('.banner_bg', {
-    //                     width: '60%',
-    //                     opacity: 1,
-    //                 })
-    //                 .to('.brandName,.p1,.cta_main', {
-    //                     'clipPath': 'polygon(0% 0%, 100% 0%, 100% 100%, 0 100%)',
-    //                     y: 0,
-    //                     opacity: 1,
-    //                     stagger: 0.2
-    //                 })
-    //                 .to('.swiperSlide', {
-    //                     stagger: {
-    //                         amount: 0.2
-    //                     },
-    //                     opacity: 1,
-    //                     scale: 1
-    //                 })
-    //         }
-    //     }, app.current)
-    //     return () => ctx.revert();
-    // }, [data])
-
     return (
         <Grid
             ref={app}

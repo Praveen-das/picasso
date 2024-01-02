@@ -54,6 +54,28 @@ export const signupValidation = yup.object({
     .required("Password is required"),
 });
 
+yup.addMethod(yup.string, 'stripEmptyString', function () {
+  return this.transform((value) => (value === '' ? undefined : value));
+});
+
+export const personalInfoSchema = yup.object(
+  {
+    displayName: yup
+      .string()
+      .min(5, "displayName should be in between 5 to 20 characters in length")
+      .max(20, "displayName should be in between 5 to 20 characters in length"),
+    email: yup
+      .string("Enter your email")
+      .email("Enter a valid email"),
+    phoneNumber: yup
+      .string()
+      .max(10),
+    bio: yup
+      .string()
+      .max(60, "Bio must be less than 60 characters"),
+  }
+)
+
 export const displayNameSchema = yup.object(
   {
     displayName: yup
@@ -61,6 +83,7 @@ export const displayNameSchema = yup.object(
       .min(5, "displayName should be in between 5 to 20 characters in length")
       .max(20, "displayName should be in between 5 to 20 characters in length")
   })
+
 export const emailSchema = yup.object({ email: yup.string("Enter your email").email("Enter a valid email") })
 
 export const passwordSchema = yup.object({
@@ -81,7 +104,7 @@ export const socialSchema = yup.object({
   social: yup.array()
     .of(yup.object({
       name: yup.string(),
-      url: yup.string().url('must me a valid URL.')
+      url: yup.string().url('Enter a valid URL')
     }))
 })
 
@@ -92,7 +115,13 @@ export const userAddressSchema = yup.object({
   state: yup.string().required("Select your state"),
   pincode: yup.mixed().required("Enter your pincode"),
   mobile: yup.string().required("Enter your phone number"),
-  alternate_phone: yup.mixed(),
-  email: yup.string().email("Enter a valid email"),
   isDefault: yup.boolean()
+});
+
+export const accountDetailsSchema = yup.object({
+  name: yup.string().required("Enter your name"),
+  email: yup.string().email().required("Enter a valid email"),
+  account_number: yup.string().required("Enter your bank account number"),
+  ifsc_code: yup.string().matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC code').required("Enter your IFSC code"),
+  tnc_accepted: yup.boolean().required()
 });

@@ -94,5 +94,6 @@ export {
 
   getArtists,
   _addFollower,
-  _removeFollower
+  _removeFollower,
+
 };

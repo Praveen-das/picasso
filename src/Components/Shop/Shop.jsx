@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useState } from 'react'
 import './shop.css'
 import Card from '../Card/Card'
-import { Box, Button, IconButton, Menu, MenuItem, Pagination, Typography } from '@mui/material';
+import { Box, Button, Menu, MenuItem, Pagination, Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
 import Masonry from '@mui/lab/Masonry';
@@ -30,16 +30,6 @@ function Shop({ toggleFilter, setToggleFilter }) {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-    useLayoutEffect(() => {
-        if (isFetching) return
-        // const tl = gsap.timeline()
-        // tl.from('.product_card', {
-        //     opacity: 0,
-        //     stagger: 0.1
-        // })
-        // return () => tl.clear()
-    }, [isFetching])
 
     const [skeleton] = useState(new Array(20).fill())
 
