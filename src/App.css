@@ -220,3 +220,7 @@ a:hover {
 .noScroll::-webkit-scrollbar {
     display: none;
 }
+
+.img_border {
+    border-radius: 10px;
+}

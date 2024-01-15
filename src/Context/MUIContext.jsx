@@ -31,6 +31,11 @@ export function MUIContext({ children }) {
 
             'title.colored': { fontSize: 16, fontWeight: 700, color: "var(--brand)" },
             'title.primary': {
+                fontSize: 18,
+                fontWeight: 800,
+                textTransform: 'capitalize'
+            },
+            'title.secondary': {
                 fontSize: 16,
                 fontWeight: 700,
                 textTransform: 'capitalize'
@@ -62,7 +67,7 @@ export function MUIContext({ children }) {
             },
             tabTitle: {
                 fontSize: 26,
-                fontWeight: 500,
+                fontWeight: 600,
                 color: "black",
             },
         },

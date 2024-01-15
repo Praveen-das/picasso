@@ -6,21 +6,7 @@ import useCurrentUser from '../../Hooks/useCurrentUser';
 import './style.css'
 import { _updateUser } from '../../lib/user.api';
 import useRzp from '../../Hooks/useRzp';
-
-function loadScript(src) {
-    if (window.Razorpay) return true
-    return new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = () => {
-            resolve(true);
-        };
-        script.onerror = () => {
-            resolve(false);
-        };
-        document.body.appendChild(script);
-    });
-}
+import { loadScript } from '../../Utils/utils';
 
 const faqs = [
     {
@@ -59,7 +45,7 @@ export default function SellerSection() {
             return;
         }
 
-        const { data } = await axiosClient.post("/rzp/orders");
+        const { data } = await axiosClient.post("/rzp/orders/registration");
 
         if (!data) {
             alert("Server error. Are you online?");
@@ -74,7 +60,7 @@ export default function SellerSection() {
             name: 'Artworld',
             description: 'Artist registration',
             image: 'http://localhost:1337/logo.svg',
-            callback_url: 'http://localhost:3001/rzp/verify',
+            callback_url: 'http://localhost:3001/rzp/registration/verify',
             prefill: {
                 name: 'praveen das',
                 email: 'sdfdsjfh2@ndsfdf.com',
@@ -82,8 +68,8 @@ export default function SellerSection() {
             }
         }
 
-        const paymentObject = new window.Razorpay(options);
-        paymentObject.open();
+        const rzp = new window.Razorpay(options);
+        rzp.open();
     }
 
     return (

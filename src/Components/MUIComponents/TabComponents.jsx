@@ -10,8 +10,6 @@ export function TabPanel(props) {
                 <Box
                     sx={{
                         position: 'relative',
-                        height: '100%',
-                        // boxShadow: { xs: 'none', lg: '-5px -2px 30px -4px var(--neu)' },
                         flex: { xs: '1 1 100%', lg: '1 1 0' },
                     }}
                     {...other}

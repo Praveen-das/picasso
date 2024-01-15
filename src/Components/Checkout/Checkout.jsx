@@ -1,164 +1,275 @@
 import React, { useState } from 'react'
 import './checkout.css'
 
-import { Box, Grid,Button, Typography, Step, StepLabel, StepContent, Paper, Stepper } from '@mui/material';
-import AddressList, { Address } from './Components/AddressList/AddressList';
-import PaymentMethod from './Components/PaymentMethod/PaymentMethod';
-import Products from './Components/Products/Products';
+import { Box, Grid, Button, Typography, Divider } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
+import { Link, Navigate } from 'react-router-dom';
 import { useCart } from '../../Hooks/useCart';
-import AddNewAddress from '../Profile/ManageAddress/AddNewAddress';
-import useSales from '../../Hooks/Sales/useSales';
+import EditForm from "../Profile/EditForm";
+import useCurrentUser from '../../Hooks/useCurrentUser';
+import LoadingScreen from '../MUIComponents/LoadingScreen'
+
+import { loadScript } from '../../Utils/utils';
+import axiosClient from '../../lib/axiosClient';
+import { ReactComponent as Visa } from '../../Assets/svg/visa.svg'
+import { ReactComponent as Mastercard } from '../../Assets/svg/mastercard.svg'
+import { ReactComponent as Upi } from '../../Assets/svg/upi.svg'
+import { useStore } from '../../Context/Store';
+
+const button_style = {
+  borderRadius: '100px',
+  fontSize: '0.8rem'
+}
+
+const item = {
+  boxSizing: 'border-box',
+  borderRadius: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 6,
+}
+
+const container = {
+  display: 'grid',
+  gap: 3,
+}
 
 function Checkout() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [address, setAddress] = useState({});
-  const [method, setMethod] = useState('card');
   const [open, setOpen] = useState(false)
+  const { currentUser: { data: user } } = useCurrentUser();
+  const address = user?.default_address
 
-  const { createOrder } = useSales()
-  const { cart } = useCart()
+  const { cart: { data, isLoading, isFetching, isFetched } } = useCart()
+  const cart = data?.[0]
+  const total_price = data?.[1].total_price
+  const total_discount = data?.[1].total_discount
 
-  const handleNext = () => {
-    setActiveStep((pre) => pre + 1);
-  };
-  
-  const handleBack = () => {
-    setActiveStep((pre) => pre - 1);
-  };
-
-  const handleOrder = () => {
-    createOrder.mutateAsync({
-      method,
-      cart_items: cart.data[0]
-    })
-      .then(res => console.log(res))
-      .catch(err => console.log(err))
-  };
+  if (isLoading || isFetching) return <LoadingScreen />
+  if (isFetched && !cart?.length) return <Navigate to='/cart' />
 
   return (
-    <Grid container spacing={2} p='1rem 4rem'>
-      <Grid item xs={8}>
-        <Box maxWidth={750}>
-          <Stepper activeStep={activeStep} orientation="vertical" >
-            <Step>
-              <StepLabel>
-                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 0 ? 'var(--brand)' : 'var(--brandMain)'}>
-                  {open ? 'Add Shipping Address' : activeStep === 0 ? 'Select a delivery address' : 'Delivery Address'}
-                </Typography>
-              </StepLabel>
-              <Box display={activeStep === 0 && 'none'}>
-                <div className="addressList">
-                  <Address data={address} />
-                </div>
-              </Box>
-              <StepContent >
-                <Box sx={{ mt: 1.5 }}>
+    <>
+      <EditForm user={data} open={open} onClose={setOpen} />
+      <Grid container columnSpacing={12} p='1rem 3rem 2rem 3rem'>
+        <Grid container item xs={7.5} spacing={4} >
+          <Grid item xs={12}>
+            <Typography variant='tabTitle'>Checkout</Typography>
+          </Grid>
+          <Grid item xs={12} minHeight='100%'>
+            <Box sx={item}>
+              <Box sx={container}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Typography variant='title.primary'>
+                    Shipping Address
+                  </Typography>
+                  <Button
+                    onClick={() => setOpen(address ? 'address.update' : 'address.add')}
+                    sx={button_style}
+                    variant='outlined'
+                    size='small'
+                  >
+                    {address ? 'Edit' : 'Add'}
+                  </Button>
+                </Box>
+                <Box
+                  sx={{
+                    px: 4,
+                    py: 3,
+                    border: '1px solid var(--brand)',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1
+                  }}
+                >
                   {
-                    open ? <AddNewAddress open={open} close={() => setOpen(false)} /> :
-                      <AddressList setAddress={setAddress} />
+                    !address ?
+                      <Button onClick={() => setOpen('address.add')} sx={{ m: 'auto' }}>Add your address here</Button> :
+                      <>
+                        <Typography variant='paragraph' >{address.name}</Typography>
+                        <Typography variant='body2' >{address.address}</Typography>
+                        <Typography variant='body2' >{address.city + " " + address.state + " " + address.pincode}</Typography>
+                        <Typography variant='body2' >{address.mobile}</Typography>
+                      </>
                   }
                 </Box>
-                <Box display={open && 'none'} sx={{ mb: 1 }}>
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      sx={{
-                        mt: 3,
-                        mr: 1,
-                        p: '10px 20px',
-                        borderRadius: '100px',
-                        fontSize: '0.8rem'
-                      }}
-                    >
-                      Use this address
-                    </Button>
-                    <Button
-                      onClick={setOpen}
-                      sx={{ mt: 3, mr: 1, p: '10px 20px', }}
-                    >
-                      New Address
-                    </Button>
-                  </div>
-                </Box>
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>
-                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 1 ? 'var(--brand)' : 'var(--brandMain)'}>
-                  {activeStep === 1 ? 'Select a payment method' : 'Payment method'}
+              </Box>
+              <Box sx={container}>
+                <Typography sx={{ mr: 4 }} variant='title.primary'>
+                  We Support
                 </Typography>
-              </StepLabel>
-              <StepContent>
-                <Box sx={{ mt: 1.5 }}>
-                  <PaymentMethod method={method} setMethod={setMethod} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 2,
+                    alignItems: 'center'
+                  }}
+                >
+                  <Upi width={50} height={50} />
+                  <Visa width={50} height={50} />
+                  <Mastercard width={50} height={50} />
                 </Box>
-                <Box sx={{ mb: 1 }}>
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      sx={{
-                        mt: 3,
-                        mr: 1,
-                        p: '10px 20px',
-                        borderRadius: '100px',
-                        fontSize: '0.8rem'
-                      }}
-                    >
-                      Use this method
-                    </Button>
-                    <Button
-                      onClick={handleBack}
-                      sx={{ mt: 3, mr: 1, p: '10px 20px', }}
-                    >
-                      Back
-                    </Button>
-                  </div>
-                </Box>
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>
-                <Typography variant='subtitle1' fontWeight={800} color={activeStep === 2 ? 'var(--brand)' : 'var(--brandMain)'}>
-                  {activeStep === 2 ? 'Review items and delivery' : 'Items and delivery'}
+              </Box>
+              <Box sx={container}>
+                <Typography variant='title.primary'>
+                  Product Summary
                 </Typography>
-              </StepLabel>
-              <StepContent>
-                <Box sx={{ mt: 1.5 }}>
-                  <Products />
-                </Box>
-              </StepContent>
-            </Step>
-          </Stepper>
-          {activeStep === 2 && (
-            <Paper square elevation={0} sx={{ mt: 2 }}>
-              <Typography>All steps completed - you&apos;re finished</Typography>
-              <Button variant='contained' onClick={handleOrder} sx={{ mt: 4, mr: 1 }}>
-                Place order
-              </Button>
-            </Paper>
-          )}
+                {
+                  cart?.map(({ id, product, quantity }, key) =>
+                    <Box sx={{ display: 'flex', gap: 4 }} key={id}>
+                      <img className='img_border' width={80} height={80} src={product.images[0].url + '/tr:w-100'} alt="" />
+                      <Box>
+                        <Link to={`/shop/product/${product?.id}`}>
+                          <Typography variant='paragraph'>{product.name}</Typography>
+                        </Link>
+                        <Typography fontWeight={700} fontSize={18}>Rs. {product.price * quantity}</Typography>
+                      </Box>
+                      {
+                        cart?.[key + 1] &&
+                        <Divider variant='fullWidth' />
+                      }
+                    </Box>
+                  )
+                }
+              </Box>
+            </Box>
+          </Grid>
+        </Grid >
+        <CheckoutBox />
+      </Grid >
+    </>
+  );
+}
+
+const CheckoutBox = () => {
+  const setAlert = useStore(s => s.setAlert)
+  const [loading, setLoading] = useState(false);
+  const { currentUser: { data: user } } = useCurrentUser()
+  const { cart } = useCart()
+  const total_price = cart.data?.[1].total_price
+  const total_discount = cart.data?.[1].total_discount
+
+  async function handleRegistration() {
+    if (!user?.default_address) {
+      setAlert({
+        message: `You should provide an address`,
+        type: 'error',
+        toggled: true,
+      });
+      return
+    }
+    
+    setLoading(true)
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    const transfers = {
+      total_amount: 20000,
+      accounts: [
+        {
+          account: '1321321',
+          amount: 12000
+        },
+        {
+          account: '89746541',
+          amount: 8000
+        },
+      ]
+    }
+
+    const { data } = await axiosClient.post("/rzp/orders/purchase", { transfers: JSON.stringify(transfers) });
+
+    if (!data) {
+      alert("Server error. Are you online?");
+      return;
+    }
+
+    const options = {
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+      currency: data.currency,
+      amount: data.amount?.toString(),
+      order_id: data.id,
+      name: 'Artworld',
+      description: 'Artist registration',
+      image: 'http://localhost:1337/logo.svg',
+      callback_url: 'http://localhost:3001/rzp/purchase/verify',
+      prefill: {
+        name: user?.displayName,
+        email: user?.email,
+        phone_number: user?.default_address?.phone
+      },
+      config: {
+        display: {
+          hide: [
+            {
+              method: "wallet"
+            },
+            {
+              method: "paylater"
+            },
+          ],
+        }
+      },
+      "modal": {
+        "ondismiss": function () {
+          setLoading(false)
+        }
+      }
+    }
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+    rzp.on('payment.failed', function (response) {
+      setLoading(false)
+      console.log(response);
+    });
+  }
+
+  return (
+    <>
+      <Grid item xs position='sticky' top='2rem' alignSelf='flex-start'>
+        <Box
+          sx={{
+            ...item,
+            gap: 5,
+            width: '100%',
+            textAlign: 'center',
+            bgcolor: 'var(--brandLight)',
+            p: '4rem 3rem',
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              justifyContent: 'center',
+              textAlign: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography variant='title.primary'>Sub total</Typography>
+            <Typography fontSize={28} fontWeight={800}>₹{total_price - total_discount || 0}</Typography>
+          </Box>
+          <Divider />
+          <Typography variant='subtitle2'>After clicking “Confirm Order”, you will be redirected to Razorpay to complete your purchase securely.</Typography>
+          <LoadingButton fullWidth loading={loading} onClick={handleRegistration} variant='contained' size='large'>Confirm Order</LoadingButton>
+          <Typography sx={{ mt: -1 }} variant='subtitle2' textAlign='center' mt={1}>All transactions are secure and encrypted.</Typography>
+          {/* <a style={{ marginInline: 'auto' }} href="https://razorpay.com/" target="_blank" rel="noreferrer" > <img referrerPolicy="origin" src="https://badges.razorpay.com/badge-light.png " style={{ height: '45px', width: '113px' }} alt="Razorpay | Payment Gateway | Neobank" /></a> */}
         </Box>
       </Grid>
-      
-      {/* <Grid item xs={12} m='1.5rem 0 0 1.4rem'>
-                            <Typography {...style.typography}>Payment options</Typography>
-                        </Grid>
-                        <div className="checkout__method">
-                            <div>
-                                <input defaultChecked={true} onChange={() => setPaymentMethod('card')} name='payment' type="radio" />
-                                <CreditCardIcon sx={{ fontSize: '18px' }} />
-                                <label >Credit card/Debit card</label>
-                            </div>
-                            <div>
-                                <input onChange={() => setPaymentMethod('cod')} name='payment' type="radio" />
-                                <LocalShippingIcon sx={{ fontSize: '18px' }} />
-                                <label >COD</label>
-                            </div>
-                        </div> */}
-    </Grid>
-  );
+    </>
+  )
+
 }
 
 export default Checkout

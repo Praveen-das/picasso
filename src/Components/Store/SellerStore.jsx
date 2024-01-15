@@ -9,7 +9,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useUserData from '../../Hooks/useUserData';
 import axiosClient from '../../lib/axiosClient';
 import useCurrentUser from '../../Hooks/useCurrentUser';
@@ -19,6 +19,7 @@ export default function Store() {
     const { id } = useParams()
     const { user: { data: person, isLoading, isFetching }, addFollower, removeFollower } = useUserData(id)
     const { currentUser: { data: currentUser } } = useCurrentUser()
+    const navigate = useNavigate()
 
     let icons = {
         facebook: <FacebookIcon />,
@@ -27,11 +28,8 @@ export default function Store() {
         linkedIn: <LinkedInIcon />,
     }
 
-    useEffect(() => {
-        console.log(person);
-    }, [person])
-
     function handleFollowing() {
+        if(!currentUser) return navigate('/login')
         let user = person?.followers.find(o => o?.userId === currentUser?.id)
 
         if (!user)

@@ -1,3 +1,7 @@
+#dashboard_container td {
+    height: 5rem;
+}
+
 .admin_brandName--wrapper {
     display: flex;
     justify-content: center;

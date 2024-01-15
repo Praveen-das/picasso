@@ -4,27 +4,19 @@ import { Box, useMediaQuery } from '@mui/material'
 
 import LocalMallIcon from '@mui/icons-material/LocalMallOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
-import HomeIcon from '@mui/icons-material/HomeOutlined';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 import ProfileDetails from './ProfileDetails/ProfileDetails'
-import ManageAddress from './ManageAddress/ManageAddress'
 import MyOrders from './MyOrders/MyOrders'
 import MyWishlist from './MyWishlist/MyWishlist'
 import MessengerSettings from './MessengerSettings/MessengerSettings'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
 import Messenger from '../Messenger/Messenger';
 
 function UserProfile() {
-    const location = useLocation()
-    const [tab, setTab] = useState(location.state?.tab || 0)
-
-    useEffect(() => {
-        const tabs = location.state?.tab || 0
-        setTab(tabs)
-    }, [location])
+    const [tab, setTab] = useState(0)
 
     const lg = useMediaQuery((theme) => theme.breakpoints.up('lg'))
 
@@ -32,8 +24,13 @@ function UserProfile() {
         setTab(newValue)
     };
 
+    const margin = {
+        ml: { xs: 0, lg: 14 },
+        mt: { xs: 4, lg: 0 }
+    }
+
     return (
-        <Box display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={14} pl={4} >
+        <Box minHeight='100%' display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={{ sm: 4,md: 4, lg: 14 }} px={4}>
             <StyledTabs
                 textColor='primary'
                 orientation={lg ? 'vertical' : 'horizontal'}
@@ -61,11 +58,6 @@ function UserProfile() {
                     icon={<FavoriteBorderIcon fontSize='small' />}
                     label="My Wishlist"
                 />
-                {/* <StyledTab
-                        {...tabStyling}
-                        icon={<HomeIcon fontSize='small' />}
-                        label="Manage Address"
-                    /> */}
                 <StyledTab
                     {...tabStyling}
                     icon={<ChatBubbleIcon fontSize='small' />}
@@ -84,13 +76,10 @@ function UserProfile() {
             <TabPanel value={tab} index={3}>
                 <MyWishlist />
             </TabPanel>
-            {/* <TabPanel value={tab} index={4}>
-                <ManageAddress />
-            </TabPanel> */}
             <TabPanel value={tab} index={4}>
                 <MessengerSettings />
             </TabPanel>
-        </Box>
+        </Box >
     )
 }
 

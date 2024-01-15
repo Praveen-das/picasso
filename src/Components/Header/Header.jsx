@@ -20,7 +20,7 @@ function Header() {
   let pathName = pathname.slice(1)
   const { currentUser } = useCurrentUser();
   const { handleLogout } = useAuth()
-  
+
   return (
     <>
       <nav id='navbar'>
@@ -54,7 +54,10 @@ function Header() {
                     </IconButton>
                   }
                 >
-                  <Menu to='/seller'>Dashboard</Menu>
+                  {
+                    currentUser.data?.role === 'seller' &&
+                    <Menu to="/dashboard">Dashboard</Menu>
+                  }
                   <Menu to='/profile'>Profile</Menu>
                   <Menu onClick={handleLogout}>Logout</Menu>
                 </Select>
@@ -125,7 +128,7 @@ function Header() {
             Shop
           </Link>
         </Box>
-        <Link style={{ marginLeft: 'auto' }} to="/seller" >
+        <Link style={{ marginLeft: 'auto' }} to="/dashboard" >
           Sell on Artworld
         </Link>
       </Box> */}
@@ -160,11 +163,10 @@ function Select({ mainElement, children }) {
           opacity: 0,
           translate: '10px 20px',
           pointerEvents: 'none',
-          borderRadius: '5px',
+          // borderRadius: '5px',
           overflow: 'hidden',
           transition: '0.1s',
           boxShadow: "0 5px 10px rgb(0 0 0 / 17%)",
-          p:'2px'
         }}
       >
         {children}
@@ -185,11 +187,9 @@ function Menu({ children, to, onClick }) {
           bgcolor: 'white',
           display: 'flex',
           alignItems: 'center',
-          borderRadius:'5px',
-          transition:'0.2s',
+          transition: '0.2s',
           ":hover": {
-            bgcolor: 'var(--brand)',
-            color: 'white !important',
+            color: 'var(--brand) !important',
           }
         }}
       >

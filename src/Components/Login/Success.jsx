@@ -2,12 +2,13 @@ import { Box, Button, Fade, Modal, Typography } from '@mui/material'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import successvdo from '../../Assets/success.mp4'
+import { ReactComponent as SuccessSVG } from '../../Assets/svg/success.svg'
 
-function Success({ open, setOpen }) {
+function Success({ open, setOpen, title, message, callbackMessage, callbackURL = '/' }) {
     const navigate = useNavigate()
 
     const style = {
-        boxSizing: 'borderBox',
+        boxSizing: 'border-box',
         position: 'absolute',
         display: 'grid',
         placeItems: 'center',
@@ -15,39 +16,37 @@ function Success({ open, setOpen }) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 600,
         bgcolor: 'background.paper',
         boxShadow: 24,
-        p: '4em 2em',
-        gap: 2,
-        outline: 'none'
+        p: '3em 3em',
+        gap: 3,
+        outline: 'none',
+        borderRadius: '40px'
     }
 
     return (
         <Modal
             open={open}
-            onClose={() => navigate('/')}
+            onClose={() => navigate(callbackURL)}
             closeAfterTransition
-            sx={{ background: 'white' }}
-            // hideBackdrop
+            hideBackdrop
         >
             <Fade in={open}>
                 <Box sx={style} >
                     <video autoPlay width={160} height={160} src={successvdo} alt="" />
-                    <Typography variant='h5' fontSize='1.5rem'>CONGRATULATIONS</Typography>
-                    <Typography lineHeight={1.4} variant='h2' fontSize={18}>Your account has been successfully created. Continue by loging in</Typography>
+                    <Typography variant='title.primary' sx={{ textTransform: 'none' }} fontSize='1.5rem'>CONGRATULATIONS</Typography>
+                    <Typography variant='paragraph'>Your account has been successfully created. Continue by loging in</Typography>
                     <Button
                         type="submit"
                         size="large"
                         sx={{
                             background: "var(--brandGradient)",
                             borderRadius: "50px",
-                            fontSize: "12px",
-                            width: "200px",
-                            mt: '1rem'
+                            mt: 2
                         }}
                         variant="contained"
-                        onClick={() => setOpen(false)}
+                        onClick={() => navigate(callbackURL)}
                     >
                         Continue
                     </Button>

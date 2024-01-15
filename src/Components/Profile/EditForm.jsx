@@ -1,38 +1,35 @@
 import { Box, Button, Modal, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import TextField from '../MUIComponents/TextField';
 import useCurrentUser from '../../Hooks/useCurrentUser';
 import { useStore } from '../../Context/Store';
 import { Formik } from 'formik';
-import { personalInfoSchema, socialSchema, userAddressSchema } from '../../Schema/YupSchema';
+import { personalInfoSchema, socialSchema, userAddressSchema, userAddressUpdateSchema } from '../../Schema/YupSchema';
 
-function Edits(
-    {
-        open,
-        onClose,
-        user
-    }) {
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 500,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    borderRadius: '10px',
+    py: 5,
+    px: 5,
+    pb: 6,
+    outline: 'none',
+    display: 'grid',
+    gap: 4
+};
 
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        borderRadius: '10px',
-        py: 5,
-        px: 5,
-        pb: 6,
-        outline: 'none',
-        display: 'grid',
-        gap: 4
-    };
+function Edits({ open, onClose, }) {
+    const { currentUser: { data: user } } = useCurrentUser()
 
     const forms = {
         'personalInfo': <PersonalInfo data={user} {...{ onClose }} />,
-        'address': <Address data={user?.default_address} {...{ onClose }} />,
+        'address.add': <Address {...{ onClose }} />,
+        'address.update': <Address data={user?.default_address} {...{ onClose }} />,
         'socialMediaLinks': <SocialMediaLinks data={user} {...{ onClose }} />
     }
 
@@ -45,7 +42,7 @@ function Edits(
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style} >
-                    {forms[open]}
+                    {forms?.[open]}
                 </Box>
             </Modal>
         </>
@@ -134,7 +131,7 @@ function PersonalInfo({ data, onClose }) {
 }
 
 function Address({ data, onClose }) {
-    const { updateUserAddress } = useCurrentUser()
+    const { addUserAddress, updateUserAddress } = useCurrentUser()
     const setAlert = useStore((s) => s.setAlert);
 
     function handleClose() {
@@ -142,24 +139,46 @@ function Address({ data, onClose }) {
     }
 
     const handleUpdate = (values, { resetForm, setFieldError, setSubmitting }) => {
-        removieEmptyValues()
+        removieEmptyValues(values)
 
-        updateUserAddress.mutateAsync({ id: data?.id, ...values })
-            .then(() => {
-                setAlert({
-                    message: `${Object.keys(data)[0]} changed successfully`,
-                    type: 'success',
-                    toggled: true,
+        if (!data) {
+            addUserAddress.mutateAsync(values)
+                .then((res) => {
+                    console.log(res.data);
+                    setAlert({
+                        message: `Address added successfully`,
+                        type: 'success',
+                        toggled: true,
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    // const { field, message } = err.response?.data;
+                    // setFieldError(field.toLowerCase(), message);
+                    setSubmitting(false);
+                    return
                 });
-                resetForm();
-                handleClose()
-                setSubmitting(false);
-            })
-            .catch((err) => {
-                const { field, message } = err.response?.data;
-                setFieldError(field.toLowerCase(), message);
-                setSubmitting(false);
-            });
+        } else {
+            updateUserAddress.mutateAsync({ id: data?.id, ...values })
+                .then((res) => {
+                    console.log(res);
+                    setAlert({
+                        message: `${Object.keys(data)[0]} changed successfully`,
+                        type: 'success',
+                        toggled: true,
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    // const { field, message } = err.response?.data;
+                    // setFieldError(field.toLowerCase(), message);
+                    setSubmitting(false);
+                    return
+                });
+        }
+        resetForm();
+        handleClose()
+        setSubmitting(false);
     }
 
     const initialValues = {
@@ -168,18 +187,23 @@ function Address({ data, onClose }) {
         city: '',
         state: '',
         pincode: '',
-        isDefault: true
+        mobile: '',
+    }
+
+    const flex_box = {
+        display: 'flex',
+        gap: 4
     }
 
     return (
         <Formik
             initialValues={initialValues}
             validateOnChange={false}
-            validationSchema={userAddressSchema}
+            validationSchema={data ? userAddressUpdateSchema : userAddressSchema}
             onSubmit={handleUpdate}
         >
             {
-                ({ handleChange, handleSubmit, values }) => (
+                ({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                     <>
                         <Box
                             sx={{
@@ -190,19 +214,17 @@ function Address({ data, onClose }) {
                                 gap: 2
                             }}
                         >
-                            <Typography variant='title.primary'>Edit Address</Typography>
+                            <Typography variant='title.primary'>{Boolean(data) ? 'Update' : 'Add'} Address</Typography>
                             <Button onClick={handleClose} sx={{ ml: 'auto' }} size='small'>cancel</Button>
-                            <Button disabled={updateUserAddress.isLoading} onClick={handleSubmit} size='small' variant='contained'>apply</Button>
+                            <Button onClick={handleSubmit} size='small' variant='contained'>apply</Button>
                         </Box>
-                        {/* <TextField onChange={handleChange} name='name' label='Name' placeholder={data?.name}></TextField> */}
-                        <TextField onChange={handleChange} name='address' multiline rows={2} label='House name/Flat number' placeholder={data?.address}></TextField>
+                        <TextField onChange={handleChange} name='name' label='Name' placeholder={data?.name}></TextField>
+                        <TextField onChange={handleChange} name='address' label='House name/Flat number' placeholder={data?.address}></TextField>
                         <TextField onChange={handleChange} name='city' label='City' placeholder={data?.city}></TextField>
                         <TextField onChange={handleChange} name='state' label='State' placeholder={data?.state}></TextField>
-                            <TextField onChange={handleChange} name='pincode' label='Pincode/Zipcode' placeholder={data?.pincode}></TextField>
-                        {/* <Box display='flex' gap={4}>
-                            <TextField onChange={handleChange} name='mobile' label='Phone Number' placeholder={data?.pincode}></TextField>
-                        </Box> */}
-                        <Box>
+                        <TextField onChange={handleChange} onBlur={handleBlur} name='pincode' label='Pincode/Zipcode' error={Boolean(errors.pincode && touched.pincode) && errors.pincode} placeholder={data?.pincode}></TextField>
+                        <TextField onChange={handleChange} onBlur={handleBlur} name='mobile' label='Phone Number' error={Boolean(errors.mobile) && touched.mobile && errors.mobile} placeholder={data?.mobile} pattern={`^[0-9]`}></TextField>
+                        {/* <Box>
                             <input
                                 id="isDefault"
                                 name="isDefault"
@@ -214,7 +236,7 @@ function Address({ data, onClose }) {
                             <label htmlFor='isDefault' style={{ fontSize: "0.9rem" }} >
                                 Set as default shipping address.
                             </label>
-                        </Box>
+                        </Box> */}
                     </>
                 )}
         </Formik>

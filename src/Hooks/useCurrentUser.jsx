@@ -20,7 +20,7 @@ function useCurrentUser() {
     },
   });
 
-  const { mutateAsync: addUserAddress } = useMutation(_addUserAddress, {
+  const addUserAddress = useMutation(_addUserAddress, {
     onSettled: () => {
       queryClient.invalidateQueries(["currentUser"]);
     },

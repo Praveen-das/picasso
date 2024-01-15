@@ -11,7 +11,7 @@ function SellerProfile({seller}) {
                 displayName={seller?.displayName}
                 profilePicture={seller?.photo}
             />
-            <Link to={`/store/${seller?.id}`}>
+            <Link to={`/artists/profile/${seller?.id}`}>
                 <Typography sx={{ ":hover": { textDecoration: 'underline' } }} fontWeight={600}>
                     {seller?.displayName}
                 </Typography>

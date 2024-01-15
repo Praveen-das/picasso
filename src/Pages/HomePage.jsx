@@ -286,7 +286,7 @@ function AboutUsSection() {
     )
 }
 
-function Security() {
+export function Security() {
 
     let
         container = {
@@ -294,7 +294,7 @@ function Security() {
             boxSizing: 'border-box',
             display: 'flex',
             gap: 2,
-            mt: 'var(--vSpacing)',
+            // mt: 'var(--vSpacing)',
         },
         iconboxProps = {
             sx: {
@@ -309,10 +309,11 @@ function Security() {
         props = {
             sx: {
                 width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2
+                display: 'grid',
+                justifyItems: 'center',
+                alignContent: 'start',
+                gap: 2,
+                textAlign: 'center'
             }
         },
         iconProps = {

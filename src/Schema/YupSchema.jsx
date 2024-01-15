@@ -113,9 +113,17 @@ export const userAddressSchema = yup.object({
   address: yup.string().required("Enter your address"),
   city: yup.string().required("Select your city"),
   state: yup.string().required("Select your state"),
-  pincode: yup.mixed().required("Enter your pincode"),
-  mobile: yup.string().required("Enter your phone number"),
-  isDefault: yup.boolean()
+  pincode: yup.string().max(6).required("Enter your pincode"),
+  mobile: yup.string().max(10, 'Phone Number must be at most 10 characters.').required("Enter your phone number"),
+});
+
+export const userAddressUpdateSchema = yup.object({
+  name: yup.string(),
+  address: yup.string(),
+  city: yup.string(),
+  state: yup.string(),
+  pincode: yup.string().max(6),
+  mobile: yup.string().max(10, 'Phone Number must be at most 10 characters.'),
 });
 
 export const accountDetailsSchema = yup.object({

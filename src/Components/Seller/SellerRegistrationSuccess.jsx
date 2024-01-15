@@ -10,6 +10,7 @@ import success from '../../Assets/success.gif'
 import './style.css'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import LoadingButton from '@mui/lab/LoadingButton/LoadingButton'
 
 function SellerRegistrationSuccess() {
   const [step, setStep] = useState(0)
@@ -25,11 +26,18 @@ function SellerRegistrationSuccess() {
           width: '100%',
         }}
       >
-        <OnboardingConfirmation active={step === 0} callback={(value) => {
-          setEmail(value)
-          setStep(1)
-        }} />
-        <SellerOnbording data={email} active={step === 1} callback={() => setStep(0)} />
+        <OnboardingConfirmation
+          active={step === 0}
+          callback={(value) => {
+            setEmail(value)
+            setStep(1)
+          }}
+        />
+        <SellerOnbording
+          data={email}
+          active={step === 1}
+          callback={() => setStep(0)}
+        />
       </Box>
     </Container>
   )
@@ -50,7 +58,7 @@ function SellerOnbording({ active, callback, data: email }) {
           Your Razorpay dashboard will get activated within 24 hours and a confirmation mail will be sent to your email <span className='emailid'>{email}</span>. Thank you.
         </Typography>
         <Button onClick={() => {
-          navigate('/seller')
+          navigate("/dashboard")
           callback()
         }} sx={{ mt: 4 }} variant='contained' size='large'>Dashboard</Button>
       </div>
@@ -66,7 +74,7 @@ function OnboardingConfirmation({ active, callback }) {
 
     const data = {
       "name": "Gaurav Kumar",
-      "email": "praveen97.das@gmail.com",
+      "email": "praveen9.7das@gmail.com",
       "tnc_accepted": true,
       "account_details": {
         "business_name": "Acme Corporation",
@@ -75,7 +83,7 @@ function OnboardingConfirmation({ active, callback }) {
       "bank_account": {
         "ifsc_code": "HDFC0CAGSBK",
         "beneficiary_name": "Gaurav Kumar",
-        "account_number": 1234567890123456,
+        "account_number": 4111111111111111,
       },
     }
 
@@ -115,7 +123,7 @@ function OnboardingConfirmation({ active, callback }) {
           // validationSchema={accountDetailsSchema}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, handleChange, handleBlur, setFieldError }) => (
+          {({ isSubmitting, errors, touched, handleChange, handleBlur, setFieldError }) => (
             <Form>
               <Box
                 sx={{
@@ -173,7 +181,7 @@ function OnboardingConfirmation({ active, callback }) {
                   }}
                 >
                   <Button fullWidth size='large' >Skip</Button>
-                  <Button fullWidth type='submit' variant='contained' size='large'>Proceed</Button>
+                  <LoadingButton loading={isSubmitting} fullWidth type='submit' variant='contained' size='large'>Proceed</LoadingButton>
                 </Box>
               </Box>
             </Form>

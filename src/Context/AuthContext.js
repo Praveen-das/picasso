@@ -7,7 +7,7 @@ export const useAuthContext = () => useContext(Context)
 
 export default function AuthContext({ children }) {
     const { currentUser } = useCurrentUser()
-
+    
     return (
         <Context.Provider value={currentUser}>
             {

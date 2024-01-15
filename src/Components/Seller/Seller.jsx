@@ -9,7 +9,7 @@ import DashboardIcon from '@mui/icons-material/LineAxis';
 import ProductsIcon from '@mui/icons-material/LocalMallOutlined';
 
 export default function Seller() {
-    const [value, setValue] = useState(1);
+    const [value, setValue] = useState(0);
     const lg = useMediaQuery((theme) => theme.breakpoints.up('lg'))
 
     const handleChange = (event, newValue) => {
@@ -17,23 +17,26 @@ export default function Seller() {
     };
 
     return (
-        <Box display='flex' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={2} >
-            <Box mt={'0.5rem'}>
-                <StyledTabs
-                    textColor='primary'
-                    orientation={lg ? 'vertical' : 'horizontal'}
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                    sx={{
-                        pl: 2,
-                        height: { lg: '100%' },
-                    }}
-                >
-                    <StyledTab icon={<DashboardIcon fontSize='small' />} label="Dashboard" {...tabStyling} />
-                    <StyledTab icon={<ProductsIcon fontSize='small' />} label="Manage Products" {...tabStyling} />
-                </StyledTabs>
-            </Box>
+        <Box id='dashboard_container' display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={{ sm: 4,md: 4, lg: 14 }} px={4} >
+            <StyledTabs
+                textColor='primary'
+                orientation={lg ? 'vertical' : 'horizontal'}
+                value={value}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+            >
+                <StyledTab
+                    icon={<DashboardIcon fontSize='small' />}
+                    label="Dashboard"
+                    {...tabStyling}
+                />
+                <StyledTab
+                    icon={<ProductsIcon
+                        fontSize='small' />}
+                    label="Manage Products"
+                    {...tabStyling}
+                />
+            </StyledTabs>
             <TabPanel value={value} index={0}>
                 <Dashboard />
             </TabPanel>

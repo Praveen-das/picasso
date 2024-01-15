@@ -17,17 +17,13 @@
 .dashboard-items {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 10px;
     margin-bottom: 1rem;
 }
 
-.rows {
-    display: flex;
-    gap: 10px;
-}
-
-.rows div {
+.dashboard-items div {
+    box-sizing: border-box;
     position: relative;
     width: 100%;
     aspect-ratio: 1.8;
@@ -41,17 +37,17 @@
     cursor: pointer;
 }
 
-.rows div > *{
+.dashboard-items div > *{
     pointer-events: none;
 }
 
-.rows label {
+.dashboard-items label {
     position: relative;
     color: var(--brand);
     font-size: 1.5em;
 }
 
-.rows h6 {
+.dashboard-items h6 {
     margin: 0;
 }
 

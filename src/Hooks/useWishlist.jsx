@@ -14,7 +14,7 @@ function useWishlist() {
 
     const removeFromWishlist = useMutation(_removeFromWishlist, {
         onSuccess: () => {
-            queryClient.invalidateQueries(['wishlist'])
+            queryClient.invalidateQueries(['currentUser'])
         },
     })
 

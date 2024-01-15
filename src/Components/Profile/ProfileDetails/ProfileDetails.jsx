@@ -27,7 +27,7 @@ const actionBtnStyle = {
 function ProfileDetails() {
   const { currentUser: { data: user } } = useCurrentUser();
   const address = user?.default_address
-
+  
   const [open, setOpen] = useState(null)
 
   const { logout, handleLogout } = useAuth()
@@ -80,21 +80,21 @@ function ProfileDetails() {
           <Grid item xs={12} mt={2}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant='title.colored'>Address</Typography>
-              <Button {...actionBtnStyle} variant="outlined" onClick={() => setOpen('address')}>Edit</Button>
+              <Button {...actionBtnStyle} variant="outlined" onClick={() => setOpen(address ? 'address.update' : 'address.add')}>Edit</Button>
             </Box>
           </Grid>
           <Grid container item xs={12} rowSpacing={2} columnSpacing={4} mt={-4}>
             <Grid item xs={5}>
-              <InfoField label='House Name/ Flat No'>{user?.displayName}</InfoField>
+              <InfoField label='House Name/ Flat No'>{address?.address}</InfoField>
             </Grid>
             <Grid item xs={5}>
-              <InfoField label='City'>{address?.mobile}</InfoField>
+              <InfoField label='City'>{address?.city}</InfoField>
             </Grid>
             <Grid item xs={5}>
-              <InfoField label='State'>{address?.mobile}</InfoField>
+              <InfoField label='State'>{address?.state}</InfoField>
             </Grid>
             <Grid item xs={5}>
-              <InfoField label='Pincode/Zipcode'>{address?.mobile}</InfoField>
+              <InfoField label='Pincode/Zipcode'>{address?.pincode}</InfoField>
             </Grid>
           </Grid>
           {/* <Grid item xs={12} >
@@ -145,7 +145,7 @@ function ProfileDetails() {
               >
                 <Typography variant="title.colored" display='flex' mb={1}>Register as a seller</Typography>
                 <Typography variant="h10" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, voluptatum aliquid distinctio esse, nam facilis voluptas commodi illo similique repellendus earum omnis natus molestias culpa eum veniam dolores voluptatibus minus.</Typography>
-                <Button onClick={() => navigate("/seller")} variant='contained' sx={{ px: 2, ml: 'auto' }}>Register</Button>
+                <Button onClick={() => navigate("/seller/registration")} variant='contained' sx={{ px: 2, ml: 'auto' }}>Register</Button>
               </Box>
             </Grid>
           }

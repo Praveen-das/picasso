@@ -3,7 +3,7 @@
     width: 100%;
     display: flex;
     gap: 10px;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
@@ -39,6 +39,7 @@
     width: 80px;
     aspect-ratio: 1;
     background-size: cover;
+    border-radius: 5px;
 }
 .actionButtons{
     cursor: pointer;

@@ -14,17 +14,17 @@ import { useFilter } from '../../Sidebar/useFilter'
 import useFacets from '../../../Hooks/useFacets'
 import { AddItem } from './AddItem'
 
-const skeleton = new Array(20).fill()
+const skeleton = new Array(5).fill()
 
 function Products() {
-    const [model, setModel] = useState({ open: true, payload: null })
+    const [model, setModel] = useState({ open: false, payload: null })
     const [product, setProduct] = useState(null)
 
     const { filter, setFilter, deleteFilter } = useFilter()
     const { facets: { data } } = useFacets()
     const total = data?.total || 0
 
-    const { products: { data: productList, isLoading }, deleteProduct } = useAdmin()
+    const { products: { data: productList, isFetching }, deleteProduct } = useAdmin()
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -53,7 +53,7 @@ function Products() {
     return (
         <TransitionGroup style={{ height: '100%' }} exit={false} >
             {!model.open ?
-                <Fade style={{ height: '100%' }} key={model.open}>
+                <Fade style={{ height: '100%' }} key={1}>
                     <div className="dashboard-wrapper">
                         <div id="dashboard">
                             <div className="actions">
@@ -76,10 +76,7 @@ function Products() {
                                 </thead>
                                 <tbody>
                                     {
-                                        // ((!result.searching) || (!loading)) ?
-                                        //     (result.data.length > 0 ? result.data : data
-                                        //     )
-                                        !isLoading ? productList?.map((product) =>
+                                        !isFetching ? productList?.map((product) =>
                                             < tr key={product.id} >
                                                 <td>{product?.name}</td>
                                                 <td>
@@ -119,22 +116,22 @@ function Products() {
                                             :
                                             skeleton.map((_, i) => (
                                                 <tr key={i}>
-                                                    <td height={'70px'} width={'15%'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
-                                                    <td height={'70px'} width={'20%'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
-                                                    <td height={'70px'} width={'39%'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
-                                                    <td height={'70px'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
-                                                    <td height={'70px'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
-                                                    <td height={'70px'}>
+                                                    <td>
                                                         <Skeleton animation="wave" />
                                                     </td>
                                                 </tr>
@@ -178,7 +175,7 @@ function Products() {
                     </div >
                 </Fade>
                 :
-                <Fade style={{ height: '100%' }} key={model.open}>
+                <Fade style={{ height: '100%' }} key={2}>
                     <div >
                         <AddItem payload={model.payload} onClose={() => setModel(({ open: false, payload: null }))} />
                     </div>
