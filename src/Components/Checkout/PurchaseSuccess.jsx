@@ -1,7 +1,6 @@
 import { Box, Button, Fade, Modal, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import successvdo from '../../Assets/success.mp4'
 import { ReactComponent as SuccessSVG } from '../../Assets/svg/success.svg'
 
 function PurchaseSuccess() {

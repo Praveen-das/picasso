@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { _addFollower, _removeFollower, _getUserById } from "../lib/user.api";
+import { _addFollower, _removeFollower, _getUserById } from "../Services/user.api";
 
 function useUserData(uid) {
     const queryClient = useQueryClient();

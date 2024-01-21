@@ -4,9 +4,7 @@ import {
   createRoutesFromElements,
   Outlet,
   RouterProvider,
-  redirect,
   ScrollRestoration,
-  useParams,
   Navigate,
   useLocation,
 } from "react-router-dom";
@@ -16,18 +14,15 @@ import "./App.css";
 
 import { MUIContext } from './Context/MUIContext';
 
-import LoadingScreen from "./Components/MUIComponents/LoadingScreen";
-import Header from "./Components/Header/Header"
-import Footer from './Components/Footer/Footer'
-import { Test } from "./Test";
+import LoadingScreen from "./Components/Ui/LoadingScreen";
+import Header from "./Components/Layouts/Header/Header"
+import Footer from './Components/Layouts/Footer/Footer'
 import SellerRegistrationPage from "./Pages/SellerRegistrationPage";
-import SellerRegistrationSuccess from "./Components/Seller/SellerRegistrationSuccess";
+import SellerOnbordingPage from "./Components/Seller/SellerOnbording/SellerOnbording";
 import AuthContext, { useAuthContext } from "./Context/AuthContext";
 import PurchaseSuccess from "./Components/Checkout/PurchaseSuccess";
 
-// import Test from "./Test/Test";
-const ChatEngin = lazy(() => import("./Components/ChatEngin/ChatEngin"))
-
+const ChatEngin = lazy(() => import("./Components/Chat/ChatEngin"))
 const LoginPage = lazy(() => import("./Pages/LoginPage"));
 const CollectionsPage = lazy(() => import("./Pages/CollectionsPage"));
 const HomePage = lazy(() => import("./Pages/HomePage"))
@@ -39,7 +34,7 @@ const SellerPage = lazy(() => import("./Pages/SellerPage"))
 const ShoppingCartPage = lazy(() => import("./Pages/ShoppingCartPage"))
 const StorePage = lazy(() => import("./Pages/StorePage"))
 const ChatPage = lazy(() => import("./Pages/ChatPage"))
-const Alert = lazy(() => import("./Components/Alert/Alert"))
+const Alert = lazy(() => import("./Components/Ui/Alert/Alert"))
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -64,12 +59,11 @@ const router = createBrowserRouter(
         <Route path="/purchase/success" element={<PurchaseSuccess />} />
         <Route path="/cart" element={<ShoppingCartPage />} />
         <Route element={<AdminRoutes />}>
-          <Route path="/dashboard" element={<SellerPage />} />
           <Route path="/seller/registration" element={<SellerRegistrationPage />} />
-          <Route path="/seller/onboarding" element={<SellerRegistrationSuccess />} />
+          <Route path="/seller/onboarding" element={<SellerOnbordingPage />} />
+          <Route path="/dashboard" element={<SellerPage />} />
         </Route>
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/test" element={<Test />} />
       </Route>
     </Route>
   ));
@@ -87,48 +81,46 @@ function App() {
 function AuthRoutes() {
   const { data: user } = useAuthContext()
   const currentPath = useLocation().pathname
+  const LOGIN_PATH = '/login'
+  const HOME_PATH = '/'
 
   const isAuthenticated = Boolean(user)
 
-  const paths = ['/login']
-
-  return (
-    <>
-      {
-        !isAuthenticated ?
-          currentPath === '/login' ? <Outlet /> :
-            <Navigate to='/login' replace /> :
-          paths.includes(currentPath) ? <Navigate to='/' replace /> :
-            <Outlet />
-      }
-    </>
-  )
+  if (isAuthenticated) {
+    if (currentPath === LOGIN_PATH)
+      return <Navigate to={HOME_PATH} replace />
+    return <Outlet />
+  } else {
+    if (currentPath === LOGIN_PATH)
+      return <Outlet />
+    return <Navigate to={LOGIN_PATH} replace />
+  }
 }
 
 function AdminRoutes() {
   const { data: user } = useAuthContext()
   const location = useLocation()
-  const paths = ['/seller/registration', '/seller/onboarding']
 
   const currentPath = location.pathname
-  const previousPath = location.state?.previousPath || '/'
-
-  const samePath = currentPath === previousPath
+  const replaced = location.state?.replaced
 
   const isAdmin = Boolean(user?.role === 'seller')
   const isConnected = Boolean(user?.linked_account?.status === 'active')
 
-  if (samePath)
-    return <Outlet />
+  const props = {
+    replace: true,
+    state: { replaced: true }
+  }
 
-  if (!isAdmin)
-    return <Navigate to='/seller/registration' replace state={{ previousPath: currentPath }} />
+  if (!isAdmin && !replaced)
+    return <Navigate to='/seller/registration' {...props} />
 
-  if (!isConnected)
-    return <Navigate to='/seller/onboarding' replace state={{ previousPath: currentPath }} />
+  if (!isConnected && !replaced)
+    return <Navigate to='/seller/onboarding' {...props} />
 
-  if (paths.includes(currentPath))
-    return <Navigate to="/dashboard" />
+  if (currentPath !== '/dashboard' && !replaced) {
+    return <Navigate to="/dashboard" {...props} />
+  }
 
   return <Outlet />
 }

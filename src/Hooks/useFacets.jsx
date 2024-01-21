@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchFilterParams } from "../lib/product.api";
+import { fetchFilterParams } from "../Services/product.api";
 
 export default function useFacets() {
     const queryString = window.location.search.slice(1)

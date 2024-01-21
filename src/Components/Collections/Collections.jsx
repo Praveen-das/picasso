@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Typography } from '@mui/material'
 import React from 'react'
 import useFacets from '../../Hooks/useFacets'
-import ItemCard from '../Card/ItemCard';
+import ItemCard from '../Ui/Card/ItemCard';
 
 export default function Collections() {
     const { facets: { data }, isFetching, isLoading } = useFacets()

@@ -5,7 +5,7 @@ import { useProducts } from '../../Hooks/useProducts'
 import { Box, Button, Grid } from '@mui/material'
 import { Link } from 'react-router-dom'
 import useFacets from '../../Hooks/useFacets'
-import { Carousal } from '../Carousal/Carousal'
+import { Carousal } from '../Ui/Carousal/Carousal'
 
 function Banner() {
     const br = useRef()

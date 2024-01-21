@@ -1,5 +1,5 @@
 import React from 'react'
-import Store from '../Components/Store/SellerStore'
+import Store from '../Components/Seller/Store/Store'
 
 function StorePage() {
     return (

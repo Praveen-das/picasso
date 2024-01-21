@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Avatar from '../../Avatar/Avatar';
+import Avatar from '../../Ui/Avatar/Avatar';
 
 function SellerProfile({seller}) {
     

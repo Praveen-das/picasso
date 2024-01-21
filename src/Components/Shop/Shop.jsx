@@ -1,11 +1,11 @@
 import { useCallback, useLayoutEffect, useState } from 'react'
 import './shop.css'
-import Card from '../Card/Card'
+import Card from '../Ui/Card/Card'
 import { Box, Button, Menu, MenuItem, Pagination, Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useProducts } from '../../Hooks/useProducts';
 import Masonry from '@mui/lab/Masonry';
-import { useFilter } from '../Sidebar/useFilter';
+import { useFilter } from '../Layouts/Sidebar/useFilter';
 import noresultImg from '../../Assets/Images/noresult.png'
 import useFacets from '../../Hooks/useFacets';
 import FilterListIcon from '@mui/icons-material/FilterList';

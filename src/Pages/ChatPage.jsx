@@ -1,6 +1,5 @@
 import React from 'react'
-import Messenger from '../Components/Messenger/Messenger'
-import useCurrentUser from '../Hooks/useCurrentUser'
+import Messenger from '../Components/Chat/Messenger'
 
 function ChatPage() {
 

@@ -1,8 +1,8 @@
 import { Box, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
-import Dashboard from '../SellerComponents/Dashboard/Dashboard';
-import Products from '../SellerComponents/Products/Products';
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../Ui/TabComponents';
+import Dashboard from './Tabs/Dashboard/Dashboard';
+import Products from './Tabs/Products/Products';
 import './style.css'
 
 import DashboardIcon from '@mui/icons-material/LineAxis';

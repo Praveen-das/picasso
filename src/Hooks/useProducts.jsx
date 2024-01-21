@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../lib/product.api";
-import { useFilter } from "../Components/Sidebar/useFilter";
+import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../Services/product.api";
 
 
 export function useProducts() {

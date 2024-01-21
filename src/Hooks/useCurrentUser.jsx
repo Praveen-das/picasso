@@ -8,7 +8,7 @@ import {
   _updateUserAddress,
   _addSocialMediaLink,
   _removeSocialMediaLink,
-} from "../lib/user.api";
+} from "../Services/user.api";
 
 function useCurrentUser() {
   const queryClient = useQueryClient();

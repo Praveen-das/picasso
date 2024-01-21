@@ -7,13 +7,13 @@ import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-import ProfileDetails from './ProfileDetails/ProfileDetails'
-import MyOrders from './MyOrders/MyOrders'
-import MyWishlist from './MyWishlist/MyWishlist'
-import MessengerSettings from './MessengerSettings/MessengerSettings'
+import ProfileDetails from './Tabs/ProfileDetails/ProfileDetails'
+import MyOrders from './Tabs/MyOrders/MyOrders'
+import MyWishlist from './Tabs/MyWishlist/MyWishlist'
+import MessengerSettings from './Tabs/MessengerSettings/MessengerSettings'
 import { useState } from 'react';
-import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../MUIComponents/TabComponents';
-import Messenger from '../Messenger/Messenger';
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../Ui/TabComponents';
+import Messenger from '../../Components/Chat/Messenger';
 
 function UserProfile() {
     const [tab, setTab] = useState(0)

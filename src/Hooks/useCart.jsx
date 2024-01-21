@@ -5,9 +5,9 @@ import {
     _fetchUserCart,
     _updateCart,
     _removeFromCart,
-} from "../lib/cart.api";
+} from "../Services/cart.api";
 
-export const useCart = () => {
+export const useCart = (user) => {
     const queryClient = useQueryClient()
 
     const addToCart = useMutation(_addToCart, {
@@ -34,7 +34,7 @@ export const useCart = () => {
         }
     })
 
-    const cart = useQuery(['cart'], _fetchUserCart)
+    const cart = useQuery(['cart'], _fetchUserCart, { enabled: Boolean(user) })
 
     return {
         addToCart,

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Shop from '../Components/Shop/Shop'
-import Sidebar from '../Components/Sidebar/Sidebar'
+import Sidebar from '../Components/Layouts/Sidebar/Sidebar'
 import { Grid } from '@mui/material'
 
 function ShoppingPage() {

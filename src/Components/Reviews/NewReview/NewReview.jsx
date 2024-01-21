@@ -4,7 +4,7 @@ import { Box, IconButton, Modal, Rating, TextField } from '@mui/material';
 import './newReview.css'
 import useReviews from '../../../Hooks/useReviews';
 import useCurrentUser from '../../../Hooks/useCurrentUser';
-import confirmAction from '../../ConfirmationDialog/ConfirmationDialog';
+import confirmAction from '../../Ui/ConfirmationDialog/ConfirmationDialog';
 import { Fade } from '@mui/material';
 
 function NewReview({ product, open, setOpen, userReview }) {

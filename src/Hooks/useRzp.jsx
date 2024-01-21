@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useNavigate } from "react-router-dom";
-import { _verifyPayment } from "../lib/rzp";
+import { _verifyPayment } from "../Services/rzp.api";
 
 function useRzp() {
     const queryClient = useQueryClient()

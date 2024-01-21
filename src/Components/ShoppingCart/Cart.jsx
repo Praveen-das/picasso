@@ -5,19 +5,20 @@ import { Box, Button, Divider, Grid, Typography } from '@mui/material';
 import { useCart } from '../../Hooks/useCart';
 import { Fragment } from 'react';
 
-import QuantityInput from '../QuantityInput/QuantityInput';
-
+import QuantityInput from '../Ui/QuantityInput/QuantityInput';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
-import WishlistButton from '../WishlistButton/WishlistButton';
+import WishlistButton from '../Ui/WishlistButton/WishlistButton';
 import { calculateDiscount } from '../../Utils/utils';
 import { Link } from 'react-router-dom';
 import EmptyCart from './EmptyCart';
-import LoadingScreen from '../MUIComponents/LoadingScreen'
+import LoadingScreen from '../Ui/LoadingScreen'
+import useCurrentUser from '../../Hooks/useCurrentUser';
 
 function Cart() {
     const navigate = useNavigate()
-    const { cart, updateCart, removeFromCart } = useCart()
+    const { currentUser } = useCurrentUser()
+    const { cart, updateCart, removeFromCart } = useCart(currentUser.data)
     const cart_items = cart.data?.[0]
     const total_price = cart.data?.[1].total_price
     const total_discount = cart.data?.[1].total_discount

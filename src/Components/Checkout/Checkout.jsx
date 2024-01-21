@@ -5,16 +5,16 @@ import { Box, Grid, Button, Typography, Divider } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
 import { Link, Navigate } from 'react-router-dom';
 import { useCart } from '../../Hooks/useCart';
-import EditForm from "../Profile/EditForm";
 import useCurrentUser from '../../Hooks/useCurrentUser';
-import LoadingScreen from '../MUIComponents/LoadingScreen'
+import LoadingScreen from '../Ui/LoadingScreen'
+import EditsModal from '../Ui/Modals/EditsModal'
 
 import { loadScript } from '../../Utils/utils';
 import axiosClient from '../../lib/axiosClient';
 import { ReactComponent as Visa } from '../../Assets/svg/visa.svg'
 import { ReactComponent as Mastercard } from '../../Assets/svg/mastercard.svg'
 import { ReactComponent as Upi } from '../../Assets/svg/upi.svg'
-import { useStore } from '../../Context/Store';
+import { useStore } from '../../Store/Store';
 
 const button_style = {
   borderRadius: '100px',
@@ -39,7 +39,7 @@ function Checkout() {
   const { currentUser: { data: user } } = useCurrentUser();
   const address = user?.default_address
 
-  const { cart: { data, isLoading, isFetching, isFetched } } = useCart()
+  const { cart: { data, isLoading, isFetching, isFetched } } = useCart(user)
   const cart = data?.[0]
   const total_price = data?.[1].total_price
   const total_discount = data?.[1].total_discount
@@ -49,7 +49,7 @@ function Checkout() {
 
   return (
     <>
-      <EditForm user={data} open={open} onClose={setOpen} />
+      <EditsModal user={data} open={open} onClose={setOpen} />
       <Grid container columnSpacing={12} p='1rem 3rem 2rem 3rem'>
         <Grid container item xs={7.5} spacing={4} >
           <Grid item xs={12}>
@@ -150,7 +150,7 @@ const CheckoutBox = () => {
   const setAlert = useStore(s => s.setAlert)
   const [loading, setLoading] = useState(false);
   const { currentUser: { data: user } } = useCurrentUser()
-  const { cart } = useCart()
+  const { cart } = useCart(user)
   const total_price = cart.data?.[1].total_price
   const total_discount = cart.data?.[1].total_discount
 

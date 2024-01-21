@@ -3,7 +3,7 @@ import {
   logoutUser,
   signinUser,
   signupUser,
-} from "../lib/user.api";
+} from "../Services/user.api";
 import socket from "../lib/ws";
 import { useNavigate } from "react-router-dom";
 

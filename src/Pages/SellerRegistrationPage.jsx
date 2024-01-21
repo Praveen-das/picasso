@@ -1,10 +1,10 @@
 import React from 'react'
-import SellerSection from '../Components/Seller/SellerSection'
+import SellerRegistraton from '../Components/Seller/SellerRegistraton/SellerRegistraton'
 
 function SellerRegistrationPage() {
     return (
         <>
-            <SellerSection />
+            <SellerRegistraton />
         </>
     )
 }

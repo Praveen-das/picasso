@@ -3,9 +3,11 @@ import React from 'react'
 import { useCart } from '../../../../Hooks/useCart'
 
 import { Link } from 'react-router-dom';
+import useCurrentUser from '../../../../Hooks/useCurrentUser';
 
 function Products() {
-    const { cart, updateCart, removeFromCart } = useCart()
+    const { currentUser } = useCurrentUser()
+    const { cart, updateCart, removeFromCart } = useCart(currentUser.data)
 
     return (
         <>

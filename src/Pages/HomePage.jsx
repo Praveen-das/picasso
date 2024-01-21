@@ -1,5 +1,4 @@
-import './style.css'
-import { Suspense, lazy, useEffect, useRef } from 'react'
+import { Suspense, lazy } from 'react'
 
 import Explore from '../Components/ExploreBar/Explore'
 import Banner from '../Components/Banner/Banner'
@@ -27,7 +26,7 @@ import { ReactComponent as MoneybackIcon } from '../Assets/svg/moneyback.svg'
 import { ReactComponent as PaymentIcon } from '../Assets/svg/securePayment.svg'
 import { ReactComponent as ReturnPolicyIcon } from '../Assets/svg/return.svg'
 
-const Tray = lazy(() => import('../Components/Tray/Tray'))
+const Tray = lazy(() => import('../Components/Ui/Tray/Tray'))
 
 function HomePage() {
 

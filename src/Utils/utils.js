@@ -59,3 +59,28 @@ export function loadScript(src) {
       document.body.appendChild(script);
   });
 }
+
+export const getDeliveryDate = () => {
+  var today = new Date();
+
+  var deliveryDate = today;
+  var total_days = 9;
+  for (var days = 1; days <= total_days; days++) {
+    deliveryDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+    if (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+      total_days++;
+    }
+  }
+  return (
+    deliveryDate.toDateString() + " " + deliveryDate.toLocaleTimeString()
+  );
+};
+
+export function removieEmptyValues(values) {
+  Object.keys(values).forEach(key => {
+      if (values[key] === '' || values[key] === null) {
+          delete values[key];
+      }
+  });
+}
+

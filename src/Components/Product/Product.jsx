@@ -11,14 +11,14 @@ import SellerProfile from './SellerProfile/SellerProfile';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import RemoveShoppingCart from '@mui/icons-material/RemoveShoppingCartOutlined';
 import ChatIcon from '@mui/icons-material/Chat';
-import { useStore } from '../../Context/Store';
+import { useStore } from '../../Store/Store';
 import StarEmptyIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
-import WishlistButton from '../WishlistButton/WishlistButton'
+import WishlistButton from '../Ui/WishlistButton/WishlistButton'
 import UnfoldMoreIcon from '@mui/icons-material/ExpandMore';
 import UnfoldLessIcon from '@mui/icons-material/ExpandLess';
 import ShoppingIcon from '@mui/icons-material/ShoppingBagOutlined';
-import { ShareButton } from '../ShareButton/ShareButton';
+import { ShareButton } from '../Ui/ShareButton/ShareButton';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton'
 
 const IconProps = {
@@ -33,7 +33,7 @@ const Product = () => {
     const connectedUsers = useStore(s => s.connectedUsers)
 
     const { currentUser } = useCurrentUser()
-    const { addToCart, removeFromCart, cart: { data: [cart] = [], ...cartApi } } = useCart()
+    const { addToCart, removeFromCart, cart: { data: [cart] = [], ...cartApi } } = useCart(currentUser.data)
     const { data: product, ...productApi } = useProduct(product_id)
 
     const cartItem = cart?.find((o) => o.product_id === product?.id)

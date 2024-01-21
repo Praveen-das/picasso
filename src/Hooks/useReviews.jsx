@@ -5,7 +5,7 @@ import {
     _getProductReview,
     updateUserReview,
     _getProductsWithAverageRating
-} from '../lib/userReview.api'
+} from '../Services/userReview.api'
 
 const useReviews = (productId) => {
 

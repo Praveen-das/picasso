@@ -11,7 +11,7 @@ export default function AuthContext({ children }) {
     return (
         <Context.Provider value={currentUser}>
             {
-                !currentUser.isLoading &&
+                currentUser.isFetched &&
                 children
             }
         </Context.Provider>
