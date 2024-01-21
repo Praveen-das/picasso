@@ -31,7 +31,7 @@ export function Carousal({ data }) {
                 width: '100%',
                 height: '100%',
                 position: 'relative',
-                overflow:'hidden'
+                overflow: 'hidden'
             }}
         >
             <IconButton
@@ -63,7 +63,7 @@ export function Carousal({ data }) {
                 className="carousal"
             >
                 {
-                    data?.map((product) =>
+                    !!data?.length && data?.map((product) =>
                         <SwiperSlide key={product?.id}>
                             <Card product={product} />
                         </SwiperSlide>
