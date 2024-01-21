@@ -35,16 +35,16 @@ export const Item = styled(Box)
 
 
 export const StyledTabs = styled(Tabs)({
-    minHeight: 0,
+    // minHeight: 0,
     '& .MuiTabs-indicator': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        zIndex: -1,
-        width: '100%',
-        backgroundColor: 'var(--brand)',
-        borderRadius: 20,
+        // display: 'flex',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // height: '100%',
+        // zIndex: -1,
+        // width: '100%',
+        // backgroundColor: 'var(--brand)',
+        // borderRadius: 20,
     },
     ".MuiTabs-flexContainer": {
         gap: 8,
@@ -54,14 +54,14 @@ export const StyledTabs = styled(Tabs)({
 export const StyledTab = styled(Tab)(
     () => ({
         margin: 5,
-        borderRadius: 20,
+        // borderRadius: 20,
         fontSize: 13,
         fontWeight: 600,
         minHeight: 40,
         height: 40,
         transition: 'color 0.5s',
         '&.Mui-selected': {
-            color: '#fff',
+            // color: '#fff',
         },
         '&.Mui-focusVisible': {
             background: 'red'
