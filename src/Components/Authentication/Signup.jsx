@@ -15,6 +15,7 @@ import { TF_Style } from '../Seller/Tabs/style'
 import useAuth from "../../Hooks/useAuth";
 import { useState } from "react";
 import Success from "./Success";
+import { SERVER_URL } from "../../Utils/urls";
 
 function Signup({ setWindow }) {
   const { signup } = useAuth()
@@ -73,8 +74,7 @@ function Signup({ setWindow }) {
           <IconButton
             aria-label="google"
             onClick={() => {
-              // window.open("https://relieved-enjoyed-fly.ngrok-free.app/auth/google", "_self");
-              window.open("http://localhost:3001/auth/google", "_self");
+              window.open(`${SERVER_URL}/auth/google`, "_self");
             }}
           >
             <Google sx={{ fontSize: 30, color: "#DB4437" }} />
@@ -82,8 +82,7 @@ function Signup({ setWindow }) {
           <IconButton
             aria-label="delete"
             onClick={() => {
-              // window.open("https://relieved-enjoyed-fly.ngrok-free.app/auth/facebook", "_self");
-              window.open("http://localhost:3001/auth/facebook", "_self");
+              window.open(`${SERVER_URL}/auth/facebook`, "_self");
             }}
           >
             <Facebook sx={{ fontSize: 30, color: "#4267B2" }} />

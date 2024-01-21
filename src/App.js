@@ -69,6 +69,7 @@ const router = createBrowserRouter(
   ));
 
 function App() {
+  
   return (
     <MUIContext>
       <AuthContext>

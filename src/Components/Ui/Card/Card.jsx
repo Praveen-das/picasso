@@ -6,7 +6,7 @@ import { forwardRef } from 'react'
 
 const Card = forwardRef(({ product }, ref) => {
     const images = product?.images
-
+    
     return (
         <Link to={`/shop/product/${product?.id}`}>
             <div

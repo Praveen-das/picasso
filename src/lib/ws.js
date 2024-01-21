@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
+import { SERVER_URL } from "../Utils/urls";
 
-const URL = "http://localhost:3001";
-const socket = io(URL, { autoConnect: false });
+const socket = io(SERVER_URL, { autoConnect: false });
 
 export default socket;

@@ -1,12 +1,8 @@
 import axios from "axios";
-
-// const BASE_URL = "https://artworld-server.vercel.app/";
-const BASE_URL = "http://localhost:3001";
-// const BASE_URL = "https://relieved-enjoyed-fly.ngrok-free.app";
-// const BASE_URL = "https://artsworld-server.onrender.com";
+import { SERVER_URL } from "../Utils/urls";
 
 const axiosClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: SERVER_URL,
   headers: {
     "Content-Type": "application/json",
   },

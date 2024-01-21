@@ -15,6 +15,7 @@ import { ReactComponent as Visa } from '../../Assets/svg/visa.svg'
 import { ReactComponent as Mastercard } from '../../Assets/svg/mastercard.svg'
 import { ReactComponent as Upi } from '../../Assets/svg/upi.svg'
 import { useStore } from '../../Store/Store';
+import { SERVER_URL } from '../../Utils/urls';
 
 const button_style = {
   borderRadius: '100px',
@@ -203,7 +204,7 @@ const CheckoutBox = () => {
       name: 'Artworld',
       description: 'Artist registration',
       image: 'http://localhost:1337/logo.svg',
-      callback_url: 'http://localhost:3001/rzp/purchase/verify',
+      callback_url: `${SERVER_URL}/rzp/purchase/verify`,
       prefill: {
         name: user?.displayName,
         email: user?.email,
