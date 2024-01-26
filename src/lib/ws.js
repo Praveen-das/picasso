@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
-import { SERVER_URL } from "../Utils/urls";
+import { BASE_URL } from "../Utils/urls";
 
-const socket = io(SERVER_URL, { autoConnect: false });
+const socket = io(BASE_URL, { autoConnect: false });
 
 export default socket;

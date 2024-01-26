@@ -7,7 +7,7 @@ import '../style.css'
 import { _updateUser } from '../../../Services/user.api';
 import useRzp from '../../../Hooks/useRzp';
 import { loadScript } from '../../../Utils/utils';
-import { SERVER_URL } from '../../../Utils/urls';
+import { BASE_URL } from '../../../Utils/urls';
 
 const faqs = [
     {
@@ -61,7 +61,7 @@ export default function SellerRegistraton() {
             name: 'Artworld',
             description: 'Artist registration',
             image: 'http://localhost:1337/logo.svg',
-            callback_url: `${SERVER_URL}/rzp/registration/verify`,
+            callback_url: `${BASE_URL}/rzp/registration/verify`,
             prefill: {
                 name: 'praveen das',
                 email: 'sdfdsjfh2@ndsfdf.com',

@@ -31,10 +31,10 @@ function Header() {
                 ARTWORLD.
               </label>
             </Link>
-            {/* {
+            {
               pathName !== 'admin' &&
               <Search onSearch={(query) => navigate(`/results?q=${query}`)} />
-            } */}
+            }
           </div>
           <div className="right">
             <Link id='nav_links' to='/cart' >

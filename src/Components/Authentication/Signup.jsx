@@ -15,7 +15,7 @@ import { TF_Style } from '../Seller/Tabs/style'
 import useAuth from "../../Hooks/useAuth";
 import { useState } from "react";
 import Success from "./Success";
-import { SERVER_URL } from "../../Utils/urls";
+import { BASE_URL } from "../../Utils/urls";
 
 function Signup({ setWindow }) {
   const { signup } = useAuth()
@@ -74,7 +74,7 @@ function Signup({ setWindow }) {
           <IconButton
             aria-label="google"
             onClick={() => {
-              window.open(`${SERVER_URL}/auth/google`, "_self");
+              window.open(`${BASE_URL}/auth/google`, "_self");
             }}
           >
             <Google sx={{ fontSize: 30, color: "#DB4437" }} />
@@ -82,7 +82,7 @@ function Signup({ setWindow }) {
           <IconButton
             aria-label="delete"
             onClick={() => {
-              window.open(`${SERVER_URL}/auth/facebook`, "_self");
+              window.open(`${BASE_URL}/auth/facebook`, "_self");
             }}
           >
             <Facebook sx={{ fontSize: 30, color: "#4267B2" }} />
