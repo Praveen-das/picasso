@@ -1,51 +1,44 @@
-import { Box, Modal } from '@mui/material'
-import React from 'react'
-import useCurrentUser from '../../../Hooks/useCurrentUser';
-import { Address } from '../../Form/Address';
-import { SocialMediaLinks } from '../../Form/SocialMediaLinks';
-import { PersonalInfo } from '../../Form/PersonalInfo';
+import { Box } from "@mui/material";
+import useCurrentUser from "../../../Hooks/useCurrentUser";
+import { Address } from "../../Form/Address";
+import { SocialMediaLinks } from "../../Form/SocialMediaLinks";
+import { PersonalInfo } from "../../Form/PersonalInfo";
+import { ChangePassword } from "../../Form/ChangePassword";
+import { ChangeEmail } from "../../Form/ChangeEmail";
+import { AddBio } from "../../Form/AddBio";
+import Modal from "../Modal";
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    borderRadius: '10px',
-    py: 5,
-    px: 5,
-    pb: 6,
-    outline: 'none',
-    display: 'grid',
-    gap: 4
-};
+function EditsModal({ open, onClose }) {
+  const {
+    currentUser: { data: user },
+  } = useCurrentUser();
 
-function EditsModal({ open, onClose, }) {
-    const { currentUser: { data: user } } = useCurrentUser()
+  const forms = {
+    personalInfo: <PersonalInfo data={user} onClose={onClose} />,
+    updateEmail: <ChangeEmail data={user} onClose={onClose} />,
+    updateBio: <AddBio data={user} onClose={onClose} />,
+    "address.add": <Address onClose={onClose} />,
+    "address.update": <Address data={user?.address} onClose={onClose} />,
+    socialMediaLinks: <SocialMediaLinks data={user} onClose={onClose} />,
+    changePassword: <ChangePassword data={user} onClose={onClose} />,
+  };
 
-    const forms = {
-        'personalInfo': <PersonalInfo data={user} {...{ onClose }} />,
-        'address.add': <Address {...{ onClose }} />,
-        'address.update': <Address data={user?.default_address} {...{ onClose }} />,
-        'socialMediaLinks': <SocialMediaLinks data={user} {...{ onClose }} />
-    }
-
-    return (
-        <>
-            <Modal
-                open={Boolean(open)}
-                onClose={() => onClose(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style} >
-                    {forms?.[open]}
-                </Box>
-            </Modal>
-        </>
-    )
+  return (
+    <>
+      <Modal open={Boolean(open)} onClose={() => onClose(false)}>
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 500,
+            display: "grid",
+            gap: 4,
+          }}
+        >
+          {forms?.[open]}
+        </Box>
+      </Modal>
+    </>
+  );
 }
 
-export default EditsModal
+export default EditsModal;

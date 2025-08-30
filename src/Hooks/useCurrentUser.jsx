@@ -8,6 +8,9 @@ import {
   _updateUserAddress,
   _addSocialMediaLink,
   _removeSocialMediaLink,
+  _changePassword,
+  _requestPasswordResetLink,
+  _resetPassword,
 } from "../Services/user.api";
 
 function useCurrentUser() {
@@ -55,6 +58,16 @@ function useCurrentUser() {
       queryClient.invalidateQueries(["currentUser"]);
     },
   });
+  
+  const changePassword = useMutation(_changePassword, {
+    onSettled: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+  
+  const requestPasswordResetLink = useMutation(_requestPasswordResetLink);
+
+  const resetPassword = useMutation(_resetPassword);
 
   return {
     currentUser,
@@ -64,30 +77,11 @@ function useCurrentUser() {
     deleteUserAddress,
     addToRecentlyViewed,
     addSocialMediaLink,
-    removeSocialMediaLink
-  }
-
-}
-
-export function useCurrentUserHelpers() {
-  const queryClient = useQueryClient();
-
-  const { mutateAsync: updateUser, isLoading } = useMutation(_updateUser, {
-    onSettled: () => {
-      queryClient.invalidateQueries(["currentUser"]);
-    },
-  });
-
-  const addSocialMediaLink = useMutation(_addSocialMediaLink, {
-    onSettled: () => {
-      queryClient.invalidateQueries(["currentUser"]);
-    },
-  });
-
-  return {
-    updateUser,
-    addSocialMediaLink
-  }
+    removeSocialMediaLink,
+    changePassword,
+    requestPasswordResetLink,
+    resetPassword
+  };
 }
 
 export default useCurrentUser;

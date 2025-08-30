@@ -3,11 +3,11 @@ footer {
     width: 100%;
     display: block;
     /* background: rgb(27, 27, 27); */
+    /* border-top: 1px solid rgba(0, 0, 0, 0.082); */
     padding: 1rem 2rem;
     padding-bottom: 0;
-    /* border-top: 1px solid rgba(0, 0, 0, 0.082); */
     height: fit-content;
-    margin-top: 2rem;
+    margin-top: 10rem;
 }
 
 .footer-container {
@@ -29,9 +29,9 @@ footer {
 }
 
 .footer-container li {
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: 500;
-    line-height: 25px;
+    line-height: 3em;
 }
 
 .footer2 {
@@ -40,11 +40,12 @@ footer {
     justify-content: center;
     gap: 2rem;
     border-top: solid rgba(0, 0, 0, 0.219) 1px;
+    font-size: 0.9em;
 }
 
 footer p {
     text-align: center;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 .contact ul {
@@ -52,9 +53,9 @@ footer p {
 }
 
 .contact li {
-    line-height: 30px;
+    line-height: 3em;
     text-align: right;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 .follow {

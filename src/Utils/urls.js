@@ -7,4 +7,4 @@ export const isStaging = process.env.NODE_ENV === 'staging'
 
 export const BASE_URL = isProduction
     ? process.env.REACT_APP_SERVER_URL
-    : process.env.REACT_APP_LOCAL_SERVER_URL
+    : 'http://localhost:3001'

@@ -25,10 +25,11 @@
 
 #productImage {
     display: block;
-    width: 100%;
     max-width: 90vw;
-    max-height: 100vh;
+    max-height: 90vh;
     object-fit: contain;
+    background-size: contain;
+    margin-inline: auto;
 }
 
 .cartAndWishlist {

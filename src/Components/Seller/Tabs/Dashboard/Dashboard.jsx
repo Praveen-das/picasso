@@ -1,207 +1,239 @@
-import { useState } from 'react'
-import './dashboard.css'
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { faClock, faUndo } from '@fortawesome/free-solid-svg-icons'
-import Status from '../../../Ui/OrderStatus/Status'
-import EditIcon from '@mui/icons-material/Edit';
-import { IconButton, Skeleton } from '@mui/material'
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
-import confirmAction from '../../../Ui/ConfirmationDialog/ConfirmationDialog'
-import useSales from '../../../../Hooks/useSales'
-import useSalesOrders from "../../../../Hooks/useSalesOrders"
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import CancelIcon from '@mui/icons-material/Cancel';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { Box, Grid, Pagination, Skeleton, Typography } from "@mui/material";
+import { blue, green, orange, purple, red } from "@mui/material/colors";
+import { CheckCircle, Clock, FileText, RotateCcw, Truck, X } from "lucide-react";
+import moment from "moment";
+import { useState } from "react";
+import { hidden } from "../../../../const";
+import useMediaQuery from "../../../../Hooks/useMediaQuery";
+import useSalesOrders from "../../../../Hooks/useSalesOrders";
+import { CopyToClipboard } from "../../../../lib/CopyToClipboard";
+import Card from "../../../Ui/Card";
+import Status from "../../../Ui/OrderStatus/Status";
+import TableHead from "../Components/TableHead";
+import Td from "../Components/Td";
+import "./dashboard.css";
+import StatCard from "./StatCard";
+import { ViewSalesOrder } from "./ViewSalesOrder";
 
-const options = [
-    'pending',
-    'shipped',
-    'completed',
-    'cancelled',
-    'refunded',
-]
-
-const skeleton = new Array(5).fill()
+const skeleton = new Array(5).fill(null);
 
 function Dashboard() {
-    const [toggleEdit, setToggleEdit] = useState(false)
-    const [status, setStatus] = useState('')
+  const lg = useMediaQuery("sm");
+  const [searchParams, setSearchParams] = useState(new URLSearchParams({ p: 1 }));
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const query = searchParams.toString();
+  const salesOrders = useSalesOrders(query);
 
-    const { updateStatus } = useSales()
-    const salesOrders = useSalesOrders()
+  const orders = salesOrders.data?.orders || [];
+  const totalOrders = salesOrders.data?.total_orders || 0;
+  const total = salesOrders.data?.total || 0;
+  const statsRecord = salesOrders.data?.stats;
 
-    const handleOrders = (orderStatus) => {
-        if (status.status)
-            if (status.status !== orderStatus)
-                return confirmAction(
-                    'Change order status',
-                    'Press OK to confirm your action',
-                    () => updateStatus.mutateAsync(status).then(() => setToggleEdit(false))
-                )
+  const pandingOrders = statsRecord?.["pending"] || 0;
+  const ordersShipped = statsRecord?.["shipped"] || 0;
+  const ordersDelivered = statsRecord?.["delivered"] || 0;
+  const ordersCancelled = statsRecord?.["cancelled"] || 0;
+  const ordersRefunded = statsRecord?.["refunded"] || 0;
 
-        setToggleEdit(false)
-    }
+  const stats = [
+    {
+      bgcolor: purple[100],
+      iconColor: purple[400],
+      label: "TOTAL ORDERS",
+      value: totalOrders,
+      Icon: FileText,
+    },
+    {
+      bgcolor: orange[100],
+      iconColor: orange[400],
+      label: "ORDERS PENDING",
+      value: pandingOrders,
+      query: "pending",
+      Icon: Clock,
+    },
+    {
+      bgcolor: blue[100],
+      iconColor: blue[400],
+      label: "ORDERS SHIPPED",
+      value: ordersShipped,
+      query: "shipped",
+      Icon: Truck,
+    },
+    {
+      bgcolor: green[100],
+      iconColor: green[400],
+      label: "ORDERS DELIVERED",
+      value: ordersDelivered,
+      query: "delivered",
+      Icon: CheckCircle,
+    },
+    {
+      bgcolor: red[100],
+      iconColor: red[400],
+      label: "ORDERS CANCELLED",
+      value: ordersCancelled,
+      query: "cancelled",
+      Icon: X,
+    },
+    {
+      bgcolor: purple[100],
+      iconColor: purple[400],
+      label: "ORDERS REFUNDED",
+      value: ordersRefunded,
+      query: "refunded",
+      Icon: RotateCcw,
+    },
+  ];
 
-    return (
-        <>
-            <div className="dashboard-wrapper">
-                <div id="dashboard">
-                    <div className="dashboard-items">
-                        <div className="total_orders" onClick={() => salesOrders.groupBy('')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[1]) ||
-                                    0
-                                }
-                            </label>
-                            <FormatListBulletedIcon fontSize='large' className='icon' />
-                        </div>
-                        <div className="order-pending" onClick={() => salesOrders.groupBy('pending')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[2]?.find(o => o.status === "pending")?._count.status) ||
-                                    0
-                                }
-                            </label>
-                            <Icon className='icon' icon={faClock}></Icon>
-                        </div>
-                        <div className="order-shipped" onClick={() => salesOrders.groupBy('shipped')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[2].find(o => o.status === 'shipped')?._count.status) ||
-                                    0
-                                }
-                            </label>
-                            <LocalShippingIcon fontSize='large' className='icon' />
-                        </div>
-                        <div className="order-completed" onClick={() => salesOrders.groupBy('completed')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[2].find(o => o.status === 'completed')?._count.status) ||
-                                    0
-                                }
-                            </label>
-                            <AssignmentTurnedInIcon fontSize='large' className='icon' />
-                        </div>
-                        <div className="order-cancelled" onClick={() => salesOrders.groupBy('cancelled')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[2].find(o => o.status === 'cancelled')?._count.status) ||
-                                    0
-                                }
-                            </label>
-                            <CancelIcon fontSize='large' className='icon' />
-                        </div>
-                        <div className="order-refunded" onClick={() => salesOrders.groupBy('refunded')}>
-                            <label >
-                                {
-                                    (salesOrders.data && salesOrders.data[2].find(o => o.status === 'refunded')?._count.status) ||
-                                    0
-                                }
-                            </label>
-                            <Icon className='icon' icon={faUndo}></Icon>
-                        </div>
-                    </div>
-                    {/* <label className='recentOrders' >Recent orders</label> */}
-                    <table style={{ width: '100%' }}>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Order id</th>
-                                <th>Order date</th>
-                                <th>quantity</th>
-                                <th>total</th>
-                                <th>Status</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                !salesOrders.isFetching ?
-                                    salesOrders.data?.[0]?.map((order, index) =>
-                                        <tr key={index} style={{ height: '70px' }}>
-                                            <td>{order?.cart_item?.product?.name}</td>
-                                            <td>{order?.id}</td>
-                                            <td>{order?.timer_order_taken}</td>
-                                            <td>{order?.cart_item?.quantity}</td>
-                                            <td>{order?.cart_item?.price}</td>
-                                            <td style={{ width: '120px' }}>
-                                                {
-                                                    toggleEdit !== index ?
-                                                        <span>
-                                                            <Status status={order?.status} />
-                                                        </span> :
-                                                        <select onChange={(e) => setStatus({ id: order.id, status: e.target.value })} name="status" id="dashbord_select">
-                                                            <option hidden className='status_options' >{order?.status}</option>
-                                                            {
-                                                                options.map((value) =>
-                                                                    <option
-                                                                        className='status_options'
-                                                                        key={value}
-                                                                        value={status.status}
-                                                                    >
-                                                                        {value}
-                                                                    </option>
-                                                                )
-                                                            }
-                                                        </select>
-                                                }
-                                            </td>
-                                            <td style={{ width: '60px' }}>
-                                                {
-                                                    toggleEdit === index ?
-                                                        <div id='dashbord_edit' style={{
-                                                            zIndex: toggleEdit === index ? 3 : 1,
-                                                            opacity: toggleEdit === index ? 1 : 0,
-                                                            transitionDelay: toggleEdit === index ? '0.2s' : '0s',
-                                                        }}>
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => setToggleEdit(null)} variant='contained'>
-                                                                <ClearIcon /></IconButton>
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => handleOrders(order?.status)} variant='contained'>
-                                                                <CheckIcon />
-                                                            </IconButton>
-                                                        </div> :
-                                                        <IconButton
-                                                            onClick={() => setToggleEdit(toggleEdit !== index ? index : null)}
-                                                            sx={{ transform: 'translateY(-3px)' }}
-                                                        >
-                                                            <EditIcon sx={{ fontSize: '18px' }} />
-                                                        </IconButton >
-                                                }
-                                            </td>
-                                        </tr>
-                                    ) :
-                                    skeleton.map((_, i) => (
-                                        <tr key={i}>
-                                            <td>
-                                                <Skeleton animation="wave" width={'100px'} />
-                                            </td>
-                                            <td>
-                                                <Skeleton animation="wave" />
-                                            </td>
-                                            <td>
-                                                <Skeleton animation="wave" />
-                                            </td>
-                                            <td >
-                                                <Skeleton animation="wave" />
-                                            </td>
-                                            <td >
-                                                <Skeleton animation="wave" />
-                                            </td>
-                                            <td >
-                                                <Skeleton animation="wave" />
-                                            </td>
-                                        </tr>
-                                    ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </>
-    )
+  const handlePagination = (_, value) => {
+    searchParams.set("p", value);
+    setSearchParams(new URLSearchParams(searchParams));
+  };
+
+  const handleQuery = (query) => {
+    if (!query || searchParams.get("status") === query) searchParams.delete("status");
+    else searchParams.set("status", query);
+    setSearchParams(new URLSearchParams(searchParams));
+  };
+
+  return (
+    <>
+      <ViewSalesOrder
+        open={Boolean(selectedOrder)}
+        onClose={() => setSelectedOrder(null)}
+        orderId={selectedOrder?.id}
+        queryKey={query}
+      />
+
+      <Grid container spacing={4}>
+        <Grid item xs={12}>
+          <Typography variant="h5">Dashboard</Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              display: "grid",
+              width: "100%",
+              gridTemplateColumns: {
+                xs: "repeat(auto-fit, minmax(150px, 1fr))",
+                md: "repeat(auto-fit, minmax(300px, 1fr))",
+              },
+              gap: 2,
+            }}
+          >
+            {stats.map((stat, index) => (
+              <StatCard onClick={handleQuery} key={index} {...stat} />
+            ))}
+          </Box>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card>
+            <Box id="dashboard_table" component="table" width="100%">
+              <Box component="thead" textAlign="justify" mb={4}>
+                <Box color="white" bgcolor="primary.main" component="tr">
+                  <TableHead>Order Id</TableHead>
+                  <TableHead sx={{ textAlign: "start" }} noWrap>
+                    Order date
+                  </TableHead>
+                  <TableHead sx={hidden.sm}>Customer</TableHead>
+                  <TableHead sx={hidden.sm} textAlign="center">
+                    Quantity
+                  </TableHead>
+                  <TableHead textAlign="center">Status</TableHead>
+                  {/* <TableHead sx={hidden.md} textAlign="end">
+                    Actions
+                  </TableHead> */}
+                </Box>
+              </Box>
+
+              <Box sx={{ fontSize: "0.85em" }} component="tbody">
+                {salesOrders.isLoading ? (
+                  skeleton.map((_, i) => (
+                    <tr key={i}>
+                      <Td colSpan={lg ? 10 : 3}>
+                        <Skeleton animation="wave" />
+                      </Td>
+                    </tr>
+                  ))
+                ) : !!orders.length ? (
+                  orders.map((sales_order) => {
+                    let order = sales_order.order;
+
+                    return (
+                      <Box
+                        onClick={() => setSelectedOrder(sales_order)}
+                        sx={{ "&:hover": { bgcolor: "var(--brandLight50) !important" }, cursor: "pointer", height: 70 }}
+                        component="tr"
+                        key={sales_order.id}
+                      >
+                        <Td>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Typography variant="inherit" sx={{ maxWidth: "100px" }} noWrap>
+                              {sales_order.id}
+                            </Typography>
+                            {lg && <CopyToClipboard name="Product id" value={sales_order.id} />}
+                          </Box>
+                        </Td>
+                        <Td>{moment(sales_order?.createdAt).format("MMMM Do YYYY")}</Td>
+                        <Td sx={hidden.sm}>{order?.user.displayName}</Td>
+                        <Td sx={hidden.sm} textAlign="center">
+                          {sales_order?.quantity}
+                        </Td>
+                        <Td>
+                          <Box sx={{ display: "flex", justifyContent: "center" }}>
+                            <Status status={sales_order?.status} />
+                          </Box>
+                        </Td>
+                        {/* <Td sx={hidden.md}>
+                          <Box sx={{ display: "flex", justifyContent: "end" }}>
+                            <Button
+                              onClick={() => setSelectedOrder(sales_order)}
+                              size="small"
+                              startIcon={<Eye style={{ width: "1em", height: "1em" }} />}
+                            >
+                              View
+                            </Button>
+                          </Box>
+                        </Td> */}
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <Td style={{ paddingLeft: 0 }} colSpan={lg ? 10 : 3}>
+                      <Box
+                        sx={{
+                          display: "grid",
+                          placeItems: "center",
+                          p: { xs: 3, lg: 6 },
+                        }}
+                      >
+                        <Typography whiteSpace="normal" textAlign="center">
+                          No orders found. Your orders will appear here once customers start purchasing your artworks.
+                        </Typography>
+                      </Box>
+                    </Td>
+                  </tr>
+                )}
+              </Box>
+            </Box>
+
+            {total > 10 && (
+              <Pagination
+                page={Number(searchParams.get("p"))}
+                color="primary"
+                sx={{ mt: "auto" }}
+                onChange={handlePagination}
+                count={Math.ceil(total / 10)}
+              />
+            )}
+          </Card>
+        </Grid>
+      </Grid>
+    </>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

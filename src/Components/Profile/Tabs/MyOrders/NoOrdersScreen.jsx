@@ -1,16 +1,24 @@
-import { Box, Typography } from '@mui/material';
-import { ReactComponent as NoOrders } from '../../../../Assets/svg/noorders.svg';
-import { emptyItemBoxStyle } from '../../styles';
+import { Box, Container, Typography } from "@mui/material";
+import { ReactComponent as NoOrders } from "../../../../Assets/svg/noorders.svg";
+import { emptyItemBoxStyle } from "../../styles";
 
 export function NoOrdersScreen() {
-
-    return (
-        <Box sx={emptyItemBoxStyle}>
-            <NoOrders height={250} style={{
-                marginRight: -20,
-                marginBottom: '2.5rem'
-            }} />
-            <Typography color='#000' variant='h6' fontSize={22}>NO ORDERS FOUND</Typography>
-            <Typography color='#555' fontWeight={500} fontSize={16}>Looks like you haven't made any orders yet</Typography>
-        </Box>);
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        placeItems: "center",
+        textAlign: "center",
+        gap: 2,
+        px: 6,
+        py: 4,
+      }}
+    >
+      <NoOrders height={250} />
+      <Typography variant="title.primary" fontWeight={500}>
+        No orders found
+      </Typography>
+      <Typography>Looks like you haven't made any orders yet</Typography>
+    </Box>
+  );
 }

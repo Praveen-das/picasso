@@ -8,7 +8,6 @@ export const productValidation = yup.object({
   discount: yup.number().max(100),
   images: yup.array().of(yup.mixed()).min(1).max(5),
   category_id: yup.number(),
-  subCategory_id: yup.number(),
   collections_id: yup.number(),
   subject_id: yup.number(),
   style_id: yup.number(),
@@ -20,7 +19,6 @@ export const productValidation = yup.object({
 
 export const productUpdateValidation = yup.object({
   name: yup.string(),
-  category_id: yup.number(),
   material_id: yup.number(),
   desc: yup.string(),
   price: yup.number(),

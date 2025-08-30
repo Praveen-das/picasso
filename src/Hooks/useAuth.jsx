@@ -1,19 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  logoutUser,
-  signinUser,
-  signupUser,
-} from "../Services/user.api";
+import { logoutAdmin as _logoutAdmin, logoutUser, signinUser,signinAdmin as _signinAdmin, signupUser } from "../Services/user.api";
 import socket from "../lib/ws";
 import { useNavigate } from "react-router-dom";
 
 function useAuth() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
   const { mutateAsync: signin } = useMutation(signinUser, {
     onSuccess: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
+  const { mutateAsync: signinAdmin } = useMutation(_signinAdmin, {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(["currentUser"]);
     },
   });
@@ -30,22 +32,30 @@ function useAuth() {
     },
   });
 
+  const logoutAdmin = useMutation(_logoutAdmin, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["currentUser"]);
+    },
+  });
+
   function handleLogout() {
-    logout.mutateAsync()
+    logout
+      .mutateAsync()
       .then(() => {
-        socket.disconnect()
+        socket.disconnect();
       })
       .finally(() => {
-        navigate('/')
-      })
-
+        navigate("/");
+      });
   }
 
   return {
     signin,
-    signup,
     logout,
-    handleLogout
+    signinAdmin,
+    logoutAdmin,
+    signup,
+    handleLogout,
   };
 }
 

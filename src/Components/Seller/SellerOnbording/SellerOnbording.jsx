@@ -1,186 +1,222 @@
-import { Box, Button, Checkbox, Container, FormControlLabel, Typography } from '@mui/material'
-import React, { useRef, useState } from 'react'
-import { CSSTransition } from 'react-transition-group'
-import TextField from '../../Ui/TextField'
-import { Form, Formik } from 'formik'
-import { accountDetailsSchema } from '../../../Schema/userSchema'
-import { createLinkedAccount } from '../../../Services/rzp.api'
-import success from '../../../Assets/success.gif'
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material";
+import { useFormik } from "formik";
+import { useState } from "react";
+import { accountDetailsSchema, userDetailSchema } from "../../../Schema/userSchema";
 
-import '../style.css'
-import { useNavigate } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
-import LoadingButton from '@mui/lab/LoadingButton/LoadingButton'
+import AccountBalanceIcon from "@mui/icons-material/AccountBalanceOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import { useQueryClient } from "@tanstack/react-query";
+import "../style.css";
+
+import useCurrentUser from "../../../Hooks/useCurrentUser";
+import { createLinkedAccount, updateLinkedAccount } from "../../../Services/rzp.api";
+import { gap, spacing } from "../../../const";
+import Card from "../../Ui/Card";
+import BankDetailsForm from "./BankDetailsForm";
+import OnboardingStatus from "./OnboardingStatus";
+import SellerDetailsForm from "./SellerDetailsForm";
+import useRzp from "../../../Hooks/useRzp";
+import { useNavigate } from "react-router-dom";
 
 function SellerOnbording() {
-  const [step, setStep] = useState(0)
-  const [email, setEmail] = useState('')
+  const currentUser = useCurrentUser().currentUser.data;
+  const queryClient = useQueryClient();
+  const { createBankAccount } = useRzp();
+  const navigate = useNavigate();
 
-  return (
-    <Container maxWidth='sm'>
-      <Box
-        sx={{
-          boxShadow: '0 10px 10px 5px var(--brandLight)',
-          borderRadius: '20px',
-          position: 'relative',
-          width: '100%',
-        }}
-      >
-        <Onboarding
-          active={step === 0}
-          callback={(value) => {
-            setEmail(value)
-            setStep(1)
-          }}
-        />
-        <SellerOnbordingSuccess
-          data={email}
-          active={step === 1}
-          callback={() => setStep(0)}
-        />
-      </Box>
-    </Container>
-  )
-}
+  const [activeStep, setActiveStep] = useState(0);
 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
 
-function SellerOnbordingSuccess({ active, callback, data: email }) {
-  const ref = useRef()
-  const navigate = useNavigate()
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
-  return (
-    <CSSTransition nodeRef={ref} className='onboarding' in={active} timeout={1000} >
-      <div ref={ref}>
-        <Typography variant='h5'>CONGRATULATIONS</Typography>
-        <img width={200} height={200} src={success} alt="" />
-        <Typography>
-          Your are successfully connected to Razorpay payment gateway.
-          Your Razorpay dashboard will get activated within 24 hours and a confirmation mail will be sent to your email <span className='emailid'>{email}</span>. Thank you.
-        </Typography>
-        <Button onClick={() => {
-          navigate("/dashboard")
-          callback()
-        }} sx={{ mt: 4 }} variant='contained' size='large'>Dashboard</Button>
-      </div>
-    </CSSTransition>
-  )
-}
+  const userDetails = useFormik({
+    initialValues: initialValues.userDetail,
+    validationSchema: userDetailSchema,
+    validateOnChange: false,
+    validateOnMount: false,
+    onSubmit: handleSubmittingSellerDetails,
+  });
 
-function Onboarding({ active, callback }) {
-  const ref = useRef()
-  const queryClient = useQueryClient()
+  const bankAccount = useFormik({
+    initialValues: initialValues.bankAccount,
+    // validationSchema: accountDetailsSchema,
+    validateOnChange: false,
+    validateOnMount: false,
+    onSubmit: handleSubmittingBankAccount,
+  });
 
-  async function handleSubmit(payload, { setSubmitting, setFieldError }) {
+  async function handleSubmittingSellerDetails(payload, { setStatus, setFieldError }) {
+    try {
+      const accountId = currentUser.linked_account?.accountId;
+      if (accountId) {
+        await updateLinkedAccount(accountId, payload);
+      } else await createLinkedAccount(payload);
 
-    const data = {
-      "name": payload.name,
-      "email": payload.email,
-      "tnc_accepted": payload.tnc_accepted,
-      "account_details": {
-        "business_name": "Acme Corporation",
-        "business_type": "individual"
-      },
-      "bank_account": {
-        "ifsc_code": payload.ifsc_code,
-        "beneficiary_name": payload.name,
-        "account_number": payload.account_number,
-      },
+      queryClient.invalidateQueries(["currentUser"]);
+      setStatus({ submitted: true });
+      handleNext();
+    } catch (error) {
+      const errorResponse = error.response.data;
+      if (errorResponse.code === "BAD_REQUEST_ERROR") {
+        setFieldError(errorResponse.field, errorResponse.description);
+      }
     }
-
-    await createLinkedAccount(data)
-      .then((res) => {
-        queryClient.invalidateQueries(["currentUser"])
-        callback(data?.email)
-      })
-      .catch((err) => {
-        console.log('error---->', err.response.data.error.description)
-        setFieldError('email', err.response.data.error.description)
-      })
-
-    setSubmitting(false)
   }
 
-  return (
-    <CSSTransition nodeRef={ref} className='onboardingConfirmation' in={active} timeout={1000} >
-      <div ref={ref} >
-        <Formik
-          initialValues={{
-            name: '',
-            email: '',
-            account_number: '',
-            ifsc_code: '',
-            tnc_accepted: false,
-          }}
-          validationSchema={accountDetailsSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting, errors, touched, handleChange, handleBlur, setFieldError }) => (
-            <Form>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gap: 4
-                }}
-              >
-                <Typography variant='h5'>SELLER ONBOARDING</Typography>
-                <Box>
-                  <a className='razorpay_logo' href="https://razorpay.com/" target="_blank" rel="noreferrer" >
-                    <img referrerPolicy="origin" src="https://badges.razorpay.com/badge-light.png " style={{ height: '45px', width: '113px' }} alt="Razorpay | Payment Gateway | Neobank" />
-                  </a>
-                </Box>
-                <Typography sx={{ mt: -2, mb: 2 }}>Create a payout account for receiving payments.</Typography>
-                <TextField
-                  name='name'
-                  label='Name'
-                  error={touched.name && Boolean(errors.name) && errors.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <TextField
-                  name='email'
-                  label='Email'
-                  error={touched.email && Boolean(errors.email) && errors.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <TextField
-                  name='account_number'
-                  label='Account Number'
-                  error={touched.account_number && Boolean(errors.account_number) && errors.account_number}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <TextField
-                  name='ifsc_code'
-                  label='IFSC Code'
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.ifsc_code && Boolean(errors.ifsc_code) && errors.ifsc_code}
-                />
-                <FormControlLabel
-                  name='tnc_accepted'
-                  label='I Agree to the terms and conditions.'
-                  required
-                  onChange={handleChange}
-                  control={<Checkbox size='small' />}
-                />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: 2,
+  async function handleSubmittingBankAccount(payload, { setStatus, setFieldError }) {
+    try {
+      const res = await createBankAccount.mutateAsync(payload);
+      setStatus({ submitted: true });
+      navigate("/dashboard", { state: { status: "success" }, replace: true });
+      queryClient.invalidateQueries(["currentUser"]);
+    } catch (error) {
+      const errorResponse = error.response.data;
+      if (errorResponse.code === "BAD_REQUEST_ERROR") {
+        setFieldError(errorResponse.field, errorResponse.description);
+      }
+    }
+  }
 
-                  }}
-                >
-                  <Button fullWidth size='large' >Skip</Button>
-                  <LoadingButton loading={isSubmitting} fullWidth type='submit' variant='contained' size='large'>Proceed</LoadingButton>
-                </Box>
+  const accountLinked = currentUser?.linked_account?.status === "created";
+
+  return (
+    <Box sx={{ position: "relative", width: "100%" }}>
+      <Grid container spacing={spacing} px={gap} pt={2} pb={6}>
+        <Grid item xs={12} md={8} textAlign="start">
+          <Box sx={{ display: "grid", gap: 4 }}>
+            <Box sx={{ display: "grid", gap: 2 }}>
+              <Typography variant="h5">Onboarding Status</Typography>
+              <Typography variant="h10">Complete your seller registration to start selling on our platform</Typography>
+            </Box>
+
+            <Box sx={{ display: "grid", gap: 2, mt: 2 }}>
+              <OnboardingStatus
+                title="Store Details"
+                active={activeStep + 1 === 1}
+                completed={Boolean(accountLinked)}
+                icon={PersonOutlineIcon}
+                index={1}
+              />
+              <OnboardingStatus
+                title="Bank Account"
+                active={activeStep + 1 === 2}
+                completed={Boolean(bankAccount.status?.submitted)}
+                icon={AccountBalanceIcon}
+                index={2}
+              />
+            </Box>
+
+            <Card>
+              <Box sx={{ display: "grid", gap: 2, px: { sm: 4 }, pt: 5, pb: 8 }}>
+                <Grid item container xs={12} height="fit-content" spacing={4} textAlign="start">
+                  <SellerDetailsForm formData={userDetails} open={!accountLinked} />
+                  <BankDetailsForm formData={bankAccount} open={!!accountLinked} onBack={handleBack} />
+                </Grid>
               </Box>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    </CSSTransition >
-  )
+            </Card>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={4} textAlign="start">
+          <Box sx={{ display: "grid", gap: 4 }}>
+            <Card sx={{ display: { xs: "none", md: "unset" } }}>
+              <Box sx={{ display: "grid", gap: 2, p: { sm: 3 } }}>
+                <a href="https://razorpay.com/" target="_blank" rel="noreferrer">
+                  <img
+                    referrerPolicy="origin"
+                    src="https://badges.razorpay.com/badge-light.png "
+                    style={{ height: "45px", width: "113px" }}
+                    alt="Razorpay | Payment Gateway | Neobank"
+                  />
+                </a>
+                <Typography variant="subtitle2" lineHeight={2}>
+                  Our seller onboarding and payments are securely powered by Razorpay, ensuring fast KYC verification,
+                  smooth payouts, and complete compliance — so you can focus on selling, while we take care of the rest.
+                </Typography>
+              </Box>
+            </Card>
+
+            <Card>
+              <Box sx={{ display: "grid", gap: 3, p: { sm: 3 } }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <HelpOutlineOutlinedIcon color="primary" />
+                  <Typography variant="title.colored">Frequently Asked Questions</Typography>
+                </Box>
+                {sellerFAQs.map(({ question, answer }, i) => (
+                  <Accordion key={i} defaultExpanded={i === 0}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1-content"
+                      id="panel1-header"
+                      sx={{ p: 0 }}
+                    >
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        {question}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ p: 0, m: 0 }}>
+                      <Typography variant="subtitle2">{answer}</Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Box>
+            </Card>
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }
 
-export default SellerOnbording
+const sellerFAQs = [
+  {
+    question: "Who can sell on our platform?",
+    answer:
+      "Anyone with a valid business or individual identity and the necessary documents (GST, PAN, Bank Account, etc.) can register as a seller.",
+  },
+  {
+    question: "What documents are required to register as a seller?",
+    answer:
+      "You will typically need:\n- PAN Card\n- GSTIN (for taxable goods)\n- Bank account details\n- Business address proof\n- Identity proof (for individuals or authorized signatories)",
+  },
+  {
+    question: "How long does it take to get my seller account approved?",
+    answer:
+      "Typically, seller verification and account activation take 24 to 48 hours after successful submission of all required documents.",
+  },
+  {
+    question: "Are there any registration or setup fees?",
+    answer:
+      "No, registering as a seller on our platform is completely free. You only pay a commission on each successful sale.",
+  },
+];
+
+const initialValues = {
+  userDetail: {
+    name: "",
+    email: "",
+    phone: "",
+    street1: "",
+    street2: "",
+    city: "",
+    state: "",
+    country: "IN",
+    postal_code: "",
+  },
+  bankAccount: {
+    account_number: "",
+    pan: "ABCDE1234k",
+    ifsc_code: "",
+    beneficiary_name: "",
+    tnc_accepted: false,
+  },
+};
+
+export default SellerOnbording;

@@ -1,73 +1,54 @@
 .product_card {
   position: relative;
-  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 10px;
-  gap: 20px;
 }
 
 .card_overlay {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(10px);
-  background: #000000dc;
+  text-align: center;
+  /* position: absolute;
+  inset: 0; */
   padding: 1em 1em;
   transition: 0.5s;
   /* border-radius: 20px; */
-  opacity: 0;
+  opacity: 1;
 }
-.card_overlay--items{
+
+.card_overlay--items {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-}
-
-.card_overlay_text {
   color: white;
-  font-size: 16px;
-  font-weight: 600;
-  translate: 0 50px
-}
-
-.card_overlay_text--secondry {
-  color: white;
-  font-size: 14px;
-  font-weight: 400;
-  translate: 0 50px
 }
 
 .product_card:hover .card_overlay {
   opacity: 1;
 }
 
-.card_overlay_text,
-.card_overlay_text--secondry {
-  transition: 0.5s 0.5s;
+.product_card:hover .product_image {
+  scale: 1.1;
 }
 
-.product_card:hover .card_overlay_text {
+.wishlist-btn {
   transition: 0.5s;
-  translate: 0 0px;
+  /* opacity: 0; */
 }
 
-.product_card:hover .card_overlay_text--secondry {
-  transition: 0.5s 0.1s;
-  translate: 0 0px;
+.product_card:hover .wishlist-btn {
+  opacity: 1;
 }
 
 .product_image {
-  min-width: 150px;
   height: 100%;
   display: block;
   object-fit: cover;
+  background-size: cover;
   transition: 0.5s;
-  z-index: -1;
+  box-shadow: 0px 20px 30px -10px #0000003b;
 }
 
 .shop_products .painting {
@@ -79,7 +60,6 @@
   border-radius: 1px;
   transition: 0.1s ease-in-out;
   box-shadow: 0 0 0 4px white, -25px 25px 25px #00000073;
-
 }
 
 .painting:hover {

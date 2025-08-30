@@ -8,28 +8,5 @@
     text-transform: capitalize;
     border-radius: 10px;
     font-size: 12px;
-}
-
-.status_pending {
-    background: var(--brand);
-}
-
-.status_shipped {
-    background: #ff9800;
-}
-
-.status_completed {
-    background: #4caf50;
-}
-
-.status_declined {
-    background: #6d50ef;
-}
-
-.status_cancelled {
-    background: #ef5350;
-}
-
-.status_refunded {
-    background: #4c98af;
+    font-weight: 500;
 }

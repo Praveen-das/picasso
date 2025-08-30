@@ -1,143 +1,288 @@
 import { useMemo, useState } from "react";
 import "./header.css";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigation } from "react-router-dom";
 import DropDown from "../../Ui/DropDown/DropDown";
 import Avatar from "../../Ui/Avatar/Avatar";
 import { useNavigate } from "react-router-dom";
-import Search from "../../../Components/Ui/Search/Search";
+import SearchWrapper from "../../Ui/Search/SearchWrapper";
 import FavoriteIcon from "@mui/icons-material/FavoriteBorder";
 import { useStore } from "../../../Store/Store";
 import useCurrentUser from "../../../Hooks/useCurrentUser";
 import useAuth from "../../../Hooks/useAuth";
-import { Badge, Box, IconButton, Typography } from "@mui/material";
-import CartIcon from '@mui/icons-material/ShoppingBagOutlined';
-import LoginIcon from '@mui/icons-material/LoginOutlined';
-import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
+
+import {
+  Badge,
+  Box,
+  Button,
+  Container,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import CartIcon from "@mui/icons-material/ShoppingBagOutlined";
+import LoginIcon from "@mui/icons-material/LoginOutlined";
+import PersonIcon from "@mui/icons-material/PersonOutlineOutlined";
+import useMediaQuery from "../../../Hooks/useMediaQuery";
+import {
+  AlignJustify,
+  ChartLine,
+  ChevronRight,
+  Heart,
+  House,
+  InboxIcon,
+  Layers2,
+  LogIn,
+  Package,
+  SearchIcon,
+  ShieldCheck,
+  ShoppingBag,
+  ShoppingCart,
+  User,
+} from "lucide-react";
+import { gap } from "../../../const";
+import { useProducts, useProductSearch } from "../../../Hooks/useProducts";
+import { useRecentSearches } from "../../../Store/useRecentSearches";
 
 function Header() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation()
-  let pathName = pathname.slice(1)
+  const matches = useMediaQuery("sm");
+
+  return <nav id="navbar">{matches ? <WindowHeader /> : <MobileHeader />}</nav>;
+}
+
+function WindowHeader() {
+  const { pathname } = useLocation();
   const { currentUser } = useCurrentUser();
-  const { handleLogout } = useAuth()
+  const { handleLogout } = useAuth();
+  const isAdminRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/seller");
+  const isLg = useMediaQuery("lg");
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        height: "4em",
+        px: 4,
+      }}
+    >
+      <Link to="/">
+        <label className="header_brandName">ARTWORLD.</label>
+      </Link>
+      {!isAdminRoute && (
+        <Box width="40%">
+          <SearchWrapper mode={!isLg && "modal"} />
+        </Box>
+      )}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 3, ml: { sm: "auto" } }}>
+        <Link id="nav_links" to="/cart">
+          <CartIcon fontSize="small" />
+        </Link>
+        {currentUser.data !== null ? (
+          <Select
+            mainElement={
+              <IconButton size="small">
+                <Avatar displayName={currentUser.data?.displayName} profilePicture={currentUser.data?.photo} />
+              </IconButton>
+            }
+          >
+            {currentUser.data?.role === "seller" && <Menu to="/dashboard">Dashboard</Menu>}
+            <Menu to="/profile">Profile</Menu>
+            <Menu onClick={handleLogout}>Logout</Menu>
+          </Select>
+        ) : (
+          <Link id="nav_links" to="/sign-in">
+            <LoginIcon fontSize="small" />
+          </Link>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+function MobileHeader() {
+  const { pathname } = useLocation();
+  const currentUser = useCurrentUser().currentUser.data;
+  const navigate = useNavigate();
+
+  const [openDrawer, toggleDrawer] = useState(false);
+
+  const isDashboardRoute = pathname.startsWith("/dashboard");
+  const isAdminRoute = isDashboardRoute || pathname.startsWith("/seller");
 
   return (
     <>
-      <nav id='navbar'>
-        <div className="navbar">
-          <div className="left">
-            <Link to="/">
-              <label className="header_brandName">
-                ARTWORLD.
-              </label>
-            </Link>
-            {
-              pathName !== 'admin' &&
-              <Search onSearch={(query) => navigate(`/results?q=${query}`)} />
-            }
-          </div>
-          <div className="right">
-            <Link id='nav_links' to='/cart' >
-              <CartIcon fontSize='small' />
-            </Link>
-            {
-              currentUser.data !== null ?
-                <Select
-                  mainElement={
-                    <IconButton size='small'>
-                      <Avatar
-                        sx={{ width: 30, height: 30 }}
-                        displayName={currentUser.data?.displayName}
-                        profilePicture={currentUser.data?.photo}
-                      />
-                    </IconButton>
-                  }
-                >
-                  {
-                    currentUser.data?.role === 'seller' &&
-                    <Menu to="/dashboard">Dashboard</Menu>
-                  }
-                  <Menu to='/profile'>Profile</Menu>
-                  <Menu onClick={handleLogout}>Logout</Menu>
-                </Select>
-                :
-                <Link id='nav_links'
-                  to="/login"
-                >
-                  <LoginIcon fontSize='small' />
-                </Link>
-            }
-            {/* <Badge badgeContent={userData && userData.cart ? userData.cart.length : 0} color="primary">
-          </Badge> */}
-            {/* {currentUser.data !== null ? (
-            <DropDown>
-              <Avatar
-                displayName={currentUser.data?.displayName}
-                profilePicture={currentUser.data?.photo}
-              />
-
-              <Link to="/cart">
-                <CartIcon {...style} />
-                My Cart
-              </Link>
-              <Link to="/cart">
-                <FavoriteIcon {...style} />
-                Wishlist
-              </Link>
-              <div onClick={() => logout.mutateAsync().then(() => navigate('/'))}>
-                <LogoutIcon {...style} />
-                Logout
-              </div>
-            </DropDown>
-          ) : (
-            <Link to="/login" style={{ display: 'flex', placeItems: 'center', gap: 10 }}>
-              LOG IN
-            </Link>
-          )} */}
-          </div>
-          {/* <IconButton sx={{ position: 'absolute', right: '8px' }}>
-                    <SearchIcon />
-                </IconButton> */}
-        </div>
-        {/* <Box
+      <Box
         sx={{
-          mx: 4,
-          py: 1.5,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          fontSize: 13,
-          borderTop: '1px solid #e7e7e78a',
-          position: 'sticky',
-          top: 0
+          // position: "fixed",
+          top: 0,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+          height: "4em",
+          px: gap,
+          bgcolor: "white",
         }}
       >
-        <Link style={{ display: 'flex', alignItems: 'center', fontSize: 14, fontWeight: 700 }} to="/shop" >
-          <MenuIcon fontSize="small" sx={{ mr: 2 }} />
-          All Categories
+        <IconButton size="small" onClick={() => toggleDrawer(true)}>
+          <AlignJustify style={{ width: "1.1em", height: "1.1em" }} />
+        </IconButton>
+
+        <Link to={isDashboardRoute ? "/dashboard" : "/"}>
+          {isDashboardRoute ? (
+            <label className="header_brandName">Dashboard</label>
+          ) : (
+            <label className="header_brandName">ARTWORLD.</label>
+          )}
         </Link>
-        <Box display='flex' gap={3} textTransform='uppercase'>
-          <Link to="/shop" className='nav_bottom' >
-            Latest
-          </Link>
-          <Link to="/shop" className='nav_bottom' >
-            Product
-          </Link>
-          <Link to="/shop" className='nav_bottom' >
-            Shop
-          </Link>
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: "auto" }}>
+          {!isAdminRoute && <SearchWrapper mode="modal" />}
+          <IconButton sx={{ ml: "auto" }} size="small" onClick={() => navigate("/cart")}>
+            <CartIcon sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
-        <Link style={{ marginLeft: 'auto' }} to="/dashboard" >
-          Sell on Artworld
-        </Link>
-      </Box> */}
-      </nav>
+
+        <Drawer sx={{ position: "fixed", inset: 0 }} open={Boolean(openDrawer)} onClose={() => toggleDrawer(false)}>
+          <Box
+            sx={{ pb: 2, width: "70vw", height: "100%", bgcolor: "var(--brand)", color: "white" }}
+            role="presentation"
+            onClick={() => toggleDrawer(false)}
+          >
+            <Box sx={{ mx: 1, my: 2, bgcolor: "var(--brand)", borderRadius: 4 }}>
+              {currentUser !== null ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }} onClick={() => navigate("/profile")}>
+                  <IconButton size="small" onClick={() => toggleDrawer(true)}>
+                    <Avatar displayName={currentUser?.displayName} profilePicture={currentUser?.photo} />
+                  </IconButton>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2, color: "white" }}>
+                    <Typography color="white">Hello, {currentUser?.displayName}</Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Button
+                  fullWidth
+                  endIcon={<LogIn size={20} />}
+                  component={Link}
+                  variant="text"
+                  size="large"
+                  color="secondary"
+                  to="/sign-in"
+                  sx={{ justifyContent: "start" }}
+                >
+                  Login / Signup
+                </Button>
+              )}
+            </Box>
+            <Divider />
+            <List>
+              {(isDashboardRoute ? adminListItems : listItems).map(({ label, Icon, showIcon, to, state }, idx) => (
+                <ListItem key={idx} disablePadding>
+                  <ListItemButton onClick={() => navigate(to, { state })}>
+                    {showIcon && (
+                      <ListItemIcon sx={{ minWidth: 0, mr: 2 }}>
+                        <Icon size={18} color="white" />
+                      </ListItemIcon>
+                    )}
+                    <ListItemText primary={label} primaryTypographyProps={{ color: "white" }} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
+      </Box>
     </>
   );
 }
 
-function Select({ mainElement, children }) {
+const adminListItems = [
+  {
+    label: "Home",
+    showIcon: true,
+    to: "/",
+    Icon: House,
+  },
+  {
+    label: "Dashboard",
+    showIcon: true,
+    to: "/dashboard",
+    state: { initialTab: 0 },
+    Icon: ChartLine,
+  },
+  {
+    label: "Manage Products",
+    showIcon: true,
+    to: "/dashboard",
+    state: { initialTab: 1 },
+    Icon: Package,
+  },
+];
 
+const listItems = [
+  {
+    label: "Dashboard",
+    showIcon: true,
+    to: "/dashboard",
+    state: { initialTab: 0 },
+    Icon: ChartLine,
+  },
+  {
+    label: "My Profile",
+    showIcon: true,
+    to: "/profile",
+    state: { initialTab: 0 },
+    Icon: User,
+  },
+  {
+    label: "Security",
+    showIcon: true,
+    to: "/profile",
+    state: null,
+    state: { initialTab: 1 },
+    Icon: ShieldCheck,
+  },
+
+  {
+    label: "My Cart",
+    showIcon: true,
+    to: "/cart",
+    state: null,
+    Icon: ShoppingCart,
+  },
+  {
+    label: "My Orders",
+    showIcon: true,
+    to: "/profile",
+    state: { initialTab: 2 },
+    Icon: Package,
+  },
+  {
+    label: "My Wishlist",
+    showIcon: true,
+    to: "/profile",
+    state: { initialTab: 3 },
+    Icon: Heart,
+  },
+  {
+    label: "All Categories",
+    showIcon: true,
+    to: "/categories",
+    state: null,
+    Icon: Layers2,
+  },
+];
+
+function Select({ mainElement, children }) {
   return (
     <Box
       sx={{
@@ -145,75 +290,81 @@ function Select({ mainElement, children }) {
         ":hover": {
           ".select_options": {
             opacity: 1,
-            translate: '10px 0',
-            pointerEvents: 'all',
-            transition: '0.2s',
-          }
-        }
+            translate: "10px 0",
+            pointerEvents: "all",
+            transition: "0.2s",
+          },
+        },
       }}
     >
       {mainElement}
       <Box
-        className='select_options'
+        className="select_options"
         sx={{
-          position: 'absolute',
+          position: "absolute",
           right: 0,
-          bgcolor: 'white',
+          bgcolor: "white",
           opacity: 0,
-          translate: '10px 20px',
-          pointerEvents: 'none',
-          // borderRadius: '5px',
-          overflow: 'hidden',
-          transition: '0.1s',
+          translate: "10px 20px",
+          pointerEvents: "none",
+          borderRadius: 2,
+          overflow: "hidden",
+          transition: "0.1s",
           boxShadow: "0 5px 10px rgb(0 0 0 / 17%)",
         }}
       >
         {children}
       </Box>
     </Box>
-  )
+  );
 }
 
 function Menu({ children, to, onClick }) {
-
   return (
     <Link to={to} onClick={onClick}>
       <Box
         sx={{
-          pl: 3,
-          pr: 5,
-          py: 1,
-          bgcolor: 'white',
-          display: 'flex',
-          alignItems: 'center',
-          transition: '0.2s',
+          pl: "1em",
+          pr: "2em",
+          py: "0.7em",
+          bgcolor: "white",
+          display: "flex",
+          alignItems: "center",
+          transition: "0.2s",
+
           ":hover": {
-            color: 'var(--brand) !important',
-          }
+            color: "var(--brand) !important",
+            background: "#0000001a !important",
+          },
         }}
       >
-        <Typography fontSize={14} fontWeight={600}>
+        <Typography fontSize="0.85em" fontWeight={500}>
           {children}
         </Typography>
       </Box>
     </Link>
-  )
+  );
 }
 
 export default Header;
 
 function MessagesLink() {
-  const unreadMessages = useStore(s => s.unreadMessages)
+  const unreadMessages = useStore((s) => s.unreadMessages);
   const totalUnreadMessages = useMemo(() => {
-    const u_msg = Array.from(unreadMessages?.values())
-    return u_msg?.reduce((c, a) => {
-      c += a.length
-      return c
-    }, 0) || 0
-  }, [unreadMessages])
+    const u_msg = Array.from(unreadMessages?.values());
+    return (
+      u_msg?.reduce((c, a) => {
+        c += a.length;
+        return c;
+      }, 0) || 0
+    );
+  }, [unreadMessages]);
 
-  return <Badge badgeContent={totalUnreadMessages} color="primary">
-    <Link to='/chat' className='create' >Messages</Link>
-  </Badge>;
+  return (
+    <Badge badgeContent={totalUnreadMessages} color="primary">
+      <Link to="/chat" className="create">
+        Messages
+      </Link>
+    </Badge>
+  );
 }
-

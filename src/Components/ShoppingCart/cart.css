@@ -1,84 +1,66 @@
 .checkout__product--wrapper,
 .checkout__wrapper {
-    box-sizing: border-box;
-    min-height: 100px;
-    position: relative;
-    border-radius: 10px;
-    transition: 0.1s;
+  box-sizing: border-box;
+  min-height: 100px;
+  position: relative;
+  border-radius: 10px;
+  transition: 0.1s;
 }
 
 .checkout__wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 4rem 3rem;
-    background-color: var(--brandLight);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 4rem 3rem;
+  background-color: var(--brandLight);
 }
 
 .product_imgNQty {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
-
-
-
-
 
 .checkout__checkout {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 1.5rem;
-    align-items: baseline;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1.5rem;
+  align-items: baseline;
 }
 
-.checkout__checkout>:nth-child(even) {
-    margin-left: auto;
-}
-
-.emptyCart {
-    display: grid;
-    place-items: center;
-    padding-block: 1rem;
-    box-sizing: border-box;
-}
-
-.emptyCart label {
-    font-size: 2rem;
-    font-weight: 800;
+.checkout__checkout > :nth-child(even) {
+  margin-left: auto;
 }
 
 .checkout__product--wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-    padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .checkout__product {
-    box-sizing: border-box;
-    position: relative;
-    display: grid;
-    align-items: center;
-    grid-template-columns: 100px 1fr;
-    gap: 1.5rem;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 100px 1fr;
+  gap: 1.5rem;
 }
 
 .checkout__product:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .checkout__product img {
-    display: flex;
-    max-width: 140px;
-    max-height: 140px;
-    margin: auto;
+  display: flex;
+  max-width: 140px;
+  max-height: 140px;
+  margin: auto;
 }
 
 .checkout__product--details {
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
 }

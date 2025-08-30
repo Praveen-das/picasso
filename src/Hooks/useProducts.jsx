@@ -1,71 +1,72 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchProduct, fetchAdminProducts, fetchProducts, _addProduct, _updateProduct, _deleteProduct, productQuery } from "../Services/product.api";
+import {
+  fetchProduct,
+  fetchAdminProducts,
+  fetchProducts,
+  _addProduct,
+  _updateProduct,
+  _deleteProduct,
+  productQuery,
+} from "../Services/product.api";
 
-
-export function useProducts() {
-    const queryString = window.location.search.slice(1)
-
-    return useQuery(
-        [
-            'products',
-            queryString
-        ],
-        () => fetchProducts(
-            queryString
-        ),
-        {
-            keepPreviousData: true
-        }
-    )
+export function useProductSearch(queryString = window.location.search.slice(1)) {
+  return useQuery(["product-query", queryString], () => fetchProducts(queryString), {
+    keepPreviousData: true,
+    enabled: Boolean(queryString),
+  });
 }
 
-export function useProductQuery(queryKey, url) {
-    return useQuery([queryKey,url], () => productQuery(url), {
-        keepPreviousData: true,
-    })
+export function useProducts(queryString = "") {
+  return useQuery(["products", queryString], () => fetchProducts(queryString), {
+    keepPreviousData: true,
+  });
 }
 
-export function useSellerProducts(id) {
-
+export function useProductQuery(queryKey, url, enabled = true) {
+  return useQuery([queryKey, url], () => productQuery(url), {
+    keepPreviousData: true,
+    enabled,
+  });
 }
 
-export function useAdmin() {
-    const queryString = window.location.search.slice(1)
-    const queryClient = useQueryClient();
+export function useAdmin(queryString = "") {
+  const queryClient = useQueryClient();
 
-    const products = useQuery(['admin_products', queryString], () => fetchAdminProducts(queryString), { keepPreviousData: true })
+  const products = useQuery(["admin_products",queryString], () => fetchAdminProducts(queryString), {
+    keepPreviousData: true,
+  });
 
-    const addProduct = useMutation(_addProduct, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(["admin_products"]);
-        }
-    });
+  const addProduct = useMutation(_addProduct, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin_products"]);
+    },
+  });
 
-    const updateProduct = useMutation(_updateProduct, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(["admin_products"]);
-        },
-    });
+  const updateProduct = useMutation(_updateProduct, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin_products"]);
+    },
+  });
 
-    const deleteProduct = useMutation(_deleteProduct, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['admin_products'])
-        },
-    })
+  const deleteProduct = useMutation(_deleteProduct, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin_products"]);
+    },
+  });
 
-    return {
-        products,
-        addProduct,
-        deleteProduct,
-        updateProduct,
-    }
+  return {
+    products,
+    addProduct,
+    deleteProduct,
+    updateProduct,
+  };
 }
 
 export function useProduct(id) {
-    const data = useQuery(['product', id], () => fetchProduct(id), {
-        enabled: !!id,
-        // suspense: true
-    })
-    
-    return data
+  const data = useQuery(["product", id], () => fetchProduct(id), {
+    enabled: !!id,
+    suspense: true,
+  });
+
+  return data;
 }

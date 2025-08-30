@@ -8,7 +8,6 @@
 .navbar {
     box-sizing: border-box;
     width: 100%;
-    height: var(--header);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -58,7 +57,7 @@
 }
 
 .navbar a:any-link {
-    color: #33364d;
+    color: var(--brandMain);
 }
 
 .navbar .left {
@@ -78,7 +77,7 @@
 }
 
 .header_brandName {
-    font-size: 1.1rem;
+    font-size: 1.4em;
     font-weight: 800;
     cursor: pointer;
 }

@@ -6,7 +6,7 @@ import ItemCard from '../Ui/Card/ItemCard';
 export default function Collections() {
     const { facets: { data }, isFetching, isLoading } = useFacets()
     const categories = data?.collections || []
-
+    
     return (
         <Container>
             <Grid py='2em'>

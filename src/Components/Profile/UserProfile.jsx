@@ -1,87 +1,95 @@
+import { Box, Grid } from "@mui/material";
 
-import { useLocation } from 'react-router-dom'
-import { Box, useMediaQuery } from '@mui/material'
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LocalMallIcon from "@mui/icons-material/LocalMallOutlined";
+import PersonIcon from "@mui/icons-material/PersonOutlineOutlined";
+import SecurityIcon from "@mui/icons-material/Security";
+import PasswordIcon from "@mui/icons-material/Password";
 
-import LocalMallIcon from '@mui/icons-material/LocalMallOutlined';
-import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useState } from "react";
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from "../Ui/TabComponents";
+import MyOrders from "./Tabs/MyOrders/MyOrders";
+import MyWishlist from "./Tabs/MyWishlist/MyWishlist";
+import ProfileDetails from "./Tabs/ProfileDetails/ProfileDetails";
+import SecuritySettings from "./Tabs/Security/SecuritySettings";
+import { Heart, ShieldCheck, ShoppingBag, User } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import useMediaQuery from "../../Hooks/useMediaQuery";
 
-import ProfileDetails from './Tabs/ProfileDetails/ProfileDetails'
-import MyOrders from './Tabs/MyOrders/MyOrders'
-import MyWishlist from './Tabs/MyWishlist/MyWishlist'
-import MessengerSettings from './Tabs/MessengerSettings/MessengerSettings'
-import { useState } from 'react';
-import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../Ui/TabComponents';
-import Messenger from '../../Components/Chat/Messenger';
+const tabs = [
+  {
+    label: "My Profile",
+    Icon: User,
+    component: <ProfileDetails />,
+  },
+  {
+    label: "Security",
+    Icon: ShieldCheck,
+    component: <SecuritySettings />,
+  },
+  {
+    label: "My Orders",
+    Icon: ShoppingBag,
+    component: <MyOrders />,
+  },
+  {
+    label: "My Wishlist",
+    Icon: Heart,
+    component: <MyWishlist />,
+  },
+];
 
 function UserProfile() {
-    const [tab, setTab] = useState(0)
+  const navigate = useNavigate()
+  const location = useLocation();
+  const tab = location.state?.initialTab || 0;
+  const sm = useMediaQuery("sm");
+  const lg = useMediaQuery("lg");
 
-    const lg = useMediaQuery((theme) => theme.breakpoints.up('lg'))
+  const handleChange = (_, newValue) => {
+    navigate(location.pathname, { state: { initialTab: newValue }, replace: true });
+  };
 
-    const handleChange = (_, newValue) => {
-        setTab(newValue)
-    };
-
-    const margin = {
-        ml: { xs: 0, lg: 14 },
-        mt: { xs: 4, lg: 0 }
-    }
-
-    return (
-        <Box minHeight='100%' display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={{ sm: 4,md: 4, lg: 14 }} px={4}>
+  return (
+    <Box
+      display="flex"
+      height="100%"
+      flexDirection={{ xs: "column", lg: "row" }}
+      flexWrap={{ lg: "wrap" }}
+      gap={{ sm: 4, md: 4 }}
+      boxSizing="border-box"
+      px={2}
+    >
+      <Grid container spacing={4}>
+        <Grid item sm={12} lg={2.5} hidden={!sm}>
+          <Box sx={{ maxWidth: "100vw" }}>
             <StyledTabs
-                textColor='primary'
-                orientation={lg ? 'vertical' : 'horizontal'}
-                value={tab}
-                onChange={handleChange}
-                aria-label="basic tabs example"
+              textColor="primary"
+              variant={lg ? "standard" : "scrollable"}
+              orientation={lg ? "vertical" : "horizontal"}
+              value={tab}
+              onChange={handleChange}
+              aria-label="basic tabs example"
             >
-                <StyledTab
-                    {...tabStyling}
-                    icon={<PersonIcon fontSize='small' />}
-                    label="My Profile"
-                />
-                <StyledTab
-                    {...tabStyling}
-                    icon={<ChatBubbleIcon fontSize='small' />}
-                    label="Chats"
-                />
-                <StyledTab
-                    {...tabStyling}
-                    icon={<LocalMallIcon fontSize='small' />}
-                    label="My Orders"
-                />
-                <StyledTab
-                    {...tabStyling}
-                    icon={<FavoriteBorderIcon fontSize='small' />}
-                    label="My Wishlist"
-                />
-                <StyledTab
-                    {...tabStyling}
-                    icon={<ChatBubbleIcon fontSize='small' />}
-                    label="Chat Settings"
-                />
+              {tabs.map(({ label, Icon }) => (
+                <StyledTab key={label} {...tabStyling} icon={<Icon size={20} />} label={label} />
+              ))}
             </StyledTabs>
-            <TabPanel value={tab} index={0}>
-                <ProfileDetails />
-            </TabPanel>
-            <TabPanel value={tab} index={1}>
-                <Messenger />
-            </TabPanel>
-            <TabPanel value={tab} index={2}>
-                <MyOrders />
-            </TabPanel>
-            <TabPanel value={tab} index={3}>
-                <MyWishlist />
-            </TabPanel>
-            <TabPanel value={tab} index={4}>
-                <MessengerSettings />
-            </TabPanel>
-        </Box >
-    )
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} lg={9.5}>
+          <Box px={{ sm: 2, md: 4 }}>
+            {tabs.map(({ component }, idx) => (
+              <TabPanel key={idx} value={tab} index={idx}>
+                {component}
+              </TabPanel>
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }
 
-export default UserProfile
-
+export default UserProfile;

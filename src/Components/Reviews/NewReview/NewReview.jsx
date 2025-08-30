@@ -93,7 +93,7 @@ function NewReview({ product, open, setOpen, userReview }) {
                                 </IconButton>
                                 <label className='newReview_customer--name' >Hey {currentUser.data?.name}</label>
                                 <p>Tell us about your experience</p>
-                                <img className='button_primary' src={product?.images[0]?.url} alt="" />
+                                <img className='button_primary' src={product?.images?.[0]?.url} alt="" />
                                 <label className='rate_this_product' >Rate this product</label>
                                 <Rating
                                     value={vote || userReview?.vote}

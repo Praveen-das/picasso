@@ -1,48 +1,75 @@
-import { Box, useMediaQuery } from '@mui/material';
-import { useState } from 'react';
-import { StyledTab, StyledTabs, TabPanel, tabStyling } from '../Ui/TabComponents';
-import Dashboard from './Tabs/Dashboard/Dashboard';
-import Products from './Tabs/Products/Products';
-import './style.css'
+import { Box, Grid } from "@mui/material";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { StyledTab, StyledTabs, TabPanel, tabStyling } from "../Ui/TabComponents";
+import Dashboard from "./Tabs/Dashboard/Dashboard";
+import Products from "./Tabs/Products/Products";
+import "./style.css";
 
-import DashboardIcon from '@mui/icons-material/LineAxis';
-import ProductsIcon from '@mui/icons-material/LocalMallOutlined';
+import useAuth from "../../Hooks/useAuth";
+import {  ChartLine, Package } from "lucide-react";
+import useMediaQuery from "../../Hooks/useMediaQuery";
+import { useLocation, useNavigate } from "react-router-dom";
+import { gap } from "../../const";
 
 export default function Seller() {
-    const [value, setValue] = useState(0);
-    const lg = useMediaQuery((theme) => theme.breakpoints.up('lg'))
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { logout } = useAuth();
+  const sm = useMediaQuery("sm");
+  const lg = useMediaQuery("lg");
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
+  const tab = location.state?.initialTab || 0;
 
-    return (
-        <Box id='dashboard_container' display='flex' justifyContent='center' flexDirection={{ xs: 'column', lg: 'row' }} flexWrap={{ lg: 'wrap' }} gap={{ sm: 4,md: 4, lg: 14 }} px={4} >
-            <StyledTabs
-                textColor='primary'
-                orientation={lg ? 'vertical' : 'horizontal'}
-                value={value}
-                onChange={handleChange}
-                aria-label="basic tabs example"
-            >
-                <StyledTab
-                    icon={<DashboardIcon fontSize='small' />}
-                    label="Dashboard"
-                    {...tabStyling}
-                />
-                <StyledTab
-                    icon={<ProductsIcon
-                        fontSize='small' />}
-                    label="Manage Products"
-                    {...tabStyling}
-                />
-            </StyledTabs>
-            <TabPanel value={value} index={0}>
-                <Dashboard />
+  const handleChange = (_, newValue) => {
+    navigate(location.pathname, { state: { initialTab: newValue }, replace: true });
+  };
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+  };
+
+  return (
+    <Box
+      display="flex"
+      height="100%"
+      flexDirection={{ xs: "column", lg: "row" }}
+      flexWrap={{ lg: "wrap" }}
+      gap={gap}
+      px={2}
+    >
+      <Grid container spacing={4}>
+        <Grid item sm={12} lg={2.5} hidden={!sm}>
+          <StyledTabs
+            textColor="primary"
+            orientation={lg ? "vertical" : "horizontal"}
+            value={tab}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <StyledTab
+              icon={<ChartLine style={{ width: "1.4em", height: "1.4em" }} />}
+              label="Dashboard"
+              {...tabStyling}
+            />
+            <StyledTab
+              icon={<Package style={{ width: "1.4em", height: "1.4em" }} />}
+              label="Manage Products"
+              {...tabStyling}
+            />
+          </StyledTabs>
+        </Grid>
+
+        <Grid item xs>
+          <Box px={{ sm: 2, md: 4 }}>
+            <TabPanel value={tab} index={0}>
+              <Dashboard />
             </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Products />
+            <TabPanel value={tab} index={1}>
+              <Products />
             </TabPanel>
-        </Box>
-    );
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }
